@@ -15,8 +15,11 @@ module.exports = {
         float: '0 8px 55px 0 rgb(0 0 0 / 16%)'
       },
       colors: {
-        main_color: "#554994",
-        secondarty_color: "#"
+        main_color: "#F46752",
+        main_color_hover: "#f0edffa6",
+        secondary_color: "#007188",
+        lighter_blue: "#E5F3FF",
+
       }
     },
   },
