@@ -7,7 +7,6 @@ import SectionFive from './SectionFive'
 import SectionSix from './SectionSix'
 import SectionSeven from './SectionSeven'
 import SectionEight from './SectionEight'
-import Footer from './Footer'
 
 
 export default function MainSection() {
@@ -21,7 +20,6 @@ export default function MainSection() {
         <SectionSix />
         <SectionSeven />
         <SectionEight />
-        <Footer />
     </main>
   )
 }
