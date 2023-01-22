@@ -31,7 +31,7 @@ export default function New3aweni() {
               <strong>Etape 1: </strong> Choisissez une catégorie et entrez votre localisation
             </h1>
         </aside>
-        <form className='w-2/3 h-screen bg-white z-10 rounded-l-[46px] shadow-theone px-10 pb-10 overflow-auto pt-32 flex items-start flex-col justify-between'>
+        <form className='w-2/3 h-screen bg-white z-10 rounded-l-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-start flex-col justify-between'>
           <div>
 
             <p>Selectionnez une catégorie:</p> 
