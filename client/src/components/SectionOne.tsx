@@ -1,3 +1,5 @@
+import { AiOutlineInfoCircle } from "react-icons/ai"
+import { IconContext } from "react-icons"
 import { Link } from "react-router-dom"
 
 const gga = require("../assets/learnabout.png")
@@ -6,7 +8,11 @@ export default function SectionOne() {
   return (
     <section className="hero">
       <div className="hero__info to-top">
-        <span className="hero__subtitle flex justify-between gap-1 items-center"><img src={gga} alt="" width={20} /> En savoir plus sur 3aweni  </span>
+        <span className="hero__subtitle flex justify-between gap-1">
+          <IconContext.Provider value={{className: "text-main_color mt-1"}}>
+            <AiOutlineInfoCircle />
+          </IconContext.Provider>
+           En savoir plus sur 3aweni  </span>
         <h1 className="hero__title">L'espoir pour tous !</h1>
         <p className="hero__description">Rendre le monde meilleur, avec un simple don.</p>
         <Link to="/new3aweni" className="hero__button g-button g-button--cta">Lancer un 3aweni
