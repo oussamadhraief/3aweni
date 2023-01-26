@@ -54,7 +54,7 @@ export default function() {
                 <label htmlFor="password" className="absolute peer-focus:text-xs peer-focus:-top-[5px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[5px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[10px] text-[rgb(80,80,80] transition-all">Mot de passe</label>
             </div>
 
-            <p className="whitespace-nowrap place-self-end text-sm hover:underline">Forgot password ?</p>
+            <Link className="whitespace-nowrap place-self-end text-sm hover:underline" to="/password-reset">Forgot password ?</Link>
 
             <button className="w-fit h-fit px-8 py-2 bg-secondary_color text-white rounded my-7"> se connecter </button>
 

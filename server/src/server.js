@@ -1,3 +1,6 @@
+
+const jwt=require("jsonwebtoken");
+var nodemailer = require("nodemailer");
 const mongoose=require("mongoose");
 const express=require("express");
 const cors=require("cors");
@@ -8,6 +11,7 @@ const session = require("express-session");
 const bodyParser=require("body-parser");
 const User=require('./userModel');
 require( 'dotenv/config')
+const LocalStrategy = require("passport-local").Strategy;
 
 
 const app = express ();
@@ -21,17 +25,17 @@ mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,{
         console.log("Connected To Mongo")
       })
 
-      app.use(passport.initialize());
-      app.use(passport.session());
-      require("./passportConfig")(passport);
 
+
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.use (bodyParser.json());
 app.use (bodyParser.urlencoded({extended:true}));
 app.use(cors({
   origin: "https://localhost:3000",
   credentials : true
 }))
-
 app.use(session({
   secret: "secretcode",
   resave: true,
@@ -39,31 +43,72 @@ app.use(session({
 }))
 app.use(cookieParser())
 // app.use(cookieParser("secretcode"))
+passport.use(new LocalStrategy({usernameField: "email", passwordField: "password"},( email, password, done ) => {
+  User.findOne({ email }, (err ,user) => {
+      
+      if(err) throw err
+      if(!user) return done(null,false)
+      bcrypt.compare(password, user.password, (err, result) => {
+          if(err) throw err
+          if(result === true) {
+              return done(null,user)
+          }else{
+              return done(null,false)
+          }
+      })
+  })
+}))
 
-const jwt=require("jsonwebtoken");
-var nodemailer = require("nodemailer");
+passport.serializeUser((user, cb) => {
+  cb(null, user.id)
+})
+
+passport.deserializeUser((id, cb) => {
+  User.findOne({ _id: id }, (err, user)  => {
+      const userInformation = {
+          id: user._id,
+          email: user.email,
+          phone: user.phone,
+          name: user.name,
+          // role: user.role,
+          address: user.address
+      }
+      cb(err, userInformation)
+  })
+})
+
 
 const JWT_SECRET ="hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 
-app.post("/api/user/forgot-password", async (req, res) => {
+app.post("/api/user/password-reset", async (req, res) => {
+
   const { email } = req.body;
+
   try {
+
     const oldUser = await User.findOne({ email });
+
     if (!oldUser) {
-      return res.json({ status: "User Not Exists!!" });
+      return res.status(404).json({ status: "User Not Exists!!" });
     }
+
     const secret = JWT_SECRET + oldUser.password;
+
     const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, {
       expiresIn: "5m",
     });
-    const link = `http://localhost:5000/reset-password/${oldUser._id}/${token}`;
-    var transporter = nodemailer.createTransport({
+
+
+    const link = `http://localhost:3000/password-reset/${oldUser._id}/${token}`;
+
+    var transporter = nodemailer.createTransport(
+      {
       service: "gmail",
       auth: {
         user: 'achraf.bencheikhladhari@polytechnicien.tn',
         pass: 'Polyte2022',
       },
-    });
+      });
 
     var mailOptions = {
       from: 'achraf.bencheikhladhari@polytechnicien.tn',
@@ -72,41 +117,39 @@ app.post("/api/user/forgot-password", async (req, res) => {
       text: "Someone has requested a password reset for the following account:\n \n Site Name: 3aweni.tn\n \n Username: "+oldUser.name+"\n \n Click the link below to reset your password:\n"+link+"\n \nIf this was a mistake, just igonore this email and nothing will happen.",
     };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
-      }
-    });
-    console.log(link);
-  } catch (error) {}
-});
+    transporter.sendMail(mailOptions);
+     
+    
+  } catch (error) {
 
-app.get("/reset-password/:id/:token", async (req, res) => {
+      res.status(400).json({ success: false })
+
+  }});
+
+app.get("/password-reset/:id/:token", async (req, res) => {
   const { id, token } = req.params;
   console.log(req.params);
   const oldUser = await User.findOne({ _id: id });
   if (!oldUser) {
-    return res.json({ status: "User Not Exists!!" });
+    return res.status(404).json({ status: "User Not Exists!!" });
   }
   const secret = JWT_SECRET + oldUser.password;
   try {
     const verify = jwt.verify(token, secret);
-    res.send({ email: verify.email, status: "Not Verified!!!!" });
+    res.status(404).json({ email: verify.email, status: "Not Verified!!!!" });
   } catch (error) {
     console.log(error);
     res.send("Not Verified");
   }
 });
 
-app.post("/reset-password/:id/:token", async (req, res) => {
+app.post("/password-reset/:id/:token", async (req, res) => {
   const { id, token } = req.params;
   const { password } = req.body;
 
   const oldUser = await User.findOne({ _id: id });
   if (!oldUser) {
-    return res.json({ status: "User Not Exists!!" });
+    return res.status(404).json({ status: "User Not Exists!!" });
   }
   const secret = JWT_SECRET + oldUser.password;
   try {
@@ -130,18 +173,13 @@ app.post("/reset-password/:id/:token", async (req, res) => {
 });
 
 
-
-
-
-
-
 //Routes
 
 // Login Status 200 Done
 app.post("/api/user/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) throw err;
-    if (!user) res.send("No User Exists");
+    if (!user) res.status(404).send("No User Exists");
     else {
       req.logIn(user, (err) => {
         if (err) throw err;
@@ -164,7 +202,7 @@ app.post('/api/user/register', async ( req, res ) => {
 
   User.findOne({ email } , async (err,doc) => {
       if(err) throw err
-      if(doc) res.send("User Already Exists")
+      if(doc) res.status(400).send("User Already Exists")
       if(!doc) {
           const hashedPassword = await bcrypt.hash(password, 10)
           const newUser = new User({

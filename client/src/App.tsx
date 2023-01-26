@@ -3,7 +3,9 @@ import Layout from './components/Layout';
 import New3aweni from './pages/create-3aweni/New3aweni';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import PasswordReset from './pages/PasswordReset';
 import Register from './pages/Register';
+import RequestPasswordReset from './pages/RequestPasswordReset';
 
 function App() {
   return (
@@ -13,9 +15,11 @@ function App() {
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="password-reset/:id/:productId" element={<PasswordReset />} />
+          <Route path="password-reset" element={<RequestPasswordReset />} />
         </Route>
         <Route path="new3aweni" element={<New3aweni />} />
-        <Route path="*" element={<p>error</p>} />
+        <Route path="*" element={<div>error</div>} />
     </Routes>
   </BrowserRouter> 
   );
