@@ -194,11 +194,7 @@ app.post("/api/user/login", (req, res, next) => {
 //Register Status 200 Done
 app.post('/api/user/register', async ( req, res ) => {
 
-  const { email, password, name,phone } = req?.body
-
-  if(!email || !password || !name || !phone || typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string' || typeof phone !== 'string') {
-      res.status(400).json({ success: false })
-  }
+  const { email, password } = req?.body
 
   User.findOne({ email } , async (err,doc) => {
       if(err) throw err
@@ -206,9 +202,7 @@ app.post('/api/user/register', async ( req, res ) => {
       if(!doc) {
           const hashedPassword = await bcrypt.hash(password, 10)
           const newUser = new User({
-              name,
-              email,
-              phone,
+              ...req?.body,
               password: hashedPassword,
           })
           await newUser.save()
