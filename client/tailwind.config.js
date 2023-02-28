@@ -17,10 +17,11 @@ module.exports = {
       },
       colors: {
         main_color: "#F46752",
-        main_color_hover: "#f0edffa6",
+        lighter_main_color: "#ffe8e4",
         secondary_color: "#007188",
         lighter_blue: "#E5F3FF",
-        beige: "#f9f5f2"
+        beige: "#f9f5f2",
+        light_gray: "#cccccc"
 
       }
     },

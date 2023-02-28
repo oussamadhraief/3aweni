@@ -18,7 +18,7 @@ function App() {
           <Route path="password-reset/:id/:productId" element={<PasswordReset />} />
           <Route path="password-reset" element={<RequestPasswordReset />} />
         </Route>
-        <Route path="new3aweni" element={<New3aweni />} />
+        <Route path="create" element={<New3aweni />} />
         <Route path="*" element={<div>error</div>} />
     </Routes>
   </BrowserRouter> 
