@@ -4,6 +4,20 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
 
+:root {
+  --gap-h: 60px;
+  --gap-v: 35px;
+  --gap-sv: 85px;
+  --gap-sh: 15px;
+}
+@media (max-width: 1200px) {
+  :root {
+    --gap-v: 25px;
+    --gap-h: 15px;
+    --gap-sv: 60px;
+    --gap-sh: 15px;
+  }
+}
 
 body {
   margin: 0;
@@ -123,32 +137,6 @@ header {
     opacity: 1;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-:root {
-    --gap-h: 60px;
-    --gap-v: 35px;
-    --gap-sv: 85px;
-    --gap-sh: 15px;
-  }
-  @media (max-width: 1200px) {
-    :root {
-      --gap-v: 25px;
-      --gap-h: 15px;
-      --gap-sv: 60px;
-      --gap-sh: 15px;
-    }
-  }
   
   @font-face {
     font-family: "Amerigo", sans-serif;
@@ -186,15 +174,6 @@ header {
     color: #5a6482;
     cursor: pointer;
   }
-  
-  /* input,
-  button {
-    appearance: none;
-    border: none;
-    outline: none;
-    background-color: transparent;
-    color: #5a6482;
-  } */
   
   img {
     max-width: 100%;
@@ -339,7 +318,7 @@ header {
     flex-direction: column;
     flex-wrap: wrap;
     width: 100%;
-    padding: var(--gap-sv) var(--gap-sh) var(--gap-sh);
+    padding: 0 var(--gap-sh) var(--gap-sh);
   }
   
   .g-container {
@@ -1611,6 +1590,7 @@ header {
   .footer__left {
     max-width: 376px;
     padding-right: 15px;
+    padding-top: 40px;
   }
   @media (max-width: 1200px) {
     .footer__left {
@@ -1634,7 +1614,7 @@ header {
     }
   }
   .footer__img {
-    max-width: 95px;
+    max-width: 155px;
     margin-bottom: 30px;
   }
   .footer__description {
@@ -1702,6 +1682,7 @@ header {
     display: flex;
     flex-grow: 1;
     padding-left: 200px;
+    padding-top: var(--gap-sv);
   }
   @media (max-width: 1200px) {
     .footer__right {
@@ -1785,3 +1766,13 @@ header {
       width: 100%;
     }
   }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}

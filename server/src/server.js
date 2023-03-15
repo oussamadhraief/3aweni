@@ -9,7 +9,7 @@ const cookieParser=require("cookie-parser");
 const bcrypt=require("bcryptjs");
 const session = require("express-session");
 const bodyParser=require("body-parser");
-const User=require('./userModel');
+const User=require('./user/UserModel');
 require( 'dotenv/config')
 const LocalStrategy = require("passport-local").Strategy;
 

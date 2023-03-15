@@ -22,7 +22,7 @@ export default function Navbar() {
   // <nav className='fixed top-0 left-0 w-full h-20 flex justify-around items-center bg-white'>
   //   <div className='w-1/4 flex justify-center'>
 
-  //     <img src="/logo.png" alt="" className='w-32' />
+  //     <img src="/secondary_logo.png" alt="" className='w-32' />
   //   </div>
   //     <div className='w-1/4 h-fit flex gap-7 justify-center'>
   //       <Link to="" className='px-2 py-1 rounded hover:bg-main_color_hover hover:text-main_color'>Découvrir</Link>

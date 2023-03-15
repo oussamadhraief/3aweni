@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="footer__container g-container">
         <div className="footer__left">
           <div className="footer__info">
-            <img className="footer__img" src="/logo.png" alt="logo"/>
+            <img className="footer__img" src="/official_logo.png" alt="logo"/>
             <p className="footer__description">3aweni vous invite à vous inscrire à notre Newsletter.</p>
           </div>
           <form className="footer__form">

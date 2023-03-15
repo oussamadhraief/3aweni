@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import axios from "axios"
 
 interface RegisterForm {
-    name: string;
+    lastName: string;
+    firstName: string;
     email: string;
     phone: string;
     password: string;
@@ -13,7 +14,7 @@ interface RegisterForm {
 export default function 
 () {
 
-    const [RegisterForm, setRegisterForm] = useState({lastName: "",phone: "",email: "", password: "", passwordConfirmation: ""})
+    const [RegisterForm, setRegisterForm] = useState({firstName: "", lastName: "",phone: "",email: "", password: "", passwordConfirmation: ""})
 
     const handleChange = (event: FormEvent) => {
         const target = event.target as HTMLInputElement
@@ -30,7 +31,7 @@ export default function
                 email: RegisterForm.email,
                 password: RegisterForm.password,
                 passwordConfirmation: RegisterForm.passwordConfirmation,
-                name: RegisterForm.lastName,
+                name: RegisterForm.lastName + ' ' + RegisterForm.firstName,
                 phone: RegisterForm.phone,
                 },{
                 withCredentials: true
@@ -59,7 +60,7 @@ export default function
           </div>
 
           <div className="relative my-[15px] w-1/2">
-              <input type="text" className="peer block w-full h-10 bg-transparent border  border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" id="firstName" name="firstName" required />
+              <input type="text" className="peer block w-full h-10 bg-transparent border  border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" id="firstName" name="firstName" required onChange={handleChange} />
               <label htmlFor="firstName" className="absolute peer-focus:text-xs peer-focus:-top-[5px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[5px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[10px] text-[rgb(80,80,80)] transition-all">Prénom</label>
           </div>
 

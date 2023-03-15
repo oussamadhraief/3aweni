@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header className="header" id="header">
     <div className="header__container">
-      <div className="header__left"><Link className="header__logo" to="/"><img className="header__icon" src="/logo.png" alt="logo"/></Link>
+      <div className="header__left"><Link className="header__logo" to="/"><img className="header__icon" src="/secondary_logo.png" alt="logo"/></Link>
         <Navbar />
       </div>
       <div className="header__right">

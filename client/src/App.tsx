@@ -1,11 +1,16 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout';
-import New3aweni from './pages/create-3aweni/New3aweni';
+import New3aweniGoal from './pages/create-3aweni/New3aweniGoal';
+import New3aweniCategoryLocation from './pages/create-3aweni/New3aweniCategoryLocation';
+import New3aweniRegister from './pages/create-3aweni/New3aweniRegister';
+import New3aweniLogin from './pages/create-3aweni/New3aweniLogin';
+import New3aweniType from './pages/create-3aweni/New3aweniType';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import PasswordReset from './pages/PasswordReset';
 import Register from './pages/Register';
 import RequestPasswordReset from './pages/RequestPasswordReset';
+import Error from './pages/Error';
 
 function App() {
   return (
@@ -18,8 +23,14 @@ function App() {
           <Route path="password-reset/:id/:productId" element={<PasswordReset />} />
           <Route path="password-reset" element={<RequestPasswordReset />} />
         </Route>
-        <Route path="create" element={<New3aweni />} />
-        <Route path="*" element={<div>error</div>} />
+        <Route path="create">
+          <Route path="category" element={<New3aweniCategoryLocation />} />
+          <Route path="type" element={<New3aweniType />} />
+          <Route path="goal" element={<New3aweniGoal />} />
+          <Route path="register" element={<New3aweniRegister />} />
+          <Route path="login" element={<New3aweniLogin />} />
+        </Route>
+        <Route path="*" element={<Error />} />
     </Routes>
   </BrowserRouter> 
   );
