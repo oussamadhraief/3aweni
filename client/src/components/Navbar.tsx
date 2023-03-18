@@ -7,7 +7,7 @@ export default function Navbar() {
     <nav className="main-menu" id="main-menu">
       <ul className="main-menu__list">
         <li className="main-menu__item"><Link className="main-menu__link g-link" to="#">Découvrir</Link></li>
-        <li className="main-menu__item"><Link to="" className='flex items-center gap-2 main-menu__link g-link group'>
+        <li className="main-menu__item"><Link to="/search" className='flex items-center gap-2 main-menu__link g-link group'>
            Recherche
            <IconContext.Provider value={{ className: "text-zinc-700 text-xl group-hover:text-secondary_color" }}>
              <AiOutlineSearch />
