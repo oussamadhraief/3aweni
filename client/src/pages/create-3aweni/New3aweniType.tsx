@@ -5,33 +5,53 @@ import { FormEvent, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
 
+interface FormState {
+  category: string;
+  state: string | undefined;
+  zipCode: number | undefined;
+  type: string;
+  goal: string | undefined;
+}
+
   export default function New3aweniType() {
 
     const navigate = useNavigate()
 
-    const [Type, setType] = useState<string>('')
+    const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: undefined, type: '', goal: undefined})
 
     useEffect(() => {
-      const sessionType = sessionStorage.getItem('3awenitype');
-      
-      if (sessionType) {
-       setType(JSON.parse(sessionType));
+      const session3aweni = sessionStorage.getItem('create3aweni')
+      if (session3aweni) {
+        
+        const res = JSON.parse(session3aweni)
+  
+        if(res.zipCode && res.state && res.category)
+          setForm(JSON.parse(session3aweni))
+        else 
+          navigate('/create/category')
+  
       }
-
+      else {
+        navigate('/create/category')
+      }
     }, []);
 
-    const handleChange = (e: FormEvent) => {
+  const handleChange = (e: FormEvent) => {
   
-      const target = e.target as HTMLInputElement
-      
-      setType(target.value)
-  
-    }
+    const target = e.target as HTMLInputElement
+
+    setForm({
+      ...Form,
+      type: target.value
+    })
+    
+
+  }
 
     const handleSubmit = (e: FormEvent) => {
       e.preventDefault()
   
-      sessionStorage.setItem('3awenitype',JSON.stringify(Type))
+      sessionStorage.setItem('create3aweni',JSON.stringify(Form))
       
       navigate('/create/goal')
       
@@ -59,7 +79,7 @@ import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
             <div className='w-5/6 flex justify-start gap-4 items-center flex-wrap mt-8'>
 
 
-              <label className={Type == "For me" ? 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-lighter_main_color border-2 border-main_color hover:cursor-pointer rounded-lg' : 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Forme"> <input type="radio" name="category" id="Forme" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="For me" checked={Type === "For me"} />
+              <label className={Form.type == "For me" ? 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-lighter_main_color border-2 border-main_color hover:cursor-pointer rounded-lg' : 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Forme"> <input type="radio" name="category" id="Forme" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="For me" checked={Form.type === "For me"} />
                 <div>
                   <p>Pour moi</p> 
                   <p className='text-xs font-thin text-gray-600'>Les fonds seront livrés à votre compte bancaire</p>
@@ -70,7 +90,7 @@ import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
                 </IconContext.Provider>
               </label>   
 
-              <label className={Type == "For someone" ? 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-lighter_main_color border-2 border-main_color hover:cursor-pointer rounded-lg' : 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Forsomeone"> <input type="radio" name="category" id="Forsomeone" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="For someone" checked={Type === "For someone"} />
+              <label className={Form.type == "For someone" ? 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-lighter_main_color border-2 border-main_color hover:cursor-pointer rounded-lg' : 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Forsomeone"> <input type="radio" name="category" id="Forsomeone" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="For someone" checked={Form.type === "For someone"} />
                 <div>
                   <p>Pour quelqu'un d'autre</p> 
                   <p className='text-xs font-thin text-gray-600'>Vous inviterez un bénéficiaire pour recevoir les fons ou vous les distribuerez vous-même.</p>

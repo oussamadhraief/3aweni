@@ -8,28 +8,34 @@ interface FormState {
   category: string;
   state: string | undefined;
   zipCode: number | undefined;
+  type: string;
+  goal: number | undefined;
 }
 
-export default function New3aweniCategoryGoal() {
+
+export default function New3aweniCategoryLocation() {
 
   const navigate = useNavigate()
 
-  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: undefined})
+  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: undefined, type: '', goal: undefined})
+  const [BadInformation, setBadInformation] = useState(false)
+
 
   useEffect(() => {
-    const sessionCategory = sessionStorage.getItem('3awenicategory')
-    const sessionState = sessionStorage.getItem('3awenistate')
-    const sessionZipCode = sessionStorage.getItem('3awenizipcode')
-    if (sessionCategory && sessionState && sessionZipCode) {
+    const session3aweni = sessionStorage.getItem('create3aweni')
+    if (session3aweni) {
+      const res = JSON.parse(session3aweni)
+      if(res.category && res.state && res.zipCode)
       
-    setForm({
-      category: JSON.parse(sessionCategory),
-      state: JSON.parse(sessionState),
-      zipCode: JSON.parse(sessionZipCode)
-    })
+        setForm(res)
 
   }
   }, []);
+
+  useEffect(() => {
+    console.log(Form);
+    
+  },[Form])
 
   const handleChange = (e: FormEvent) => {
 
@@ -44,14 +50,9 @@ export default function New3aweniCategoryGoal() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-
-    sessionStorage.setItem('3awenicategory',JSON.stringify(Form.category))
-
-    if(Form.state)
-      sessionStorage.setItem('3awenistate',JSON.stringify(Form.state))
-
-    if(Form.zipCode)
-      sessionStorage.setItem('3awenizipcode',JSON.stringify(Form.zipCode))
+    console.log(Form);
+    
+    sessionStorage.setItem('create3aweni',JSON.stringify(Form))
     
     navigate('/create/type')
     
@@ -87,7 +88,7 @@ export default function New3aweniCategoryGoal() {
         
             <label className={Form.category == "Créativité" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Créativité"> <input type="radio" name="category" id="Créativité" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Créativité" checked={Form.category === "Créativité"} /> Créativité</label> 
         
-            <label className={Form.category == "Dépensescourantes" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Dépenses-courantes"> <input type="radio" name="category" id="Dépenses-courantes" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Dépensescourantes" checked={Form.category === "Dépenses courantes"} /> Dépenses courantes</label> 
+            <label className={Form.category == "Dépensescourantes" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Dépenses-courantes"> <input type="radio" name="category" id="Dépenses-courantes" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Dépensescourantes" checked={Form.category === "Dépensescourantes"} /> Dépenses courantes</label> 
         
             <label className={Form.category == "Éducation" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Éducation"> <input type="radio" name="category" id="Éducation" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Éducation" checked={Form.category === "Éducation"} /> Éducation</label> 
         
@@ -100,9 +101,9 @@ export default function New3aweniCategoryGoal() {
             <label className={Form.category == "Famille" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Famille"> <input type="radio" name="category" id="Famille" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Famille" checked={Form.category === "Famille"} /> Famille</label> 
         
         
-            <label className={Form.category == "Obsèquesetcommémorations" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Obsèques-commémorations"> <input type="radio" name="category" id="Obsèques-commémorations" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Obsèquesetcommémorations" checked={Form.category === "Obsèques et commémorations"} /> Obsèques et commémorations</label> 
+            <label className={Form.category == "Obsèquesetcommémorations" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Obsèques-commémorations"> <input type="radio" name="category" id="Obsèques-commémorations" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Obsèquesetcommémorations" checked={Form.category === "Obsèquesetcommémorations"} /> Obsèques et commémorations</label> 
         
-            <label className={Form.category == "PotscommunsdAnniversaire" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="anniversaire"> <input type="radio" name="category" id="anniversaire" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="PotscommunsdAnniversaire" checked={Form.category === "Pots communs d'Anniversaire"} /> Pots communs d'Anniversaire</label> 
+            <label className={Form.category == "PotscommunsdAnniversaire" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="anniversaire"> <input type="radio" name="category" id="anniversaire" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="PotscommunsdAnniversaire" checked={Form.category === "PotscommunsdAnniversaire"} /> Pots communs d'Anniversaire</label> 
         
             <label className={Form.category == "Religion" ? 'relative px-4 py-2 bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-lg' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Religion"> <input type="radio" name="category" id="Religion" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Religion" checked={Form.category === "Religion"} /> Religion</label> 
         

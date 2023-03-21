@@ -5,27 +5,46 @@ import { IconContext } from 'react-icons';
 import { FcMoneyTransfer } from 'react-icons/fc';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
 
-  export default function New3aweniGoal() {
+interface FormState {
+  category: string;
+  state: string | undefined;
+  zipCode: number | undefined;
+  type: string;
+  goal: string | undefined;
+}
 
-    const navigate = useNavigate()
 
-    const [Goal, setGoal] = useState<string>('')
+export default function New3aweniGoal() {
 
+  const navigate = useNavigate()
 
-    useEffect(() => {
-      const sessionGoal = sessionStorage.getItem('3awenigoal');
+  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: undefined, type: '', goal: undefined})
+
+  useEffect(() => {
+    const session3aweni = sessionStorage.getItem('create3aweni')
+    if (session3aweni) {
       
-      if (sessionGoal) {
-       setGoal(JSON.parse(sessionGoal));
-      }
+      const res = JSON.parse(session3aweni)
 
-    }, []);
+      if(res.zipCode && res.state && res.category && res.type)
+        setForm(JSON.parse(session3aweni))
+      else 
+        navigate('/create/category')
+
+    }
+    else {
+      navigate('/create/category')
+    }
+  }, []);
 
     const handleChange = (e: FormEvent) => {
   
       const target = e.target as HTMLInputElement
 
-      setGoal(target.value)
+      setForm({
+        ...Form,
+        goal: target.value
+      })
       
 
     }
@@ -33,7 +52,7 @@ import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
     const handleSubmit = (e: FormEvent) => {
       e.preventDefault()
   
-      sessionStorage.setItem('3awenigoal',JSON.stringify(Goal))
+      sessionStorage.setItem('create3aweni',JSON.stringify(Form))
       
       navigate('/create/register')
       
@@ -59,7 +78,7 @@ import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
     
       <div className='w-2/3 h-screen bg-white z-10 rounded-tl-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-center flex-col justify-between'>
         <div onSubmit={handleSubmit} className='w-3/6 mt-20'>
-            <Input label="Objectif en TND" type='number' name="goal" id="goal" required value={Goal} onChange={handleChange} icon={<FcMoneyTransfer />} />
+            <Input label="Objectif en TND" type='number' name="goal" id="goal" required value={Form.goal} onChange={handleChange} icon={<FcMoneyTransfer />} />
             <div className='hidden'>
             </div>
             <p className='text-gray-700 text-xs mt-3'>Gardez à l'esprit que les frais de transaction, y compris les frais de crédit et de débit, sont déduits de chaque don.</p>

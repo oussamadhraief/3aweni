@@ -8,11 +8,11 @@ import { useState } from "react";
       <div  className="min-h-[500px] mb-24 mt-12 w-5/6 flex flex-col items-start body-container z-10" >
         <div className={TabSelection ? "mb-10 relative flex items-center justify-between w-52 after:absolute after:w-1/2 after:h-full after:top-0 after:left-0 after:bg-main_color after:z-10 after:transition-all after:duration-300 after:rounded-xl h-8" : "relative flex items-center justify-between w-52 after:absolute after:w-1/2 after:h-full after:top-0 after:left-1/2 after:bg-main_color after:z-10 after:transition-all after:rounded-xl h-8 mb-10"}>
           
-            <button  className={TabSelection ? "w-1/2 z-20 text-white transition-all" : "w-1/2 z-20 text-black transition-all"} onClick={e => setTabSelection(true)}>
+            <button  className={TabSelection ? "w-1/2 z-20 text-white transition-all outline-none" : "w-1/2 z-20 text-black transition-all outline-none"} onClick={e => setTabSelection(true)}>
               Trending
             </button>
 
-            <button  className={TabSelection ? "w-1/2 z-20 text-black transition-all" : "w-1/2 z-20 text-white transition-all"} onClick={e => setTabSelection(false)}>
+            <button  className={TabSelection ? "w-1/2 z-20 text-black transition-all outline-none" : "w-1/2 z-20 text-white transition-all outline-none"} onClick={e => setTabSelection(false)}>
               Near you
             </button>
 

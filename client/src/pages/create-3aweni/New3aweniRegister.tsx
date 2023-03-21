@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FormEvent, useState, useEffect } from 'react'
 import { IconContext } from 'react-icons';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface FormState {
   category: string;
@@ -20,29 +20,36 @@ interface FormState {
 }
 
   export default function New3aweniRegister() {
+      const navigate = useNavigate()
+
 
     const [Form, setForm] = useState<FormState>({category: '', state: "", type: "", goal: null, zipCode: null, firstName: "", lastName: "",phone: "",email: "", password: "", passwordConfirmation: ""})
-    const [MissingInformation, setMissingInformation] = useState(false)
+    const [BadInformation, setBadInformation] = useState(false)
 
     useEffect(() => {
-      const sessionCategory = sessionStorage.getItem('3awenicategory')
-      const sessionState = sessionStorage.getItem('3awenistate')
-      const sessionZipCode = sessionStorage.getItem('3awenizipcode')
-      const sessionType = sessionStorage.getItem('3awenitype');
-      const sessionGoal = sessionStorage.getItem('3awenigoal');
-      if (sessionCategory && sessionState && sessionZipCode && sessionType && sessionGoal) {
+      const session3aweni = sessionStorage.getItem('create3aweni')
+      if (session3aweni) {
       
-      setForm({
-        ...Form,
-        category: JSON.parse(sessionCategory),
-        state: JSON.parse(sessionState),
-        zipCode: JSON.parse(sessionZipCode),
-        type: JSON.parse(sessionType),
-        goal: JSON.parse(sessionGoal)
-      })
+        const res = JSON.parse(session3aweni)
+
+        if(res.category && res.state && res.zipCode && res.type && res.goal){
+          setForm({
+            ...Form,
+            category: res.category,
+            state: res.state,
+            zipCode: res.zipCode,
+            type: res.type,
+            goal: res.goal
+      
+          })
+        }else{
+          navigate('/create/category')
+
+        }
   
     }else{
-      setMissingInformation(true)
+      navigate('/create/category')
+
     }
     }, []);
 

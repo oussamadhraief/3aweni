@@ -12,6 +12,7 @@ import Register from './pages/Register';
 import RequestPasswordReset from './pages/RequestPasswordReset';
 import Error from './pages/Error';
 import SearchField from './pages/search/SearchField';
+import AccountDetails from './pages/account/AccountDetails';
 
 function App() {
   return (
@@ -24,6 +25,10 @@ function App() {
           <Route path="password-reset/:id/:productId" element={<PasswordReset />} />
           <Route path="password-reset" element={<RequestPasswordReset />} />
           <Route path="search" element={<SearchField />} />
+          <Route path="account">
+            <Route path="details" element={<AccountDetails />} />
+            <Route path="fundraisers" element={<New3aweniLogin />} />
+          </Route>
         </Route>
         <Route path="create">
           <Route path="category" element={<New3aweniCategoryLocation />} />
@@ -32,6 +37,7 @@ function App() {
           <Route path="register" element={<New3aweniRegister />} />
           <Route path="login" element={<New3aweniLogin />} />
         </Route>
+        
         <Route path="*" element={<Error />} />
     </Routes>
   </BrowserRouter> 
