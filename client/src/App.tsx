@@ -13,6 +13,7 @@ import RequestPasswordReset from './pages/RequestPasswordReset';
 import Error from './pages/Error';
 import SearchField from './pages/search/SearchField';
 import AccountDetails from './pages/account/AccountDetails';
+import AccountSecurity from './pages/account/AccountSecurity';
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
           <Route path="search" element={<SearchField />} />
           <Route path="account">
             <Route path="details" element={<AccountDetails />} />
-            <Route path="fundraisers" element={<New3aweniLogin />} />
+            <Route path="security" element={<AccountSecurity />} />
           </Route>
         </Route>
         <Route path="create">
