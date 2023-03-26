@@ -29,11 +29,10 @@ export default function SearchField() {
 
         const target = e.target as HTMLInputElement
 
-        const value = target.type === 'checkbox' ? target.checked : target.value
 
         setFilters({
             ...Filters,
-            [target.name]: value
+            [target.name]: target.value
         })
 
     }
@@ -118,87 +117,48 @@ export default function SearchField() {
 
                         <p>Categorie</p>
                         
-                        <select  className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-400 rounded-lg bg-gray-50 outline-none" name="category" value={Filters.category} onChange={handleFiltersChange}>
-                            <option value="" selected>Aucune catégorie selectionnée</option>
-
-                            <option value="Animaux"> 
-                                Animaux
-                            </option>
-
-                            <option value="Bénévolat"> 
-                            Bénévolat 
-                            </option>
-
-                            <option value="Communauté"> 
-                            Communauté 
-                            </option>
-
-                            <option value="Compétition"> 
-                            Compétition 
-                            </option>
-                        
-                            <option value="Créativité"> 
-                            Créativité 
-                            </option>
-
-                            <option value="Dépensescourantes"> Dépenses-courantes 
-                            </option>
-
-                            <option value="Éducation"> 
-                            Éducation 
-                            </option>
-
-                            <option value="Entreprises"> 
-                            Entreprises 
-                            </option>
-
-                            <option value="Environnement"> 
-                            Environnement 
-                            </option>
-
-                            <option value="Événements"> 
-                            Événements 
-                            </option>
-
-                            <option value="Famille"> 
-                            Famille 
-                            </option>
-                        
-                            <option value="Obsèquesetcommémorations"> Obsèques et commémorations
-                            </option>
-
-                            <option value="PotscommunsdAnniversaire"> Pots communs d'Anniversaire 
-                            </option>
-
-                            <option value="Religion">
-                            Religion 
-                            </option>
-
-                            <option value="Rêves"> 
-                            Rêves 
-                            </option>
-
-                            <option value="Santé"> 
-                            Santé 
-                            </option>
-
-                            <option value="Sports"> 
-                            Sports 
-                            </option>
-
-                            <option value="Urgences"> 
-                            Urgences 
-                            </option>
-
-                            <option value="Voyages"> 
-                            Voyages 
-                            </option>
-
-                            <option value="Autre"> 
-                            Autre
-                            </option>
                             
-                        </select>
+                        <div className='flex flex-wrap justify-start gap-3 mt-1'>
+
+                            <label className={Filters.category == "Bénévolat" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Bénévolat"> <input type="checkbox" name="category" id="Bénévolat" className='sr-only' onChange={handleFiltersChange} required value="Bénévolat" checked={Filters.category === "Bénévolat"} /> Bénévolat</label> 
+                        
+                            <label className={Filters.category == "Communauté" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Communauté"> <input type="checkbox" name="category" id="Communauté" className='sr-only' onChange={handleFiltersChange} required value="Communauté" checked={Filters.category === "Communauté"} /> Communauté</label> 
+                        
+                            <label className={Filters.category == "Compétition" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Compétition"> <input type="checkbox" name="category" id="Compétition" className='sr-only' onChange={handleFiltersChange} required value="Compétition" checked={Filters.category === "Compétition"} /> Compétition</label> 
+                        
+                            <label className={Filters.category == "Créativité" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Créativité"> <input type="checkbox" name="category" id="Créativité" className='sr-only' onChange={handleFiltersChange} required value="Créativité" checked={Filters.category === "Créativité"} /> Créativité</label> 
+                        
+                            <label className={Filters.category == "Dépensescourantes" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Dépenses-courantes"> <input type="checkbox" name="category" id="Dépenses-courantes" className='sr-only' onChange={handleFiltersChange} required value="Dépensescourantes" checked={Filters.category === "Dépensescourantes"} /> Dépenses courantes</label> 
+                        
+                            <label className={Filters.category == "Éducation" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Éducation"> <input type="checkbox" name="category" id="Éducation" className='sr-only' onChange={handleFiltersChange} required value="Éducation" checked={Filters.category === "Éducation"} /> Éducation</label> 
+                        
+                            <label className={Filters.category == "Entreprises" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Entreprises"> <input type="checkbox" name="category" id="Entreprises" className='sr-only' onChange={handleFiltersChange} required value="Entreprises" checked={Filters.category === "Entreprises"} /> Entreprises</label> 
+                        
+                            <label className={Filters.category == "Environnement" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Environnement"> <input type="checkbox" name="category" id="Environnement" className='sr-only' onChange={handleFiltersChange} required value="Environnement" checked={Filters.category === "Environnement"} /> Environnement</label> 
+                        
+                            <label className={Filters.category == "Événements" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Événements"> <input type="checkbox" name="category" id="Événements" className='sr-only' onChange={handleFiltersChange} required value="Événements" checked={Filters.category === "Événements"} /> Événements</label> 
+                        
+                            <label className={Filters.category == "Famille" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Famille"> <input type="checkbox" name="category" id="Famille" className='sr-only' onChange={handleFiltersChange} required value="Famille" checked={Filters.category === "Famille"} /> Famille</label> 
+                        
+                        
+                            <label className={Filters.category == "Obsèquesetcommémorations" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Obsèques-commémorations"> <input type="checkbox" name="category" id="Obsèques-commémorations" className='sr-only' onChange={handleFiltersChange} required value="Obsèquesetcommémorations" checked={Filters.category === "Obsèquesetcommémorations"} /> Obsèques et commémorations</label> 
+                        
+                            <label className={Filters.category == "PotscommunsdAnniversaire" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="anniversaire"> <input type="checkbox" name="category" id="anniversaire" className='sr-only' onChange={handleFiltersChange} required value="PotscommunsdAnniversaire" checked={Filters.category === "PotscommunsdAnniversaire"} /> Pots communs d'Anniversaire</label> 
+                        
+                            <label className={Filters.category == "Religion" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Religion"> <input type="checkbox" name="category" id="Religion" className='sr-only' onChange={handleFiltersChange} required value="Religion" checked={Filters.category === "Religion"} /> Religion</label> 
+                        
+                            <label className={Filters.category == "Rêves" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Rêves"> <input type="checkbox" name="category" id="Rêves" className='sr-only' onChange={handleFiltersChange} required value="Rêves" checked={Filters.category === "Rêves"} /> Rêves</label> 
+                        
+                            <label className={Filters.category == "Santé" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Santé"> <input type="checkbox" name="category" id="Santé" className='sr-only' onChange={handleFiltersChange} required value="Santé" checked={Filters.category === "Santé"} /> Santé</label> 
+                        
+                            <label className={Filters.category == "Sports" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Sports"> <input type="checkbox" name="category" id="Sports" className='sr-only' onChange={handleFiltersChange} required value="Sports" checked={Filters.category === "Sports"} /> Sports</label> 
+                        
+                            <label className={Filters.category == "Urgences" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Urgences"> <input type="checkbox" name="category" id="Urgences" className='sr-only' onChange={handleFiltersChange} required value="Urgences" checked={Filters.category === "Urgences"} /> Urgences</label> 
+                        
+                            <label className={Filters.category == "Voyages" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Voyages"> <input type="checkbox" name="category" id="Voyages" className='sr-only' onChange={handleFiltersChange} required value="Voyages" checked={Filters.category === "Voyages"} /> Voyages</label> 
+                        
+                            <label className={Filters.category == "Autre" ? 'relative px-4 py-2 text-sm bg-lighter_main_color border border-main_color hover:cursor-pointer rounded-full select-none' : 'relative px-4 py-2 bg-white shadow-form hover:bg-lighter_main_color text-sm hover:border-lighter_main_color hover:cursor-pointer rounded-full select-none border border-white'} htmlFor="Autre"> <input type="checkbox" name="category" id="Autre" className='sr-only' onChange={handleFiltersChange} required value="Autre" checked={Filters.category === "Autre"} /> Autre</label> 
+                    </div>
                     </div>
                     
                 </div>

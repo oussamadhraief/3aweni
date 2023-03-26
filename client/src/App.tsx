@@ -14,6 +14,9 @@ import Error from './pages/Error';
 import SearchField from './pages/search/SearchField';
 import AccountDetails from './pages/account/AccountDetails';
 import AccountSecurity from './pages/account/AccountSecurity';
+import AccountDashboard from './pages/user-dashboard/AccountDashboard';
+import DashboardMessages from './pages/user-dashboard/DashboardMessages';
+import DashboardDonations from './pages/user-dashboard/DashboardDonations';
 
 function App() {
   return (
@@ -31,6 +34,9 @@ function App() {
             <Route path="security" element={<AccountSecurity />} />
           </Route>
         </Route>
+        <Route path="/account/dashboard" element={<AccountDashboard />} />
+        <Route path="/dashboard/messages" element={<DashboardMessages />} />
+        <Route path="/dashboard/donations" element={<DashboardDonations />} />
         <Route path="create">
           <Route path="category" element={<New3aweniCategoryLocation />} />
           <Route path="type" element={<New3aweniType />} />

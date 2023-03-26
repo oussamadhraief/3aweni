@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from "react";
-import { FiEdit2 } from 'react-icons/fi';
-import { IoMdClose } from 'react-icons/io'
+import { HiOutlineExternalLink } from 'react-icons/hi';
 
 
 export default function AccountSecurity() {
@@ -33,8 +32,9 @@ export default function AccountSecurity() {
             Sécurité
           </Link>
 
-          <Link to=''  className="min-w-[112px] h-8 w-fit z-20 text-black transition-all outline-none text-center border-b-2 border-white hover:text-main_color hover:border-b-2 py-1 hover:border-main_color whitespace-nowrap">
+          <Link to='/account/manage' target='_blank'  className="flex items-center gap-1 min-w-[112px] h-8 w-fit z-20 text-black transition-all outline-none text-center border-b-2 border-white hover:text-main_color hover:border-b-2 py-1 hover:border-main_color whitespace-nowrap">
             Mes 3aweni
+            <HiOutlineExternalLink />
           </Link>
 
 
