@@ -1,4 +1,3 @@
-import { Input } from '@material-tailwind/react';
 import axios from 'axios';
 import { FormEvent, useState, useEffect } from 'react'
 import { IconContext } from 'react-icons';
@@ -109,28 +108,28 @@ interface FormState {
 
                 <div className='w-1/2'>
                   
-                  <Input size='lg' type="text" id="lastName" name="lastName" label="Nom" required onChange={handleChange} />
+                  {/* <Input size='lg' type="text" id="lastName" name="lastName" label="Nom" required onChange={handleChange} /> */}
 
                 </div>
 
                 <div className='w-1/2'>
 
-                  <Input size='lg' type="text" id="firstName" name="firstName" label="Prénom" required onChange={handleChange} />
+                  {/* <Input size='lg' type="text" id="firstName" name="firstName" label="Prénom" required onChange={handleChange} /> */}
 
                 </div>
                 
               </div>
 
 
-              <Input size='lg' type="text" id="phone" name="phone" label='Num. de tél (optionel)' onChange={handleChange} />
+              {/* <Input size='lg' type="text" id="phone" name="phone" label='Num. de tél (optionel)' onChange={handleChange} /> */}
 
-              <Input size='lg' type="text" id="email" name="email" label="Adresse E-mail" required onChange={handleChange} />
+              {/* <Input size='lg' type="text" id="email" name="email" label="Adresse E-mail" required onChange={handleChange} /> */}
               
 
-              <Input size='lg' type="text" id="password" name="password" label='Mot de passe' required onChange={handleChange} />
+              {/* <Input size='lg' type="text" id="password" name="password" label='Mot de passe' required onChange={handleChange} /> */}
               
 
-              <Input size='lg' type="text" id="password-confirm" name="password-confirm" label='Confirmez le mot de passe' required onChange={handleChange} />
+              {/* <Input size='lg' type="text" id="password-confirm" name="password-confirm" label='Confirmez le mot de passe' required onChange={handleChange} /> */}
         </div>
 
           <div className='w-full'>

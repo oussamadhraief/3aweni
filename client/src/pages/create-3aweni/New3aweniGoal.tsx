@@ -1,4 +1,3 @@
-import { Input } from '@material-tailwind/react';
 import { FormEvent, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { IconContext } from 'react-icons';
@@ -78,7 +77,7 @@ export default function New3aweniGoal() {
     
       <div className='w-2/3 h-screen bg-white z-10 rounded-tl-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-center flex-col justify-between'>
         <div onSubmit={handleSubmit} className='w-3/6 mt-20'>
-            <Input label="Objectif en TND" type='number' name="goal" id="goal" required value={Form.goal} onChange={handleChange} icon={<FcMoneyTransfer />} />
+            {/* <Input label="Objectif en TND" type='number' name="goal" id="goal" required value={Form.goal} onChange={handleChange} icon={<FcMoneyTransfer />} /> */}
             <div className='hidden'>
             </div>
             <p className='text-gray-700 text-xs mt-3'>Gardez à l'esprit que les frais de transaction, y compris les frais de crédit et de débit, sont déduits de chaque don.</p>

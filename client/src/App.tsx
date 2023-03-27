@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import useAuthContext from './hooks/useAuthContext';
 import Layout from './components/Layout';
 import New3aweniGoal from './pages/create-3aweni/New3aweniGoal';
 import New3aweniCategoryLocation from './pages/create-3aweni/New3aweniCategoryLocation';
@@ -19,21 +20,23 @@ import DashboardMessages from './pages/user-dashboard/DashboardMessages';
 import DashboardDonations from './pages/user-dashboard/DashboardDonations';
 
 function App() {
+  const { user } = useAuthContext()
+
   return (
     <BrowserRouter>
     <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="password-reset/:id/:productId" element={<PasswordReset />} />
-          <Route path="password-reset" element={<RequestPasswordReset />} />
+          <Route path="login" element={user ? <Navigate to="/" /> : <Login />} />
+          <Route path="register" element={user ? <Navigate to="/" /> : <Register />} />
+          <Route path="password-reset/:id/:productId" element={user ? <Navigate to="/" /> : <PasswordReset />} />
+          <Route path="password-reset" element={user ? <Navigate to="/" /> : <RequestPasswordReset />} />
           <Route path="search" element={<SearchField />} />
           <Route path="account">
-            <Route path="details" element={<AccountDetails />} />
-            <Route path="security" element={<AccountSecurity />} />
+            <Route path="details" element={user ?  <AccountDetails /> : <Navigate to="/login" />} />
+            <Route path="security" element={user ? <AccountSecurity /> : <Navigate to="/login" />} />
           </Route>
-        </Route>
+        </Route> 
         <Route path="/account/dashboard" element={<AccountDashboard />} />
         <Route path="/dashboard/messages" element={<DashboardMessages />} />
         <Route path="/dashboard/donations" element={<DashboardDonations />} />

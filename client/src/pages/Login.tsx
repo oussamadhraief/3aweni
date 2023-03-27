@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { FormEvent, useState } from 'react'
+import useAuthContext from '../hooks/useAuthContext';
 
 interface LoginFormInterface {
   email: string;
@@ -8,6 +9,10 @@ interface LoginFormInterface {
 }
 
 export default function() {
+
+  const navigate = useNavigate()
+
+  const { login } = useAuthContext()
 
   const [LoginForm, setLoginForm] = useState<LoginFormInterface>({email: "", password: ""})
 
@@ -27,10 +32,14 @@ export default function() {
             password: LoginForm.password
           },{
             withCredentials: true
-          }).then((response) => {
+          }).then((res) => {
             
-            console.log(response);
+            const { data: { user } } = res
+            
+            login(user)
         
+            navigate('/')
+
           })
         } catch (error) {
           
@@ -50,7 +59,7 @@ export default function() {
             </div>
 
             <div className="relative my-[15px] w-full">
-                <input type="text" className="peer block w-full h-10 bg-transparent border  border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" name="password" id='password' required value={LoginForm.password} onChange={handleChange} />
+                <input type="password" className="peer block w-full h-10 bg-transparent border  border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" name="password" id='password' required value={LoginForm.password} onChange={handleChange} />
                 <label htmlFor="password" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">Mot de passe</label>
             </div>
 

@@ -14,7 +14,7 @@ export default function AccountDashboard() {
 
 
                     <nav className="mt-10 px-4 ">
-                        <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-6 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " href="#">
+                        <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-6 transition-colors  duration-200  text-gray-600 rounded-lg " href="#">
                             <IconContext.Provider value={{ className: 'w-5 h-5 text-gray-700'}}>
                                 <BiIdCard />
                             </IconContext.Provider>
@@ -24,7 +24,7 @@ export default function AccountDashboard() {
                             <span className="flex-grow text-right">
                             </span>
                         </a>
-                        <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-6 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg whitespace-nowrap" href="#">
+                        <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-6 transition-colors  duration-200  text-gray-600 rounded-lg whitespace-nowrap" href="#">
                             <IconContext.Provider value={{ className: 'w-5 h-5 text-gray-700'}}>
                                 <TiMessage />
                             </IconContext.Provider>
@@ -39,7 +39,7 @@ export default function AccountDashboard() {
                                 </button>
                             </span>
                         </a>
-                        <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-6 transition-colors dark:hover:text-white dark:hover:bg-gray-600 duration-200  text-gray-600 dark:text-gray-400 rounded-lg " href="#">
+                        <a className="hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-6 transition-colors  duration-200  text-gray-600 rounded-lg " href="#">
                             <IconContext.Provider value={{ className: 'w-5 h-5 text-gray-700'}}>
                                 <BiDonateHeart />
                             </IconContext.Provider>

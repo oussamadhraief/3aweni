@@ -25,9 +25,11 @@ mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,{
         console.log("Connected To Mongo")
       })
 
-
-
-
+app.use(session({
+  secret: "secretcode",
+  resave: true,
+  saveUninitialized: true
+}))
 app.use(passport.initialize());
 app.use(passport.session());
 app.use (bodyParser.json());
@@ -36,15 +38,11 @@ app.use(cors({
   origin: "https://localhost:3000",
   credentials : true
 }))
-app.use(session({
-  secret: "secretcode",
-  resave: true,
-  saveUninitialized: true
-}))
+
 app.use(cookieParser())
-// app.use(cookieParser("secretcode"))
+
 passport.use(new LocalStrategy({usernameField: "email", passwordField: "password"},( email, password, done ) => {
-  User.findOne({ email }, (err ,user) => {
+  User.findOne({ email }, (err, user ) => {
       
       if(err) throw err
       if(!user) return done(null,false)
@@ -59,18 +57,18 @@ passport.use(new LocalStrategy({usernameField: "email", passwordField: "password
   })
 }))
 
-passport.serializeUser((user, cb) => {
+passport.serializeUser(( user, cb ) => {
   cb(null, user.id)
 })
 
-passport.deserializeUser((id, cb) => {
-  User.findOne({ _id: id }, (err, user)  => {
+passport.deserializeUser(( id, cb ) => {
+  User.findOne({ _id: id }, ( err, user )  => {
       const userInformation = {
           id: user._id,
           email: user.email,
           phone: user.phone,
           name: user.name,
-          // role: user.role,
+          role: user.role,
           address: user.address
       }
       cb(err, userInformation)
@@ -78,7 +76,69 @@ passport.deserializeUser((id, cb) => {
 })
 
 
-const JWT_SECRET ="hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
+//Routes
+
+app.post("/api/user/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {return next(err)}
+    if (!user) res.status(404).send("No User Exists");
+
+    else {
+      req.logIn(user, (err) => {
+        if (err) { return next(err); }
+        res.status(200).json({ success: true , user: user })
+      });
+    }
+
+  })(req, res, next);
+});
+
+
+//Register Status 200 Done
+app.post('/api/user/register', async ( req, res ) => {
+
+  const { email, password } = req?.body
+
+  User.findOne({ email } , async (err,doc) => {
+      if(err) throw err
+      if(doc) res.status(400).send("User Already Exists")
+      if(!doc) {
+
+          const hashedPassword = await bcrypt.hash(password, 10)
+          const newUser = new User({
+              ...req?.body,
+              password: hashedPassword,
+          })
+
+          await newUser.save()
+
+          res.status(200).json({ success: true, data: newUser })
+      }
+  })
+  
+})
+
+  app.get('/api/user/logout', async ( req, res, done ) => {
+
+    req.logout(done)
+
+    res.status(204).json({ success: true })
+
+  })
+
+
+  app.get('/api/user', ( req, res ) => {
+
+    if(req.isAuthenticated())
+
+    {
+      res.status(200).json({success: true, user: req.user })
+    }
+
+    else{ 
+      res.status(401).json({ success: false })}
+
+})
 
 app.post("/api/user/password-reset", async (req, res) => {
 
@@ -171,47 +231,6 @@ app.post("/password-reset/:id/:token", async (req, res) => {
     res.json({ status: "Something Went Wrong" });
   }
 });
-
-
-//Routes
-
-// Login Status 200 Done
-app.post("/api/user/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) throw err;
-    if (!user) res.status(404).send("No User Exists");
-    else {
-      req.logIn(user, (err) => {
-        if (err) throw err;
-        res.status(200).json({success: true, data: req.user})
-        console.log(req.user);
-      });
-    }
-  })(req, res, next);
-});
-
-
-//Register Status 200 Done
-app.post('/api/user/register', async ( req, res ) => {
-
-  const { email, password } = req?.body
-
-  User.findOne({ email } , async (err,doc) => {
-      if(err) throw err
-      if(doc) res.status(400).send("User Already Exists")
-      if(!doc) {
-          const hashedPassword = await bcrypt.hash(password, 10)
-          const newUser = new User({
-              ...req?.body,
-              password: hashedPassword,
-          })
-          await newUser.save()
-          res.status(200).json({ success: true, data: newUser })
-          console.log(req.body);
-      }
-  })
-  
-})
 
 app.listen(process.env.PORT, () => {
   console.log('Server listening on port',process.env.PORT)})

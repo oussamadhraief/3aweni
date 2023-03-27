@@ -29,6 +29,10 @@ header {
   
 }
 
+label {
+  user-select: none;
+}
+
 select::-ms-expand {
   display: none;
 }

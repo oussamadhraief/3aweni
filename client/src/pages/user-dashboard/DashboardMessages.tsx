@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 export default function AccountDashboard() {
   return (
     <main className='flex w-screen h-screen flex-nowrap items-start'>
-        <div className="relative bg-white dark:bg-gray-800">
+        <div className="relative bg-white">
             <div className="flex flex-col sm:flex-row sm:justify-around">
                 <div className="h-screen w-72">
                     <Link to="/"><img className="h-12 mx-auto mt-5" src="/secondary_logo.png"/></Link>
@@ -52,10 +52,10 @@ export default function AccountDashboard() {
                         <img alt="profil" src="/africa.jpg" className="mx-auto object-cover rounded-full h-10 w-10 "/>
                     </a>
                     <div className="flex flex-col">
-                        <span className="ml-2 text-sm font-semibold text-gray-900 dark:text-white">
+                        <span className="ml-2 text-sm font-semibold text-gray-900">
                             Charlie Rabiller
                         </span>
-                        <span className="ml-2 text-sm text-gray-400 dark:text-gray-300">
+                        <span className="ml-2 text-sm text-gray-400">
                             Hey John ! Do you read the NextJS doc ?
                         </span>
                     </div>
@@ -65,10 +65,10 @@ export default function AccountDashboard() {
                         <img alt="profil" src="/africa.jpg" className="mx-auto object-cover rounded-full h-10 w-10 "/>
                     </a>
                     <div className="flex flex-col">
-                        <span className="ml-2 text-sm font-semibold text-gray-900 dark:text-white">
+                        <span className="ml-2 text-sm font-semibold text-gray-900">
                             Marie Lou
                         </span>
-                        <span className="ml-2 text-sm text-gray-400 dark:text-gray-300">
+                        <span className="ml-2 text-sm text-gray-400">
                             No I think the dog is better...
                         </span>
                     </div>
@@ -78,10 +78,10 @@ export default function AccountDashboard() {
                         <img alt="profil" src="/africa.jpg" className="mx-auto object-cover rounded-full h-10 w-10 "/>
                     </a>
                     <div className="flex flex-col">
-                        <span className="ml-2 text-sm font-semibold text-gray-900 dark:text-white">
+                        <span className="ml-2 text-sm font-semibold text-gray-900">
                             Ivan Buck
                         </span>
-                        <span className="ml-2 text-sm text-gray-400 dark:text-gray-300">
+                        <span className="ml-2 text-sm text-gray-400">
                             Seriously ? haha Bob is not a child !
                         </span>
                     </div>
@@ -91,10 +91,10 @@ export default function AccountDashboard() {
                         <img alt="profil" src="/africa.jpg" className="mx-auto object-cover rounded-full h-10 w-10 "/>
                     </a>
                     <div className="flex flex-col">
-                        <span className="ml-2 text-sm font-semibold text-gray-900 dark:text-white">
+                        <span className="ml-2 text-sm font-semibold text-gray-900">
                             Marina Farga
                         </span>
-                        <span className="ml-2 text-sm text-gray-400 dark:text-gray-300">
+                        <span className="ml-2 text-sm text-gray-400">
                             Do you need that design ?
                         </span>
                     </div>

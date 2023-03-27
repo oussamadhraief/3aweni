@@ -86,7 +86,7 @@ export default function SearchField() {
 
                         
 
-                        <label htmlFor="NearbyToggle" className="inline-flex items-center space-x-4 cursor-pointer dark:text-gray-100">
+                        <label htmlFor="NearbyToggle" className="inline-flex items-center space-x-4 cursor-pointer">
                             <span className="relative">
                                 <input id="NearbyToggle" type="checkbox"
                                 name='nearby'
@@ -101,7 +101,7 @@ export default function SearchField() {
                     </div>
                     <div className='flex items-center justify-start gap-5'>
                         <p>Close to goal</p>
-                        <label htmlFor="CloseToGoalToggle" className="inline-flex items-center space-x-4 cursor-pointer dark:text-gray-100">
+                        <label htmlFor="CloseToGoalToggle" className="inline-flex items-center space-x-4 cursor-pointer">
                             <span className="relative">
                                 <input id="CloseToGoalToggle" type="checkbox"
                                 name='closeToGoal'

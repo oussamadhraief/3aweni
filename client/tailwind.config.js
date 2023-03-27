@@ -1,10 +1,6 @@
-const withMT = require("@material-tailwind/react/utils/withMT");
-/** @type {import('tailwindcss').Config} */
-module.exports = withMT({
+module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    "./node_modules/@material-tailwind/react/components/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@material-tailwind/react/theme/components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -31,5 +27,14 @@ module.exports = withMT({
   },
   plugins: [
     require('@tailwindcss/line-clamp'),
-  ]
-})
+    require("daisyui")
+  ],
+  daisyui: {
+    styled: false,
+    themes: false,
+    base: true,
+    utils: true,
+    logs: true,
+    rtl: false,
+  },
+}

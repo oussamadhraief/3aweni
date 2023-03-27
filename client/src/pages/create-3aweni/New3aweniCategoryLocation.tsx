@@ -1,6 +1,5 @@
 import { FormEvent, useState, useEffect } from 'react'
 import { states } from '../../utils/statesData'
-import { Select, Option, Input } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'
 

@@ -1,12 +1,27 @@
-import { createContext, ReactNode, useReducer } from "react";
+import axios from "axios";
+import { createContext, ReactNode, useEffect, useReducer } from "react";
 
-export const AuthContext = createContext({user: null})
+interface userInt {
+    id: string;
+    name: string;
+    phone: string;
+    email: string;
+    // role: string;
+  }
+
+interface AuthContextType {
+    user: userInt | null;
+    logout: () => void;
+    login: (user: userInt) => void;
+}
+
+export const AuthContext = createContext<AuthContextType | null>(null)
 
 export const authReducer = (state: any,action: any) => {
     switch (action.type){
-        case 'LOGIN':
+        case 'ADD':
             return {user: action.payload}
-        case 'LOGOUT':
+        case 'CLEAR':
             return {user: null}
         default: 
             return state
@@ -14,15 +29,37 @@ export const authReducer = (state: any,action: any) => {
         
 }
 
-export const AuthContextProvider = ({children}: { children: any}) => {
+export const AuthContextProvider = ({children}: { children: React.ReactNode | React.ReactNode[]}) => {
     const [state,dispatch] = useReducer(authReducer, {
         user: null
     })
 
-    console.log('AuthContext state: ',state)
+    useEffect(() => {
+        axios.get('/api/user',
+        { withCredentials: true })
+        .then((res) => {
+            
+            const { data: { user } } = res
+            
+            if(user){ 
+                dispatch({ type: 'ADD', payload: user })
+            }
+            
+            
+        })
+    }, [])
+
+    const login = (user: userInt) => {
+        dispatch({ type: 'ADD', payload: user })
+    }
+
+    const logout = () => {
+        dispatch({ type: 'CLEAR' })
+    }
+    
 
     return (
-        <AuthContext.Provider value={{...state, dispatch}}>
+        <AuthContext.Provider value={{...state, logout, login}}>
             {children}
         </AuthContext.Provider>
     )

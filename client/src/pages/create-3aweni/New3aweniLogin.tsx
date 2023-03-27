@@ -1,4 +1,3 @@
-import { Input } from '@material-tailwind/react';
 import axios from 'axios';
 import { FormEvent, useState } from 'react'
 import { IconContext } from 'react-icons';
@@ -70,10 +69,10 @@ interface FormState {
 
 
             <p>Vous n'êtes pas déjà inscrit ? <Link to='/create/register' className='underline text-main_color'>S'inscrire</Link></p>
-              <Input size='lg' type="text" id="email" name="email" label="Adresse E-mail" required onChange={handleChange} />
+              {/* <Input size='lg' type="text" id="email" name="email" label="Adresse E-mail" required onChange={handleChange} /> */}
               
 
-              <Input size='lg' type="text" id="password" name="password" label='Mot de passe' required onChange={handleChange} />
+              {/* <Input size='lg' type="text" id="password" name="password" label='Mot de passe' required onChange={handleChange} /> */}
               
             <Link to='/password-reset' className='hover:underline self-end text-black'>Mot de passe oublié ?</Link>
 
