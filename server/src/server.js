@@ -12,6 +12,15 @@ const bodyParser=require("body-parser");
 const User=require('./user/UserModel');
 require( 'dotenv/config')
 const LocalStrategy = require("passport-local").Strategy;
+var cloudinary = require('cloudinary').v2;
+const { register } = require('./user/UserService')
+
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true
+});
 
 
 const app = express ();
@@ -86,7 +95,7 @@ app.post("/api/user/login", (req, res, next) => {
     else {
       req.logIn(user, (err) => {
         if (err) { return next(err); }
-        res.status(200).json({ success: true , user: user })
+        return true
       });
     }
 
@@ -97,24 +106,17 @@ app.post("/api/user/login", (req, res, next) => {
 //Register Status 200 Done
 app.post('/api/user/register', async ( req, res ) => {
 
-  const { email, password } = req?.body
-
-  User.findOne({ email } , async (err,doc) => {
-      if(err) throw err
-      if(doc) res.status(400).send("User Already Exists")
-      if(!doc) {
-
-          const hashedPassword = await bcrypt.hash(password, 10)
-          const newUser = new User({
-              ...req?.body,
-              password: hashedPassword,
-          })
-
-          await newUser.save()
-
-          res.status(200).json({ success: true, data: newUser })
-      }
-  })
+  try {
+    const { email, password } = req?.body
+  
+    await register(email, password)
+    
+    res.status(200).json({ success: true })
+    
+  } catch (error) {
+    
+    res.status(400).json({ success: false })
+  }
   
 })
 
@@ -231,6 +233,79 @@ app.post("/password-reset/:id/:token", async (req, res) => {
     res.json({ status: "Something Went Wrong" });
   }
 });
+
+// cloudinary 
+
+app.post('/api/upload', async ( req, res ) => {
+  try {
+      const file = req.body.data
+      
+      const uploadedResponse = await cloudinary.uploader.upload(file, { upload_preset: process.env.CLOUDINARY_PRESET_NAME })
+
+      res.json({ imagePublicId: uploadedResponse })
+  } catch (error) {
+
+      console.error(error)
+  }
+})
+
+app.post('/api/delete-image', async ( req, res ) => {
+  try {
+      const { publicId } = req.body
+      
+      cloudinary.uploader.destroy(publicId, function(error,result) {
+          if(result){
+
+              res.json({ success: true, data: result.result })
+          }else{
+              res.json({ success: false })
+              
+          }
+          
+          
+              
+      });
+  } catch (error) {
+
+      console.error(error)
+  }
+})
+
+// fundraisers
+
+app.post('/api/fundraiser/register', async (req, res) => {
+
+  try {
+    const { email, password, category, state, zipCode, type, goal } = req?.body
+  
+    const newUser = await register(email, password)
+
+    const newFundraiser = await createFundraiser(newUser._id, category, state,zipCode, type, goal)
+    
+    res.status(201).json({ success: true, user: newUser, fundraiser: newFundraiser })
+    
+  } catch (error) {
+    
+    res.status(400).json({ success: false })
+  }
+
+})
+
+app.post('/api/fundraiser/loggedin', async (req, res) => {
+
+  try {
+    const { id, category, state, zipCode, type, goal } = req?.body
+
+    const newFundraiser = await createFundraiser(id, category, state,zipCode, type, goal)
+    
+    res.status(201).json({ success: true, user: newUser, fundraiser: newFundraiser })
+    
+  } catch (error) {
+    
+    res.status(400).json({ success: false })
+  }
+
+})
 
 app.listen(process.env.PORT, () => {
   console.log('Server listening on port',process.env.PORT)})

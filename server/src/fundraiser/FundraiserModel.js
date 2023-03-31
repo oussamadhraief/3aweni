@@ -66,7 +66,7 @@ const Fundraiser = new mongoose.Schema({
       trim: true,
       required: true,
     }, 
-  zipCode: { 
+  type: { 
       type: String,
       required: true,
       enum: [
@@ -82,11 +82,9 @@ const Fundraiser = new mongoose.Schema({
   },
   image: {
       type: String,
-      required: true
   },
   title: {
     type: String,
-    required: true,
     minlength: 4,
     maxlength: 150
   },

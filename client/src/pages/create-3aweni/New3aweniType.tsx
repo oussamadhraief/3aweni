@@ -7,17 +7,17 @@ import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
 
 interface FormState {
   category: string;
-  state: string | undefined;
-  zipCode: number | undefined;
+  state: string;
+  zipCode: number;
   type: string;
-  goal: string | undefined;
+  goal: number;
 }
 
   export default function New3aweniType() {
 
     const navigate = useNavigate()
 
-    const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: undefined, type: '', goal: undefined})
+    const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', goal: 0})
 
     useEffect(() => {
       const session3aweni = sessionStorage.getItem('create3aweni')

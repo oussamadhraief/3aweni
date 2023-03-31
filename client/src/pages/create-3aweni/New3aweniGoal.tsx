@@ -6,10 +6,10 @@ import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
 
 interface FormState {
   category: string;
-  state: string | undefined;
-  zipCode: number | undefined;
+  state: string;
+  zipCode: number;
   type: string;
-  goal: string | undefined;
+  goal: number;
 }
 
 
@@ -17,7 +17,7 @@ export default function New3aweniGoal() {
 
   const navigate = useNavigate()
 
-  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: undefined, type: '', goal: undefined})
+  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', goal: 0})
 
   useEffect(() => {
     const session3aweni = sessionStorage.getItem('create3aweni')
@@ -25,8 +25,10 @@ export default function New3aweniGoal() {
       
       const res = JSON.parse(session3aweni)
 
+      console.log(res);
       if(res.zipCode && res.state && res.category && res.type)
-        setForm(JSON.parse(session3aweni))
+      
+        setForm(res)
       else 
         navigate('/create/category')
 
@@ -42,7 +44,7 @@ export default function New3aweniGoal() {
 
       setForm({
         ...Form,
-        goal: target.value
+        goal: parseInt(target.value)
       })
       
 
@@ -77,6 +79,15 @@ export default function New3aweniGoal() {
     
       <div className='w-2/3 h-screen bg-white z-10 rounded-tl-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-center flex-col justify-between'>
         <div onSubmit={handleSubmit} className='w-3/6 mt-20'>
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Objectif de la collecte</span>
+          </label>
+          <label className="input-group">
+            <input type="number" name="goal" id="goal" required value={Form.goal || ''} onChange={handleChange} placeholder="1 000.00" className="input w-full outline-none border-y border-l h-10" />
+            <span>TND</span>
+          </label>
+        </div>
             {/* <Input label="Objectif en TND" type='number' name="goal" id="goal" required value={Form.goal} onChange={handleChange} icon={<FcMoneyTransfer />} /> */}
             <div className='hidden'>
             </div>

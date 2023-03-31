@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom'
 
 interface FormState {
   category: string;
-  state: string | undefined;
-  zipCode: number | undefined;
+  state: string;
+  zipCode: number;
   type: string;
-  goal: number | undefined;
+  goal: number;
 }
 
 
@@ -16,8 +16,8 @@ export default function New3aweniCategoryLocation() {
 
   const navigate = useNavigate()
 
-  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: undefined, type: '', goal: undefined})
-  const [BadInformation, setBadInformation] = useState(false)
+  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', goal: 0})
+  
 
 
   useEffect(() => {
@@ -25,16 +25,14 @@ export default function New3aweniCategoryLocation() {
     if (session3aweni) {
       const res = JSON.parse(session3aweni)
       if(res.category && res.state && res.zipCode)
-      
-        setForm(res)
+        
+        setForm({
+          ...res,
+          zipCode: parseInt(res.zipCode)
+        })
 
   }
   }, []);
-
-  useEffect(() => {
-    console.log(Form);
-    
-  },[Form])
 
   const handleChange = (e: FormEvent) => {
 
@@ -49,9 +47,10 @@ export default function New3aweniCategoryLocation() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    console.log(Form);
     
     sessionStorage.setItem('create3aweni',JSON.stringify(Form))
+    console.log(Form);
+    
     
     navigate('/create/type')
     
@@ -126,16 +125,16 @@ export default function New3aweniCategoryLocation() {
             <div className="w-full h-fit flex flex-nowrap justify-start items-start gap-5 mt-3">
               <div className='w-1/3'>
 
-              <select  className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-400 rounded-lg bg-gray-50 outline-none">
-                <option selected>Choose a country</option>
-                {states.map(item => <option value={item.label}>{item.label}</option>)}
+              <select  className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-400 rounded-lg bg-gray-50 outline-none" onChange={handleChange} required name='state' value={Form.state}>
+                <option>Selectionnez un state</option>
+                {states.map(item => <option key={item.label} value={item.label}>{item.label}</option>)}
               </select>
 
 
               </div>
 
               <div className="relative w-full xl:w-96">
-                <input type="number" className="peer block w-full h-10 bg-transparent border  border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color rounded-lg" name="zipCode" id='zipCode' required value={Form.zipCode} onChange={handleChange} />
+                <input type="number" className="peer block w-full h-10 bg-transparent border  border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color rounded-lg" name="zipCode" id='zipCode' required value={Form.zipCode || ''} onChange={handleChange} />
                 <label htmlFor="zipCode" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">Code zip</label>
             </div>
               

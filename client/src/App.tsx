@@ -15,35 +15,41 @@ import Error from './pages/Error';
 import SearchField from './pages/search/SearchField';
 import AccountDetails from './pages/account/AccountDetails';
 import AccountSecurity from './pages/account/AccountSecurity';
-import AccountDashboard from './pages/user-dashboard/DashboardSettings';
-import DashboardMessages from './pages/user-dashboard/DashboardMessages';
-import DashboardDonations from './pages/user-dashboard/DashboardDonations';
-import UserDashboard from './components/UserDashboard';
+import UserDashboardLayout from './components/UserDashboardLayout';
+import useLoadingAuthContext from './hooks/useLoadingAuthContext';
+import DashboardFundraisers from './pages/account/dashboard/DashboardFundraisers';
+import DashboardSettings from './pages/account/dashboard/DashboardSettings';
+import DashboardMessages from './pages/account/dashboard/DashboardMessages';
+import DashboardDonations from './pages/account/dashboard/DashboardDonations';
+import SingleFundraiser from './pages/fundraisers/SingleFundraiser';
 
 function App() {
+  
   const { user } = useAuthContext()
-
+  const { Loading } = useLoadingAuthContext()
+  
+  
   return (
     <BrowserRouter>
     <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="login" element={user ? <Navigate to="/" /> : <Login />} />
-          <Route path="register" element={user ? <Navigate to="/" /> : <Register />} />
-          <Route path="password-reset/:id/:productId" element={user ? <Navigate to="/" /> : <PasswordReset />} />
-          <Route path="password-reset" element={user ? <Navigate to="/" /> : <RequestPasswordReset />} />
+          <Route path="login" element={Loading ? <div>loading</div> : user ? <Navigate to="/" /> : <Login />} />
+          <Route path="register" element={Loading ? <div>loading</div> :  user ? <Navigate to="/" /> : <Register />} />
+          <Route path="password-reset/:id/:productId" element={Loading ? <div>loading</div> :  user ? <Navigate to="/" /> : <PasswordReset />} />
+          <Route path="password-reset" element={Loading ? <div>loading</div> :  user ? <Navigate to="/" /> : <RequestPasswordReset />} />
           <Route path="search" element={<SearchField />} />
+          <Route path="fundraisers/:id" element={<SingleFundraiser />} />
           <Route path="account">
-            <Route path="details" element={user ?  <AccountDetails /> : <Navigate to="/login" />} />
-            <Route path="security" element={user ? <AccountSecurity /> : <Navigate to="/login" />} />
+            <Route path="details" element={Loading ? <div>loading</div> :  user ?  <AccountDetails /> : <Navigate to="/login" />} />
+            <Route path="security" element={Loading ? <div>loading</div> :  user ? <AccountSecurity /> : <Navigate to="/login" />} />
           </Route>
         </Route> 
-        <Route path="account">
-            <Route path="dashboard?tab=user_messages"  element={<UserDashboard />} />
-            <Route path="dashboard?tab=user_fundraisers"  element={<UserDashboard />} />
-            <Route path="dashboard?tab=user_settings"  element={<UserDashboard />} />
-            <Route path="dashboard?tab=user_donations"  element={<UserDashboard />} />
-            <Route path="dashboard"  element={<UserDashboard />} />
+        <Route path="account/dashboard" element={<UserDashboardLayout />}>
+            <Route path="fundraisers"  element={!Loading ?  (user ?  <DashboardFundraisers /> : <Navigate to="/login" />) : null} />
+            <Route path="messages"  element={!Loading ?  (user ?  <DashboardMessages /> : <Navigate to="/login" />) : null} />
+            <Route path="donations"  element={!Loading ?  (user ?  <DashboardDonations /> : <Navigate to="/login" />) : null} />
+            <Route path="settings"  element={!Loading ?  (user ?  <DashboardSettings /> : <Navigate to="/login" />) : null} />
         </Route> 
         <Route path="create">
           <Route path="category" element={<New3aweniCategoryLocation />} />

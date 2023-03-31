@@ -6,10 +6,10 @@ import { Link, useNavigate } from 'react-router-dom';
 
 interface FormState {
   category: string;
-  state: string | undefined;
-  zipCode: number | null;
+  state: string;
+  zipCode: number;
   type: string;
-  goal: number | null;
+  goal: number;
   lastName: string;
   firstName: string;
   email: string;
@@ -22,8 +22,8 @@ interface FormState {
       const navigate = useNavigate()
 
 
-    const [Form, setForm] = useState<FormState>({category: '', state: "", type: "", goal: null, zipCode: null, firstName: "", lastName: "",phone: "",email: "", password: "", passwordConfirmation: ""})
-    const [BadInformation, setBadInformation] = useState(false)
+    const [Form, setForm] = useState<FormState>({category: '', state: "", type: "", goal: 0, zipCode: 0, firstName: "", lastName: "",phone: "",email: "", password: "", passwordConfirmation: ""})
+    
 
     useEffect(() => {
       const session3aweni = sessionStorage.getItem('create3aweni')
@@ -32,14 +32,16 @@ interface FormState {
         const res = JSON.parse(session3aweni)
 
         if(res.category && res.state && res.zipCode && res.type && res.goal){
+          console.log(res);
+          
           setForm({
             ...Form,
             category: res.category,
             state: res.state,
-            zipCode: res.zipCode,
+            zipCode: parseInt(res.zipCode),
             type: res.type,
-            goal: res.goal
-      
+            goal: parseInt(res.goal)
+            
           })
         }else{
           navigate('/create/category')
@@ -104,32 +106,40 @@ interface FormState {
         <div className="w-3/6 min-w-[300px] flex flex-col items-center justify-center gap-8 mt-10">
             <p>Vous êtes déjà inscrit ? <Link to='/create/login' className='underline text-main_color'>Se connecter</Link></p>
             
-              <div className='w-full flex gap-4'>
-
-                <div className='w-1/2'>
-                  
-                  {/* <Input size='lg' type="text" id="lastName" name="lastName" label="Nom" required onChange={handleChange} /> */}
-
-                </div>
-
-                <div className='w-1/2'>
-
-                  {/* <Input size='lg' type="text" id="firstName" name="firstName" label="Prénom" required onChange={handleChange} /> */}
-
-                </div>
-                
-              </div>
-
-
-              {/* <Input size='lg' type="text" id="phone" name="phone" label='Num. de tél (optionel)' onChange={handleChange} /> */}
-
-              {/* <Input size='lg' type="text" id="email" name="email" label="Adresse E-mail" required onChange={handleChange} /> */}
-              
-
-              {/* <Input size='lg' type="text" id="password" name="password" label='Mot de passe' required onChange={handleChange} /> */}
-              
-
-              {/* <Input size='lg' type="text" id="password-confirm" name="password-confirm" label='Confirmez le mot de passe' required onChange={handleChange} /> */}
+            <div className='flex w-full justify-between items-center gap-4'>
+            
+            <div className="relative w-1/2">
+                <input type="text" className="peer block w-full h-10 bg-transparent border rounded border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" id="lastName" name="lastName" required onChange={handleChange} value={Form.lastName} />
+                <label htmlFor="lastName" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">Nom</label>
+            </div>
+  
+            <div className="relative w-1/2">
+                <input type="text" className="peer block w-full h-10 bg-transparent border rounded border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" id="firstName" name="firstName" required value={Form.firstName} onChange={handleChange} />
+                <label htmlFor="firstName" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">Prénom</label>
+            </div>
+  
+            </div>
+  
+            <div className="relative w-full">
+                <input type="text" className="peer block w-full h-10 bg-transparent border rounded border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" id="phone" name="phone" required onChange={handleChange} />
+                <label htmlFor="phone" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">Num. de tél (optionel)</label>
+            </div>
+  
+            <div className="relative w-full">
+                <input type="text" className="peer block w-full h-10 bg-transparent border rounded border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" id="email" name="email" required onChange={handleChange} />
+                <label htmlFor="email" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">E-mail</label>
+            </div>
+  
+            <div className="relative w-full">
+                <input type="text" className="peer block w-full h-10 bg-transparent border rounded border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" id="password" name="password" required onChange={handleChange} />
+                <label htmlFor="password" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">Mot de passe</label>
+            </div>
+  
+            <div className="relative w-full">
+                <input type="text" className="peer block w-full h-10 bg-transparent border rounded border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color" id="password-confirm" name="password-confirm" required onChange={handleChange} />
+                <label htmlFor="password-confirm" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">Confirmez le mot de passe</label>
+            </div>
+  
         </div>
 
           <div className='w-full'>

@@ -64,17 +64,22 @@ interface FormState {
 
       <div className='w-2/3 h-screen bg-white z-10 rounded-tl-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-center flex-col justify-between'>
     
-        <div className="w-3/6 min-w-[300px] flex flex-col items-center justify-center gap-8 mt-20">
+        <div className="w-3/6 min-w-[300px] flex flex-col items-center justify-center mt-20">
             
 
 
-            <p>Vous n'êtes pas déjà inscrit ? <Link to='/create/register' className='underline text-main_color'>S'inscrire</Link></p>
-              {/* <Input size='lg' type="text" id="email" name="email" label="Adresse E-mail" required onChange={handleChange} /> */}
-              
 
-              {/* <Input size='lg' type="text" id="password" name="password" label='Mot de passe' required onChange={handleChange} /> */}
+            <label htmlFor="email" className="text-gray-700 w-fit self-start">Adresse Email: </label>
+
+            <input type="text" className="peer block w-full h-10 bg-transparent border  border-[#ccc] px-1 rounded outline-none z-0 focus:border-main_color valid:border-main_color text-sm" name="email" id='email' placeholder='example@email.com' required value={Form.email} onChange={handleChange} />
+
+            <div className="relative w-full flex justify-between items-center mt-8">
+                <label htmlFor="password" className="text-gray-700">Mot de passe: </label>
+            <Link to='/password-reset' className='hover:underline text-gray-600 hover:text-gray-800 text-sm'>Mot de passe oublié ?</Link>
+            </div>
+            <input type="password" className="peer block w-full h-10 bg-transparent border  border-[#ccc] px-1 rounded outline-none z-0 focus:border-main_color valid:border-main_color mb-8" name="password" id='password' required value={Form.password} onChange={handleChange} />
               
-            <Link to='/password-reset' className='hover:underline self-end text-black'>Mot de passe oublié ?</Link>
+            <p>Vous n'êtes pas déjà inscrit ? <Link to='/create/register' className='underline text-main_color'>S'inscrire</Link></p>
 
         </div>
 
