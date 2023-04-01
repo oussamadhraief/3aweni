@@ -9,11 +9,12 @@ const cookieParser=require("cookie-parser");
 const bcrypt=require("bcryptjs");
 const session = require("express-session");
 const bodyParser=require("body-parser");
-const User=require('./user/UserModel');
+const User = require('./user/UserModel');
 require( 'dotenv/config')
 const LocalStrategy = require("passport-local").Strategy;
 var cloudinary = require('cloudinary').v2;
 const { register } = require('./user/UserService')
+const { createFundraiser } = require('./fundraiser/FundraiserService')
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
@@ -95,7 +96,7 @@ app.post("/api/user/login", (req, res, next) => {
     else {
       req.logIn(user, (err) => {
         if (err) { return next(err); }
-        return true
+        res.status(200).json({ success: true, user: user })
       });
     }
 
@@ -190,7 +191,7 @@ app.post("/api/user/password-reset", async (req, res) => {
 
 app.get("/password-reset/:id/:token", async (req, res) => {
   const { id, token } = req.params;
-  console.log(req.params);
+  
   const oldUser = await User.findOne({ _id: id });
   if (!oldUser) {
     return res.status(404).json({ status: "User Not Exists!!" });
@@ -200,7 +201,7 @@ app.get("/password-reset/:id/:token", async (req, res) => {
     const verify = jwt.verify(token, secret);
     res.status(404).json({ email: verify.email, status: "Not Verified!!!!" });
   } catch (error) {
-    console.log(error);
+    
     res.send("Not Verified");
   }
 });
@@ -229,7 +230,7 @@ app.post("/password-reset/:id/:token", async (req, res) => {
     );
     res.render("index", { email: verify.email, status: "verified" });
   } catch (error) {
-    console.log(error);
+    
     res.json({ status: "Something Went Wrong" });
   }
 });
@@ -279,14 +280,14 @@ app.post('/api/fundraiser/register', async (req, res) => {
     const { email, password, category, state, zipCode, type, goal } = req?.body
   
     const newUser = await register(email, password)
-
-    const newFundraiser = await createFundraiser(newUser._id, category, state,zipCode, type, goal)
+    
+    const newFundraiser = await createFundraiser(newUser._id, category, state, zipCode, type, goal)
     
     res.status(201).json({ success: true, user: newUser, fundraiser: newFundraiser })
     
   } catch (error) {
     
-    res.status(400).json({ success: false })
+    res.status(400).json({ success: false, error: error })
   }
 
 })
@@ -307,81 +308,23 @@ app.post('/api/fundraiser/loggedin', async (req, res) => {
 
 })
 
+
+app.post('/api/fundraiser/create', async (req, res) => {
+
+  try {
+    const { category, state, zipCode, type, goal } = req?.body
+
+    console.log(req?.user);
+    const newFundraiser = await createFundraiser(req?.user?._id, category, state,zipCode, type, goal)
+    
+    res.status(201).json({ success: true, fundraiser: newFundraiser })
+    
+  } catch (error) {
+    
+    res.status(400).json({ success: false })
+  }
+
+})
+
 app.listen(process.env.PORT, () => {
   console.log('Server listening on port',process.env.PORT)})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const express = require("express")
-// // import express, { Request,Response } from 'express'
-// // import mongoose from 'mongoose'
-// // import cors from 'cors'
-// // import cookieParser from 'cookie-parser'
-// // import session from 'express-session'
-// require( 'dotenv/config')
-// const mongoose = require('mongoose')
-// // import bodyParser from 'body-parser';
-
-
-
-//     const { MONGO_USER,MONGO_PASSWORD,MONGO_PATH } = process.env
-
-//     mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,{
-//         // useCreateIndex: true,
-//         useNewUrlParser: true,
-//         useUnifiedTopology: true
-//       }, (err) => {
-//         if (err) throw err;
-//         console.log("Connected To Mongo")
-//       })
-
-//     //Middleware
-//     const app = express()
-//     app.use(express.json())
-//     // app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
-//     // app.use(session({
-//     //     secret: "secretcode",
-//     //     resave: true,
-//     //     saveUninitialized: true
-//     // }))
-//     // app.use(cookieParser())
-//     // app.use(bodyParser.json()); // support json encoded bodies
-//     // app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
-//     // app.use(cors())
-//     // app.use(express.json({ limit: '50mb' }))
-
-//     app.post('/api/upload',
-//     //  async ( req: Request, res: Response ) => {
-//         // try {
-//         //     const file: string = req.body.data
-            
-//         //     const uploadedResponse = await cloudinary.uploader.upload(file, { upload_preset: process.env.CLOUDINARY_PRESET_NAME })
-
-//         //     res.json({ imagePublicId: uploadedResponse })
-//         // } catch (error) {
-
-//         //     console.error(error)
-//         // }
-//     // }
-//     )
-
-
-//     app.listen(process.env.PORT, () => {
-//     console.log('Server listening on port',process.env.PORT)})

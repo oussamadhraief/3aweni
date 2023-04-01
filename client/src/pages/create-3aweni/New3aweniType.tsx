@@ -79,7 +79,7 @@ interface FormState {
             <div className='w-5/6 flex justify-start gap-4 items-center flex-wrap mt-8'>
 
 
-              <label className={Form.type == "For me" ? 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-lighter_main_color border-2 border-main_color hover:cursor-pointer rounded-lg' : 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Forme"> <input type="radio" name="category" id="Forme" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="For me" checked={Form.type === "For me"} />
+              <label className={Form.type == "Forme" ? 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-lighter_main_color border-2 border-main_color hover:cursor-pointer rounded-lg' : 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Forme"> <input type="radio" name="category" id="Forme" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Forme" checked={Form.type === "Forme"} />
                 <div>
                   <p>Pour moi</p> 
                   <p className='text-xs font-thin text-gray-600'>Les fonds seront livrés à votre compte bancaire</p>
@@ -90,7 +90,7 @@ interface FormState {
                 </IconContext.Provider>
               </label>   
 
-              <label className={Form.type == "For someone" ? 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-lighter_main_color border-2 border-main_color hover:cursor-pointer rounded-lg' : 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Forsomeone"> <input type="radio" name="category" id="Forsomeone" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="For someone" checked={Form.type === "For someone"} />
+              <label className={Form.type == "Forsomeone" ? 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-lighter_main_color border-2 border-main_color hover:cursor-pointer rounded-lg' : 'w-full relative flex justify-between items-center h-28 px-4 py-5 bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color hover:cursor-pointer rounded-lg border border-white'} htmlFor="Forsomeone"> <input type="radio" name="category" id="Forsomeone" className='absolute -z-10 rounded' onChange={e => handleChange(e)} required value="Forsomeone" checked={Form.type === "Forsomeone"} />
                 <div>
                   <p>Pour quelqu'un d'autre</p> 
                   <p className='text-xs font-thin text-gray-600'>Vous inviterez un bénéficiaire pour recevoir les fons ou vous les distribuerez vous-même.</p>

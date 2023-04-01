@@ -49,7 +49,6 @@ export default function New3aweniCategoryLocation() {
     e.preventDefault()
     
     sessionStorage.setItem('create3aweni',JSON.stringify(Form))
-    console.log(Form);
     
     
     navigate('/create/type')
@@ -127,7 +126,7 @@ export default function New3aweniCategoryLocation() {
 
               <select  className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-400 rounded-lg bg-gray-50 outline-none" onChange={handleChange} required name='state' value={Form.state}>
                 <option>Selectionnez un state</option>
-                {states.map(item => <option key={item.label} value={item.label}>{item.label}</option>)}
+                {states.map(item => <option key={item.label} value={item.value}>{item.label}</option>)}
               </select>
 
 

@@ -1,26 +1,24 @@
-const User=require('./UserModel');
+const User= require('./UserModel');
+const bcrypt= require("bcryptjs");
+
 
 const register = async (email, password, name, phone) => {
     try {
         
-        User.findOne({ email } , async (err,doc) => {
-            if(err) throw err
-            if(doc) res.status(400).send("User Already Exists")
-            if(!doc) {
+        const user = await User.findOne({ email })
+        if(user) throw new Error('User already exists')
       
-                const hashedPassword = await bcrypt.hash(password, 10)
-                const newUser = new User({
-                    email,
-                    name,
-                    phone,
-                    password: hashedPassword,
-                })
-      
-                await newUser.save()
-      
-                return newUser
-            }
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const newUser = new User({
+            email,
+            name,
+            phone,
+            password: hashedPassword,
         })
+
+        await newUser.save()
+        
+        return newUser
 
     } catch (error) {
 

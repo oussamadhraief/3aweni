@@ -32,7 +32,6 @@ interface FormState {
         const res = JSON.parse(session3aweni)
 
         if(res.category && res.state && res.zipCode && res.type && res.goal){
-          console.log(res);
           
           setForm({
             ...Form,
@@ -68,17 +67,31 @@ interface FormState {
       const handleSubmit = async (event: FormEvent) => {
             event.preventDefault()
             try {
-                axios.post('/api/user/register',{
+                axios.post('/api/fundraiser/register',{
                 email: Form.email,
                 password: Form.password,
-                firstName: Form.firstName,
-                lastName: Form.lastName,
+                name: `${Form.lastName} ${Form.firstName}`,
                 phone: Form.phone,
+                category: Form.category,
+                state: Form.state,
+                zipCode: Form.zipCode,
+                type: Form.type,
+                goal: Form.goal,
                 },{
                 withCredentials: true
                 }).then((response) => {
-                
-                console.log(response);
+
+                  
+                    const { data: { user } } = response
+
+                    axios.post('/api/user/login',{
+                      email: Form.email,
+                      password: Form.password
+                    },{
+                      withCredentials: true
+                    }).then((res) => {
+                        
+                    })
             
                 })
             } catch (error) {

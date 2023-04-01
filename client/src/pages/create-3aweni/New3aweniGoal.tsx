@@ -25,7 +25,6 @@ export default function New3aweniGoal() {
       
       const res = JSON.parse(session3aweni)
 
-      console.log(res);
       if(res.zipCode && res.state && res.category && res.type)
       
         setForm(res)
