@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Fundraiser = new mongoose.Schema({
   category: {
-    type: [String,'mochkel fel category'],
+    type: String,
     required: true,
     enum: [
       "Animaux",
@@ -17,13 +17,11 @@ const Fundraiser = new mongoose.Schema({
       "Événements",
       "Famille",
       "Obsèquesetcommémorations",
-      "PotscommunsdAnniversaire",
       "Religion",
       "Rêves",
       "Santé",
       "Sports",
       "Urgences",
-      "Voyages",
       "Autre"
     ],
   },
@@ -32,7 +30,7 @@ const Fundraiser = new mongoose.Schema({
     required: true,
   },
   state: {
-    type: [String,'mochkel fel state'],
+    type: String,
     required: true,
     enum: [
     "Ariana", 
@@ -62,12 +60,12 @@ const Fundraiser = new mongoose.Schema({
     ]
   },
   zipCode: { 
-      type: [Number,'mochkel fel zipcode'],
+      type: Number,
       trim: true,
       required: true,
     }, 
   type: { 
-      type: [String,'mochkel fel type'],
+      type: String,
       required: true,
       enum: [
         "Forme",
@@ -75,7 +73,7 @@ const Fundraiser = new mongoose.Schema({
       ]
   }, 
   goal: {
-    type: [Number,'mochkel fel goal'],
+    type: Number,
     required: true,
     min: 100,
     max: 1000000
@@ -84,7 +82,7 @@ const Fundraiser = new mongoose.Schema({
     type: String,
   },
   title: {
-    type: [String,'mochkel fel title'],
+    type: String,
     minlength: 4,
     maxlength: 150
   },

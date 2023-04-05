@@ -1,23 +1,26 @@
 import { FormEvent, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { IconContext } from 'react-icons';
-import { FcMoneyTransfer } from 'react-icons/fc';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
+import useAuthContext from '../../hooks/useAuthContext';
+import axios from 'axios';
 
 interface FormState {
   category: string;
   state: string;
   zipCode: number;
   type: string;
+  title: string;
   goal: number;
 }
 
 
-export default function New3aweniGoal() {
+export default function New3aweniTitleGoal() {
 
+  const { user } = useAuthContext()
   const navigate = useNavigate()
 
-  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', goal: 0})
+  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', title: '', goal: 0})
 
   useEffect(() => {
     const session3aweni = sessionStorage.getItem('create3aweni')
@@ -41,20 +44,52 @@ export default function New3aweniGoal() {
   
       const target = e.target as HTMLInputElement
 
-      setForm({
-        ...Form,
-        goal: parseInt(target.value)
-      })
+      if(target.name === 'goal')
       
+        setForm({
+          ...Form,
+          goal: parseInt(target.value)
+        })
+
+      else 
+
+        setForm({
+            ...Form,
+            title: target.value
+          })
 
     }
 
     const handleSubmit = (e: FormEvent) => {
       e.preventDefault()
-  
-      sessionStorage.setItem('create3aweni',JSON.stringify(Form))
       
-      navigate('/create/register')
+      if(user){
+        console.log(Form);
+        
+          axios.post('/api/create-fundraiser',{
+            ...Form
+          },{
+            withCredentials: true
+          }).then((response) => {
+
+            localStorage.removeItem('create3aweni')
+
+            const { data: { fundraiser } } = response
+            console.log(response);
+            
+
+            navigate(`/fundraisers/${fundraiser._id}`)
+
+          }).catch(error => {
+
+            console.log(error);
+            
+          })
+      }else{
+          sessionStorage.setItem('create3aweni',JSON.stringify(Form))
+          navigate('/create/register')
+        }
+        
       
     }
 
@@ -80,6 +115,13 @@ export default function New3aweniGoal() {
         <div onSubmit={handleSubmit} className='w-3/6 mt-20'>
         <div className="form-control">
           <label className="label">
+            <span className="label-text">Choisissez un titre</span>
+          </label>
+          <label className="label">
+            <input type="text" name="title" id="title" required value={Form.title || ''} onChange={handleChange} placeholder="In memory of oussema" className="input w-full outline-none border h-10 rounded-lg" />
+          </label>
+
+          <label className="label mt-10">
             <span className="label-text">Objectif de la collecte</span>
           </label>
           <label className="input-group">
@@ -87,7 +129,6 @@ export default function New3aweniGoal() {
             <span>TND</span>
           </label>
         </div>
-            {/* <Input label="Objectif en TND" type='number' name="goal" id="goal" required value={Form.goal} onChange={handleChange} icon={<FcMoneyTransfer />} /> */}
             <div className='hidden'>
             </div>
             <p className='text-gray-700 text-xs mt-3'>Gardez à l'esprit que les frais de transaction, y compris les frais de crédit et de débit, sont déduits de chaque don.</p>

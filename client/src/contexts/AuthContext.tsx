@@ -1,13 +1,6 @@
 import axios from "axios";
 import { createContext, useState, useEffect, useReducer } from "react";
-
-interface userInt {
-    id: string;
-    name: string;
-    phone: string;
-    email: string;
-    // role: string;
-  }
+import { userInt } from "../utils/interfaces";
 
 interface AuthContextType {
     user: userInt | null;
@@ -15,8 +8,13 @@ interface AuthContextType {
     login: (user: userInt) => void;
 }
 
+interface LoadingAuthContextType {
+    Loading: boolean;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export const AuthContext = createContext<AuthContextType | null>(null)
-export const LoadingAuthContext = createContext<{ Loading: boolean; }>({ Loading : true})
+export const LoadingAuthContext = createContext<LoadingAuthContextType>({ Loading : true, setLoading: () => {}})
 
 export const authReducer = (state: any,action: any) => {
 
@@ -38,25 +36,6 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode | Re
 
     const [Loading, setLoading] = useState<boolean>(true)
 
-    useEffect(() => {
-        axios.get('/api/user',
-        { withCredentials: true })
-        .then((res) => {
-            
-            const { data: { user } } = res
-            
-            if(user){ 
-                dispatch({ type: 'ADD', payload: user })
-            }
-            
-            setLoading(false)
-            
-
-        }).catch(() => {
-            setLoading(false)
-        })
-    }, [])
-
     const login = (user: userInt) => {
         dispatch({ type: 'ADD', payload: user })
     }
@@ -68,7 +47,7 @@ export const AuthContextProvider = ({children}: { children: React.ReactNode | Re
 
     return (
         <AuthContext.Provider value={{...state, logout, login}}>
-            <LoadingAuthContext.Provider value={{ Loading: Loading}}>
+            <LoadingAuthContext.Provider value={{ Loading, setLoading }}>
                 {children}
             </LoadingAuthContext.Provider>
         </AuthContext.Provider>

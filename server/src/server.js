@@ -10,6 +10,7 @@ const bcrypt=require("bcryptjs");
 const session = require("express-session");
 const bodyParser=require("body-parser");
 const User = require('./user/UserModel');
+const Fundraiser = require('./fundraiser/FundraiserModel');
 require( 'dotenv/config')
 const LocalStrategy = require("passport-local").Strategy;
 var cloudinary = require('cloudinary').v2;
@@ -68,13 +69,13 @@ passport.use(new LocalStrategy({usernameField: "email", passwordField: "password
 }))
 
 passport.serializeUser(( user, cb ) => {
-  cb(null, user.id)
+  cb(null, user._id)
 })
 
 passport.deserializeUser(( id, cb ) => {
   User.findOne({ _id: id }, ( err, user )  => {
       const userInformation = {
-          id: user._id,
+          _id: user._id,
           email: user.email,
           phone: user.phone,
           name: user.name,
@@ -87,6 +88,8 @@ passport.deserializeUser(( id, cb ) => {
 
 
 //Routes
+
+//user
 
 app.post("/api/user/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
@@ -104,13 +107,12 @@ app.post("/api/user/login", (req, res, next) => {
 });
 
 
-//Register Status 200 Done
 app.post('/api/user/register', async ( req, res ) => {
 
   try {
-    const { email, password } = req?.body
+    const { email, password, name, phone } = req?.body
   
-    await register(email, password)
+    await register(email, password, name, phone)
     
     res.status(200).json({ success: true })
     
@@ -235,6 +237,19 @@ app.post("/password-reset/:id/:token", async (req, res) => {
   }
 });
 
+
+app.get('/api/user/fundraisers', async (req, res) => {
+  try {
+
+    const fundraiser = await Fundraiser.find({ user: req.user._id })
+
+    res.status(200).json({ success: true, fundraisers: fundraiser })
+
+  } catch (error) {
+    
+  }
+})
+
 // cloudinary 
 
 app.post('/api/upload', async ( req, res ) => {
@@ -257,9 +272,11 @@ app.post('/api/delete-image', async ( req, res ) => {
       cloudinary.uploader.destroy(publicId, function(error,result) {
           if(result){
 
-              res.json({ success: true, data: result.result })
+              res.status(204).json({ success: true, data: result.result })
+
           }else{
-              res.json({ success: false })
+
+              res.status(400).json({ success: false })
               
           }
           
@@ -274,16 +291,16 @@ app.post('/api/delete-image', async ( req, res ) => {
 
 // fundraisers
 
-app.post('/api/fundraiser/register', async (req, res) => {
+app.post('/api/create-fundraiser/register', async (req, res) => {
 
   try {
-    const { email, password, category, state, zipCode, type, goal } = req?.body
+    const { email, password, category, state, zipCode, type, title, goal, name, phone  } = req?.body
   
-    const newUser = await register(email, password)
+    const newUser = await register(email, password, name, phone)
     
-    const newFundraiser = await createFundraiser(newUser._id, category, state, zipCode, type, goal)
+    const newFundraiser = await createFundraiser(newUser._id, category, state, zipCode, type, title, goal)
     
-    res.status(201).json({ success: true, user: newUser, fundraiser: newFundraiser })
+    res.status(201).json({ success: true, fundraiser: newFundraiser })
     
   } catch (error) {
     
@@ -292,12 +309,12 @@ app.post('/api/fundraiser/register', async (req, res) => {
 
 })
 
-app.post('/api/fundraiser/loggedin', async (req, res) => {
+app.post('/api/create-fundraiser/loggedin', async (req, res) => {
 
   try {
-    const { id, category, state, zipCode, type, goal } = req?.body
+    const { id, category, state, zipCode, type, title, goal } = req?.body
 
-    const newFundraiser = await createFundraiser(id, category, state,zipCode, type, goal)
+    const newFundraiser = await createFundraiser(id, category, state, zipCode, type, title, goal)
     
     res.status(201).json({ success: true, user: newUser, fundraiser: newFundraiser })
     
@@ -309,13 +326,12 @@ app.post('/api/fundraiser/loggedin', async (req, res) => {
 })
 
 
-app.post('/api/fundraiser/create', async (req, res) => {
+app.post('/api/create-fundraiser', async (req, res) => {
 
   try {
-    const { category, state, zipCode, type, goal } = req?.body
+    const { category, state, zipCode, type, title, goal } = req?.body
 
-    console.log(req?.user);
-    const newFundraiser = await createFundraiser(req?.user?._id, category, state,zipCode, type, goal)
+    const newFundraiser = await createFundraiser(req?.user?.id, category, state, zipCode, type, title, goal)
     
     res.status(201).json({ success: true, fundraiser: newFundraiser })
     
@@ -325,6 +341,41 @@ app.post('/api/fundraiser/create', async (req, res) => {
   }
 
 })
+
+app.get('/api/fundraiser/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const fundraiser = await Fundraiser.findOne({ _id: id })
+
+    res.status(200).json({ success: true, fundraiser: fundraiser })
+  } catch (error) {
+    
+    res.status(404).json({ success: true })
+  }
+})
+
+app.patch('/api/fundraiser/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { image } = req.body
+
+    const fundraiser = await Fundraiser.findOneAndUpdate({ _id: id},{
+      image
+    },{
+       new: true 
+    })
+
+    res.status(204).json({ success: true, fundraiser: fundraiser })
+
+  } catch (error) {
+
+    res.status(404).json({ success: true })
+    
+  }
+})
+
+
 
 app.listen(process.env.PORT, () => {
   console.log('Server listening on port',process.env.PORT)})

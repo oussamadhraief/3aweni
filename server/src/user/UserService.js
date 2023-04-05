@@ -22,7 +22,7 @@ const register = async (email, password, name, phone) => {
 
     } catch (error) {
 
-        throw new Error('Unable to create a new account')
+        console.log(error);
         
     }
 }

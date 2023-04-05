@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { IconContext } from 'react-icons'
 import { BiDonateHeart, BiIdCard } from 'react-icons/bi'
 import { FiSettings } from 'react-icons/fi'
@@ -7,14 +7,27 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import UserChats from './DemoUserChats'
 import AllUserChats from './AllUserChats'
 import { BsArrowBarLeft } from 'react-icons/bs'
+import getUser from '../hooks/getUser'
+import useAuthContext from '../hooks/useAuthContext'
+import useLoadingAuthContext from '../hooks/useLoadingAuthContext'
 
 export default function UserDashboard() {
 
     const location = useLocation()
+    const { login, logout } = useAuthContext()
+    const { Loading, setLoading } = useLoadingAuthContext()
+    const { user } = useAuthContext()
+
+  
 
     const [ShowChats, setShowChats] = useState<boolean>(false)
     const [ShowSidebar, setShowSidebar] = useState<boolean>(true)
 
+    useEffect(() => {
+
+        getUser({ login, logout, setLoading })
+
+    },[location])
 
   return (
 
@@ -93,7 +106,7 @@ export default function UserDashboard() {
                     <div className="dropdown dropdown-end">
                     <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
                         <div className="w-10 rounded-full">
-                        <img src="/africa.jpg" />
+                        <img src="/profile.png" />
                         </div>
                     </label>
                     <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">

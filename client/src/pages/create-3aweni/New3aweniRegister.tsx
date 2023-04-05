@@ -3,12 +3,14 @@ import { FormEvent, useState, useEffect } from 'react'
 import { IconContext } from 'react-icons';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
 import { Link, useNavigate } from 'react-router-dom';
+import useAuthContext from '../../hooks/useAuthContext';
 
 interface FormState {
   category: string;
   state: string;
   zipCode: number;
   type: string;
+  title: string;
   goal: number;
   lastName: string;
   firstName: string;
@@ -19,10 +21,13 @@ interface FormState {
 }
 
   export default function New3aweniRegister() {
-      const navigate = useNavigate()
+    
+    const { login } = useAuthContext()
+
+    const navigate = useNavigate()
 
 
-    const [Form, setForm] = useState<FormState>({category: '', state: "", type: "", goal: 0, zipCode: 0, firstName: "", lastName: "",phone: "",email: "", password: "", passwordConfirmation: ""})
+    const [Form, setForm] = useState<FormState>({category: '', state: "", type: "", title: "", goal: 0, zipCode: 0, firstName: "", lastName: "",phone: "",email: "", password: "", passwordConfirmation: ""})
     
 
     useEffect(() => {
@@ -31,7 +36,7 @@ interface FormState {
       
         const res = JSON.parse(session3aweni)
 
-        if(res.category && res.state && res.zipCode && res.type && res.goal){
+        if(res.category && res.state && res.zipCode && res.type && res.title && res.goal){
           
           setForm({
             ...Form,
@@ -39,6 +44,7 @@ interface FormState {
             state: res.state,
             zipCode: parseInt(res.zipCode),
             type: res.type,
+            title: res.title,
             goal: parseInt(res.goal)
             
           })
@@ -67,7 +73,8 @@ interface FormState {
       const handleSubmit = async (event: FormEvent) => {
             event.preventDefault()
             try {
-                axios.post('/api/fundraiser/register',{
+              
+                axios.post('/api/create-fundraiser/register',{
                 email: Form.email,
                 password: Form.password,
                 name: `${Form.lastName} ${Form.firstName}`,
@@ -77,12 +84,14 @@ interface FormState {
                 zipCode: Form.zipCode,
                 type: Form.type,
                 goal: Form.goal,
+                title: Form.title
                 },{
                 withCredentials: true
                 }).then((response) => {
 
-                  
-                    const { data: { user } } = response
+                    localStorage.removeItem('create3aweni')
+                    
+                    const { data: { fundraiser } } = response
 
                     axios.post('/api/user/login',{
                       email: Form.email,
@@ -90,6 +99,12 @@ interface FormState {
                     },{
                       withCredentials: true
                     }).then((res) => {
+                        
+                      const { data: { user } } = res
+            
+                      login(user)
+        
+                      navigate(`/fundraisers/${fundraiser._id}`)
                         
                     })
             
