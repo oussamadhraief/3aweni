@@ -1,7 +1,7 @@
 import useAuthContext from '../hooks/useAuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { IoMdNotificationsOutline } from 'react-icons/io'
+import { IoIosNotificationsOutline } from 'react-icons/io'
 import { IconContext } from 'react-icons'
 
 export default function UserDropdownMenu({ main }: { main: Boolean }) {
@@ -23,9 +23,9 @@ export default function UserDropdownMenu({ main }: { main: Boolean }) {
     <>
         <button className='relative w-fit h-fit'>
           <IconContext.Provider value={{ className: 'w-6 h-6 text-gray-500'}}>
-            <IoMdNotificationsOutline />
+            <IoIosNotificationsOutline />
           </IconContext.Provider>
-          
+
         </button>
       <div className="dropdown dropdown-bottom dropdown-end flex items-center gap-3">
         <label tabIndex={0} className="btn btn-ghost flex items-center gap-3">

@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from "axios"
 import { BsFillPersonFill } from 'react-icons/bs';
 import { AiTwotonePhone } from 'react-icons/ai';
@@ -15,6 +15,8 @@ interface RegisterForm {
 export default function 
 () {
 
+    const navigate = useNavigate()
+    
     const [RegisterForm, setRegisterForm] = useState<RegisterForm>({name: "",phone: "",email: "", password: "", passwordConfirmation: ""})
 
     const handleChange = (event: FormEvent) => {
@@ -38,8 +40,9 @@ export default function
                 withCredentials: true
                 }).then((response) => {
                 
-                console.log(response);
-            
+                    console.log(response)
+                    navigate('/login')
+                    
                 })
             } catch (error) {
                 
@@ -69,7 +72,8 @@ export default function
                     <span className="rounded-l-md inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
                         <AiTwotonePhone />
                     </span>
-                    <input type="tel" name="phone"  className=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-sm h-10 outline-none" required value={RegisterForm.phone} onChange={handleChange} placeholder='Num. de téléphone'  pattern="[0-9]{2} [0-9]{3} [0-9]{3}" />
+                    <input type="tel" name="phone"  className=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-sm h-10 outline-none" required value={RegisterForm.phone} onChange={handleChange} placeholder='Num. de téléphone'   />
+                    {/* pattern="[0-9]{2} [0-9]{3} [0-9]{3}" */}
                     </div>
                 </div>
             <div className="flex flex-col mb-2">

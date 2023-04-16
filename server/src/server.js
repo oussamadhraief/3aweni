@@ -112,9 +112,9 @@ app.post('/api/user/register', async ( req, res ) => {
   try {
     const { email, password, name, phone } = req?.body
   
-    await register(email, password, name, phone)
+    const newUser = await register(email, password, name, phone)
     
-    res.status(200).json({ success: true })
+    res.status(200).json({ success: true, user: newUser })
     
   } catch (error) {
     
@@ -125,9 +125,16 @@ app.post('/api/user/register', async ( req, res ) => {
 
   app.get('/api/user/logout', async ( req, res, done ) => {
 
-    req.logout(done)
-
-    res.status(204).json({ success: true })
+    try {
+      
+      req.logout(done)
+  
+      res.status(204).json({ success: true })
+      
+    } catch (error) {
+    
+      res.status(400).json({ success: false })
+    }
 
   })
 

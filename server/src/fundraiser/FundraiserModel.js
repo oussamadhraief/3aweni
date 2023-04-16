@@ -73,10 +73,10 @@ const Fundraiser = new mongoose.Schema({
       ]
   }, 
   goal: {
-    type: Number,
+    type: String,
     required: true,
-    min: 100,
-    max: 1000000
+    minlength: 3,
+    maxlength: 9
   },
   image: {
     type: String,
