@@ -13,7 +13,7 @@ export interface fundraiserInt {
     state: string;
     zipCode: number;
     type: string;
-    goal: number;
+    goal: string | undefined;
     user: string;
     image: string | null;
     title: string;

@@ -11,7 +11,7 @@ interface FormState {
   zipCode: number;
   type: string;
   title: string;
-  goal: number;
+  goal: string | undefined;
   lastName: string;
   firstName: string;
   email: string;
@@ -27,7 +27,7 @@ interface FormState {
     const navigate = useNavigate()
 
 
-    const [Form, setForm] = useState<FormState>({category: '', state: "", type: "", title: "", goal: 0, zipCode: 0, firstName: "", lastName: "",phone: "",email: "", password: "", passwordConfirmation: ""})
+    const [Form, setForm] = useState<FormState>({category: '', state: "", type: "", title: "", goal: undefined, zipCode: 0, firstName: "", lastName: "",phone: "",email: "", password: "", passwordConfirmation: ""})
     
 
     useEffect(() => {
@@ -45,7 +45,7 @@ interface FormState {
             zipCode: parseInt(res.zipCode),
             type: res.type,
             title: res.title,
-            goal: parseInt(res.goal)
+            goal: res.goal
             
           })
         }else{

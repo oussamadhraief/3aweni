@@ -1,27 +1,14 @@
 import Navbar from './Navbar'
 import { Link, useNavigate } from 'react-router-dom'
 import useAuthContext from '../hooks/useAuthContext'
-import { IconContext } from 'react-icons'
-import { MdOutlineExpandMore } from 'react-icons/md'
-import { HiOutlineExternalLink } from 'react-icons/hi'
-import axios from 'axios'
+
 import useLoadingAuthContext from '../hooks/useLoadingAuthContext'
+import UserDropdownMenu from './UserDropdownMenu'
 
 export default function Header() {
 
-  const { user, logout } = useAuthContext()
+  const { user } = useAuthContext()
   const { Loading } = useLoadingAuthContext()
-
-  const navigate = useNavigate()
-
-  const handleLogout = () => {
-    axios.get('/api/user/logout',{ 
-      withCredentials: true 
-    }).then(() => {
-        logout()
-        navigate('/login')
-    })
-  }
 
   return (
     <header className="header" id="header">
@@ -45,18 +32,7 @@ export default function Header() {
 
          : 
         ( user ? 
-        <div className="dropdown">
-        <label tabIndex={0} className="btn btn-ghost flex items-center gap-3">
-          {user?.name}
-          <img src="/profile.png" alt="" className='w-8 h-8' />
-        </label>
-          <ul tabIndex={0} className="dropdown-content menu shadow-form rounded-lg w-52 px-3 py-1 bg-white">
-            <li className='py-1 flex '><Link to='/account/dashboard/fundraisers' target='_blank' className='flex items-center gap-2 w-full text-center'>Tableau de bord <HiOutlineExternalLink /></Link></li>
-            <li className='py-1 flex '><Link to='/account/details'>Mon compte</Link></li>
-            <li className='py-1 flex '><Link to='/account/settings'>Paramètres</Link></li>
-            <li className='py-1 flex  text-red-500'><button onClick={handleLogout}>Logout</button></li>
-          </ul>
-      </div>
+        <UserDropdownMenu main={true} />
         :
         <>
         <Link className="header__link" to="/login">Se connecter</Link>

@@ -4,6 +4,7 @@ import { IconContext } from 'react-icons';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
 import useAuthContext from '../../hooks/useAuthContext';
 import axios from 'axios';
+import CurrencyInput from 'react-currency-input-field';
 
 interface FormState {
   category: string;
@@ -11,7 +12,7 @@ interface FormState {
   zipCode: number;
   type: string;
   title: string;
-  goal: number;
+  goal: string | undefined;
 }
 
 
@@ -20,7 +21,7 @@ export default function New3aweniTitleGoal() {
   const { user } = useAuthContext()
   const navigate = useNavigate()
 
-  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', title: '', goal: 0})
+  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', title: '', goal: undefined})
 
   useEffect(() => {
     const session3aweni = sessionStorage.getItem('create3aweni')
@@ -40,25 +41,7 @@ export default function New3aweniTitleGoal() {
     }
   }, []);
 
-    const handleChange = (e: FormEvent) => {
-  
-      const target = e.target as HTMLInputElement
-
-      if(target.name === 'goal')
-      
-        setForm({
-          ...Form,
-          goal: parseInt(target.value)
-        })
-
-      else 
-
-        setForm({
-            ...Form,
-            title: target.value
-          })
-
-    }
+    
 
     const handleSubmit = (e: FormEvent) => {
       e.preventDefault()
@@ -118,15 +101,33 @@ export default function New3aweniTitleGoal() {
             <span className="label-text">Choisissez un titre</span>
           </label>
           <label className="label">
-            <input type="text" name="title" id="title" required value={Form.title || ''} onChange={handleChange} placeholder="In memory of oussema" className="input w-full outline-none border h-10 rounded-lg" />
+            <input type="text" name="title" id="title" required value={Form.title || ''} onChange={e => setForm({
+            ...Form,
+            title: e.target.value
+          })} placeholder="In memory of oussema" className="input w-full outline-none border h-10 rounded-lg" />
           </label>
 
           <label className="label mt-10">
             <span className="label-text">Objectif de la collecte</span>
           </label>
           <label className="input-group">
-            <input type="number" name="goal" id="goal" required value={Form.goal || ''} onChange={handleChange} placeholder="1 000.00" className="input w-full outline-none border-y border-l h-10" />
-            <span>TND</span>
+            {/* <input type="number" name="goal" id="goal" required value={Form.goal || ''} onChange={handleChange} placeholder="1 000.00" className="input w-full outline-none border-y border-l h-10" /> */}
+            <CurrencyInput
+            id="input-example"
+            name="input-name"
+            placeholder="Please enter a number"
+            defaultValue={undefined}
+            decimalsLimit={2}
+            maxLength={7}
+            allowNegativeValue={false}
+            value={Form.goal}
+            onValueChange={(value) => setForm({
+              ...Form,
+              goal: value
+            })}
+            className='input w-full outline-none border-y border-l h-10'
+           />
+            <span> TND</span>
           </label>
         </div>
             <div className='hidden'>

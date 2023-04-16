@@ -8,6 +8,7 @@ import UploadPictureModal from '../../../../components/UploadImageModal'
 import EditImageToUploadModal from '../../../../components/EditImageToUploadModal'
 import axios from 'axios'
 import { fundraiserInt } from '../../../../utils/interfaces'
+import { states } from '../../../../utils/statesData'
 
 export default function EditUserFundraiser() {
 
@@ -23,7 +24,7 @@ export default function EditUserFundraiser() {
 	const [Loading, setLoading] = useState<boolean>(true)
 	const [image, setImage] = useState<string>('');
 	const [croppedImage, setCroppedImage] = useState('');
-    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: 0, user: '', image: null, title: '' })
+    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: undefined, user: '', image: null, title: '' })
 
 	useEffect(() => {
         if(id){
@@ -61,7 +62,7 @@ export default function EditUserFundraiser() {
 
 
 	const handleUpdateFundraiserImage = async (newImage: string) => {
-		await axios.patch(`/api/fundraiser/${Fundraiser._id}`,{
+		await axios.patch(`/api/fundraiser/image/${Fundraiser._id}`,{
 			image: newImage
 		},{
             headers: {
@@ -124,7 +125,7 @@ export default function EditUserFundraiser() {
 
 								</div>
 								 :
-								<><img className="object-cover object-center " src={Fundraiser.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${Fundraiser.image}` : "/3aweni_placeholder.png"} alt="content" />
+								<><img className="object-cover object-center w-full" src={Fundraiser.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${Fundraiser.image}` : "/3aweni_placeholder.png"} alt="content" />
 								{EditingImage &&
 								<div className="absolute inset-0 bg-white/60 flex items-end pb-5 justify-center flex-nowrap">
 									<progress ref={progressBarRef} value={0} max={100} className='w-[96%] ml-[2%] h-2 overflow-hidden rounded bg-secondary_color/10 [&::-webkit-progress-bar]:bg-secondary_color/10 [&::-webkit-progress-value]:bg-secondary_color [&::-moz-progress-bar]:bg-secondary_color' ></progress>
@@ -167,11 +168,14 @@ export default function EditUserFundraiser() {
 						</div>
 						<div className="col-span-full">
 							<label htmlFor="description" className="text-sm">Description</label>
-							<textarea id="description" placeholder="Description" className="w-full rounded-md outline-none text-sm h-32 px-1"></textarea>
+							<textarea id="description" placeholder="Description" className="w-full rounded-md outline-none text-sm h-32 p-1"></textarea>
 						</div>
 						<div className="col-span-full sm:col-span-3">
 							<label htmlFor="state" className="text-sm">State</label>
-							<input id="state" type="text" placeholder="City / State" value={Fundraiser.state} onChange={handleChange} className="w-full rounded-md outline-none text-sm h-9 px-1" />
+							<select id="state" placeholder='State'  className="block w-full h-9 text-sm text-gray-900 rounded-lg outline-none">
+									{states.map(item => <option value={item.value} selected={item.value === Fundraiser.state}>{item.label}</option>)}
+	
+							</select>
 						</div>
 						<div className="col-span-full sm:col-span-3">
 							<label htmlFor="zipCode" className="text-sm">Code zip</label>

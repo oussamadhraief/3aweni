@@ -13,7 +13,7 @@ interface FormState {
   zipCode: number;
   type: string;
   title: string;
-  goal: number;
+  goal: string | undefined;
 }
 
 
@@ -24,7 +24,7 @@ export default function New3aweniCategoryLocation() {
   const { login, logout } = useAuthContext()
   const { setLoading } = useLoadingAuthContext()
 
-  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', title: '', goal: 0})
+  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', title: '', goal: undefined})
   
   useEffect(() => {
 

@@ -9,7 +9,7 @@ const createFundraiser = async (uid, category, state, zipCode, type, title, goal
                 state: state,
                 zipCode: parseInt(zipCode),
                 type: type,
-                goal: parseInt(goal),
+                goal: goal,
                 archived: false,
                 title: title,
                 image: null

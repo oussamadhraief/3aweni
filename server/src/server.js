@@ -331,7 +331,7 @@ app.post('/api/create-fundraiser', async (req, res) => {
   try {
     const { category, state, zipCode, type, title, goal } = req?.body
 
-    const newFundraiser = await createFundraiser(req?.user?.id, category, state, zipCode, type, title, goal)
+    const newFundraiser = await createFundraiser(req?.user?._id, category, state, zipCode, type, title, goal)
     
     res.status(201).json({ success: true, fundraiser: newFundraiser })
     
@@ -351,27 +351,115 @@ app.get('/api/fundraiser/:id', async (req, res) => {
     res.status(200).json({ success: true, fundraiser: fundraiser })
   } catch (error) {
     
-    res.status(404).json({ success: true })
+    res.status(404).json({ success: false })
+  }
+})
+
+app.patch('/api/fundraiser/image/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { image } = req.body
+    
+    const fundraiser = await Fundraiser.findOneAndUpdate({ _id: id},{
+      image
+    },{
+      new: true 
+    })
+    
+    res.status(204).json({ success: true, fundraiser: fundraiser })
+    
+  } catch (error) {
+    
+    res.status(404).json({ success: false })
+    
   }
 })
 
 app.patch('/api/fundraiser/:id', async (req, res) => {
   try {
     const { id } = req.params
-    const { image } = req.body
-
+    const { category, state, zipCode, title, type, goal } = req.body
+    
     const fundraiser = await Fundraiser.findOneAndUpdate({ _id: id},{
-      image
+      category,
+      state,
+      zipCode,
+      // description,
+      title,
+      type,
+      goal
     },{
-       new: true 
+      new: true 
     })
-
+    
     res.status(204).json({ success: true, fundraiser: fundraiser })
+    
+  } catch (error) {
+    
+    res.status(404).json({ success: false })
+    
+  }
+})
+
+
+app.get('/api/chart-fundraisers', async (req, res) => {
+
+  try {
+
+    const thisWeek = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)))
+    const WeekThree = new Date((thisWeek - (7 * 24 * 60 * 60 * 1000)))
+    const WeekTwo = new Date((WeekThree - (7 * 24 * 60 * 60 * 1000)))
+    const WeekOne = new Date((WeekTwo - (7 * 24 * 60 * 60 * 1000)))
+    const WeekZero = new Date((WeekOne - (7 * 24 * 60 * 60 * 1000)))
+
+    Promise.all([
+      Fundraiser.find({
+        createdAt: 
+        {
+            $gte: thisWeek
+        }
+      }
+      ).count(),
+      Fundraiser.find({
+        createdAt: 
+        {
+            $gte: WeekThree,
+            $lt: thisWeek
+        }
+    }
+    ).count(),
+      Fundraiser.find({
+        createdAt: 
+        {
+            $gte: WeekTwo,
+            $lt: WeekThree
+        }
+    }
+    ).count(),
+    Fundraiser.find({
+      createdAt: 
+      {
+          $gte: WeekOne,
+          $lt: WeekTwo
+      }
+    }
+    ).count(),
+    Fundraiser.find({
+      createdAt: 
+      {
+          $gte: WeekZero,
+          $lt: WeekOne
+      }
+  }
+  ).count(),
+    ]).then( ([ last7, third7, second7, first7, before7 ]) => {
+      res.status(200).json({ success: true, data: [before7, first7, second7, third7, last7] })
+    });
+
 
   } catch (error) {
-
-    res.status(404).json({ success: true })
     
+    res.status(404).json({ success: false })
   }
 })
 

@@ -69,7 +69,7 @@ export default function
                     <span className="rounded-l-md inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
                         <AiTwotonePhone />
                     </span>
-                    <input type="number" name="phone"  className=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-sm h-10 outline-none" required value={RegisterForm.phone} onChange={handleChange} placeholder='Num. de téléphone'/>
+                    <input type="tel" name="phone"  className=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-sm h-10 outline-none" required value={RegisterForm.phone} onChange={handleChange} placeholder='Num. de téléphone'  pattern="[0-9]{2} [0-9]{3} [0-9]{3}" />
                     </div>
                 </div>
             <div className="flex flex-col mb-2">

@@ -13,7 +13,7 @@ export default function SingleFundraiser() {
     const { id } = useParams()
     const { user } = useAuthContext()
 
-    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: 0, user: '', image: null, title: '' })
+    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: undefined, user: '', image: null, title: '' })
     const [WarningOpen, setWarningOpen] = useState<boolean>(true)
 
     useEffect(() => {

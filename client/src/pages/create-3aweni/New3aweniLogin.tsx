@@ -9,14 +9,14 @@ interface FormState {
   state: string | undefined;
   zipCode: number | null;
   type: string;
-  goal: number | null;
+  goal: string | undefined;
   email: string;
   password: string;
 }
 
   export default function New3aweniRegister() {
 
-    const [Form, setForm] = useState<FormState>({category: '', state: "", type: "", goal: null, zipCode: null, email: "", password: ""})
+    const [Form, setForm] = useState<FormState>({category: '', state: "", type: "", goal: undefined, zipCode: null, email: "", password: ""})
 
     const handleChange = (e: FormEvent) => {
   

@@ -10,14 +10,14 @@ interface FormState {
   state: string;
   zipCode: number;
   type: string;
-  goal: number;
+  goal: string | undefined;
 }
 
   export default function New3aweniType() {
 
     const navigate = useNavigate()
 
-    const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', goal: 0})
+    const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', goal: undefined})
 
     useEffect(() => {
       const session3aweni = sessionStorage.getItem('create3aweni')
