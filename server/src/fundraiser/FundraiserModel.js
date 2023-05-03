@@ -78,6 +78,12 @@ const Fundraiser = new mongoose.Schema({
     minlength: 3,
     maxlength: 9
   },
+  acheivedMoney: {
+    type: String,
+    required: true,
+    minlength: 3,
+    maxlength: 9
+  },
   image: {
     type: String,
   },

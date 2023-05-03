@@ -17,6 +17,10 @@ var cloudinary = require('cloudinary').v2;
 const { register } = require('./user/UserService')
 const { createFundraiser } = require('./fundraiser/FundraiserService')
 
+
+ 
+let userId;
+
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
   api_key: process.env.CLOUDINARY_API_KEY, 
@@ -80,7 +84,8 @@ passport.deserializeUser(( id, cb ) => {
           phone: user.phone,
           name: user.name,
           role: user.role,
-          address: user.address
+          address: user.address,
+          sokcetId:user.socketId
       }
       cb(err, userInformation)
   })
@@ -100,6 +105,8 @@ app.post("/api/user/login", (req, res, next) => {
       req.logIn(user, (err) => {
         if (err) { return next(err); }
         res.status(200).json({ success: true, user: user })
+        userId = req.user._id;
+        userId= userId.toString();
       });
     }
 
@@ -111,8 +118,8 @@ app.post('/api/user/register', async ( req, res ) => {
 
   try {
     const { email, password, name, phone } = req?.body
-  
-    const newUser = await register(email, password, name, phone)
+    socketId=""
+    const newUser = await register(email, password, name, phone, socketId)
     
     res.status(200).json({ success: true, user: newUser })
     
@@ -138,20 +145,20 @@ app.post('/api/user/register', async ( req, res ) => {
 
   })
 
-
   app.get('/api/user', ( req, res ) => {
 
     if(req.isAuthenticated())
 
     {
       res.status(200).json({success: true, user: req.user })
+        userId = req.user._id;
+        userId= userId.toString();
     }
 
     else{ 
       res.status(401).json({ success: false })}
 
 })
-
 app.post("/api/user/password-reset", async (req, res) => {
 
   const { email } = req.body;
@@ -175,15 +182,16 @@ app.post("/api/user/password-reset", async (req, res) => {
 
     var transporter = nodemailer.createTransport(
       {
+      secure:true,
       service: "gmail",
       auth: {
-        user: 'achraf.bencheikhladhari@polytechnicien.tn',
-        pass: 'Polyte2022',
+        user: '3aweni.tn@gmail.com',
+        pass: '3awenitn123',
       },
       });
 
     var mailOptions = {
-      from: 'achraf.bencheikhladhari@polytechnicien.tn',
+      from: '3aweni.tn@gmail.com',
       to: email,
       subject: 'Password_Reset_3aweni',
       text: "Someone has requested a password reset for the following account:\n \n Site Name: 3aweni.tn\n \n Username: "+oldUser.name+"\n \n Click the link below to reset your password:\n"+link+"\n \nIf this was a mistake, just igonore this email and nothing will happen.",
@@ -301,11 +309,11 @@ app.post('/api/delete-image', async ( req, res ) => {
 app.post('/api/create-fundraiser/register', async (req, res) => {
 
   try {
-    const { email, password, category, state, zipCode, type, title, goal, name, phone  } = req?.body
+    const { email, password, category, state, zipCode, type, title, goal, name, phone,acheivedMoney } = req?.body
   
     const newUser = await register(email, password, name, phone)
     
-    const newFundraiser = await createFundraiser(newUser._id, category, state, zipCode, type, title, goal)
+    const newFundraiser = await createFundraiser(newUser._id, category, state, zipCode, type, title, goal,acheivedMoney)
     
     res.status(201).json({ success: true, fundraiser: newFundraiser })
     
@@ -321,7 +329,7 @@ app.post('/api/create-fundraiser/loggedin', async (req, res) => {
   try {
     const { id, category, state, zipCode, type, title, goal } = req?.body
 
-    const newFundraiser = await createFundraiser(id, category, state, zipCode, type, title, goal)
+    const newFundraiser = await createFundraiser(id, category, state, zipCode, type, title, goal,acheivedMoney)
     
     res.status(201).json({ success: true, user: newUser, fundraiser: newFundraiser })
     
@@ -336,9 +344,9 @@ app.post('/api/create-fundraiser/loggedin', async (req, res) => {
 app.post('/api/create-fundraiser', async (req, res) => {
 
   try {
-    const { category, state, zipCode, type, title, goal } = req?.body
+    const { category, state, zipCode, type, title, goal,acheivedMoney } = req?.body
 
-    const newFundraiser = await createFundraiser(req?.user?._id, category, state, zipCode, type, title, goal)
+    const newFundraiser = await createFundraiser(req?.user?._id, category, state, zipCode, type, title, goal,acheivedMoney)
     
     res.status(201).json({ success: true, fundraiser: newFundraiser })
     
@@ -381,7 +389,7 @@ app.patch('/api/fundraiser/image/:id', async (req, res) => {
     
   }
 })
-
+let fundId;
 app.patch('/api/fundraiser/:id', async (req, res) => {
   try {
     const { id } = req.params
@@ -400,7 +408,7 @@ app.patch('/api/fundraiser/:id', async (req, res) => {
     })
     
     res.status(204).json({ success: true, fundraiser: fundraiser })
-    
+
   } catch (error) {
     
     res.status(404).json({ success: false })
@@ -472,5 +480,44 @@ app.get('/api/chart-fundraisers', async (req, res) => {
 
 
 
-app.listen(process.env.PORT, () => {
-  console.log('Server listening on port',process.env.PORT)})
+
+
+//socket IO
+const http = require("http");
+const { Server } = require("socket.io");
+const server = http.createServer(app);
+const Donation = require('./donations/DonationModel');
+server.listen(process.env.PORT, () => {
+  console.log("server is running");
+});
+
+  const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:3000",
+    },
+  });
+
+    io.on('connection', (socket) => {
+      
+    console.log(`User Connected: ${socket.id}`);
+    sok=socket.id;
+    User.updateOne({ _id: userId }, { socketId: socket.id }).exec();
+    socket.on('donate', (data) => {
+      const { senderId = userId , recipientId, amount } = data;
+  
+      const donation = new Donation({
+        senderId: senderId,
+        recipientId: recipientId,
+        amount: amount,
+      });
+      donation.save();
+  
+      User.findOne({ _id: recipientId }, (err, user) => {
+        if (!user) {
+          return;
+        }
+        const socketId = user.socketId;
+        io.to(socketId).emit('donation', { amount: amount });
+      });
+    });
+  });

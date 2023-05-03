@@ -13,7 +13,7 @@ export default function SingleFundraiser() {
     const { id } = useParams()
     const { user } = useAuthContext()
 
-    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: undefined, user: '', image: null, title: '' })
+    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: '', user: '', image: null, title: '', acheivedMoney:'' })
     const [WarningOpen, setWarningOpen] = useState<boolean>(true)
 
     useEffect(() => {
@@ -58,8 +58,8 @@ export default function SingleFundraiser() {
 
                         <div className="sticky card w-fit bg-base-100 shadow-modern rounded-lg px-4 top-24 ">
                             <div className="card-body w-72 py-3">
-                                <p className='text-zinc-700 font-thin text-xs'> <strong className='text-black font-semibold text-lg'>52.000 TND</strong> collectés men asl {Fundraiser.goal}.00DT</p>
-                                <progress max="100" value="25" className="w-full h-2 my-1 overflow-hidden rounded bg-secondary_color/10 [&::-webkit-progress-bar]:bg-secondary_color/10 [&::-webkit-progress-value]:bg-secondary_color [&::-moz-progress-bar]:bg-secondary_color" />
+                                <p className='text-zinc-700 font-thin text-xs'> <strong className='text-black font-semibold text-lg'>{Fundraiser.acheivedMoney}.00DT </strong> collectés men asl {Fundraiser.goal}.00DT</p>
+                                <progress max="100" value={(parseFloat(Fundraiser.acheivedMoney)/parseFloat(Fundraiser.goal))*100} className="w-full h-2 my-1 overflow-hidden rounded bg-secondary_color/10 [&::-webkit-progress-bar]:bg-secondary_color/10 [&::-webkit-progress-value]:bg-secondary_color [&::-moz-progress-bar]:bg-secondary_color" />
                                 <p className='text-zinc-500 font-thin text-xs'>11.2k dons</p>
 
 

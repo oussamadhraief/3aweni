@@ -1,6 +1,6 @@
 const Fundraiser = require('./FundraiserModel');
 
-const createFundraiser = async (uid, category, state, zipCode, type, title, goal) => {
+const createFundraiser = async (uid, category, state, zipCode, type, title, goal,acheivedMoney) => {
     try {
             
             const newFundraiser = await Fundraiser.create({
@@ -12,7 +12,8 @@ const createFundraiser = async (uid, category, state, zipCode, type, title, goal
                 goal: goal,
                 archived: false,
                 title: title,
-                image: null
+                image: null,
+                acheivedMoney:acheivedMoney,
             })
             
             return newFundraiser

@@ -21,7 +21,10 @@ const user = new mongoose.Schema({
   },
   image: {
     type: String
-  }
+  },
+  socketId: {
+    type: String
+  },
 });
 
 module.exports = mongoose.model("User", user);

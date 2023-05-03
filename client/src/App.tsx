@@ -25,6 +25,11 @@ import DashboardDonations from './pages/account/dashboard/DashboardDonations';
 import SingleFundraiser from './pages/fundraisers/SingleFundraiser';
 import EditUserFundraiser from './pages/account/dashboard/edit-fundraiser/EditUserFundraiser';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
+const { io } = require("socket.io-client");
+
+const socket = io();
+console.log(socket);
+
 
 function App() {
   

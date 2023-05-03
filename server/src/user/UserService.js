@@ -2,7 +2,7 @@ const User= require('./UserModel');
 const bcrypt= require("bcryptjs");
 
 
-const register = async (email, password, name, phone) => {
+const register = async (email, password, name, phone,socketId) => {
     try {
         
         const user = await User.findOne({ email })
@@ -14,6 +14,7 @@ const register = async (email, password, name, phone) => {
             name,
             phone,
             password: hashedPassword,
+            socketId,
         })
 
         await newUser.save()

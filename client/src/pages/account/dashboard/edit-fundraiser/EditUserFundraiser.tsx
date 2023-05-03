@@ -24,7 +24,7 @@ export default function EditUserFundraiser() {
 	const [Loading, setLoading] = useState<boolean>(true)
 	const [image, setImage] = useState<string>('');
 	const [croppedImage, setCroppedImage] = useState('');
-    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: undefined, user: '', image: null, title: '' })
+    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: '', user: '', image: null, title: '' ,acheivedMoney:''})
 
 	useEffect(() => {
         if(id){
