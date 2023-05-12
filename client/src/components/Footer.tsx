@@ -26,26 +26,18 @@ export default function Footer() {
         <div className="footer__right">
           <div className="footer__links">
             <ul className="footer__links-list">
+              <h4 className="footer__links-title">Liens</h4>
+              <Link className="footer__links-item" to="#">Lancer un 3aweni</Link>
+              <Link className="footer__links-item" to="#">Découvrir</Link>
+              <Link className="footer__links-item" to="#">Recherche</Link>
+              <Link className="footer__links-item" to="#">Aide</Link>
+            </ul>
+            <ul className="footer__links-list">
               <h4 className="footer__links-title">Resources</h4>
-              <Link className="footer__links-item" to="#">Term life insurance plans</Link>
-              <Link className="footer__links-item" to="#">Insurance calculator</Link>
-              <Link className="footer__links-item" to="#">Guide to life insurance</Link>
               <Link className="footer__links-item" to="#">Contact</Link>
               <Link className="footer__links-item" to="#">FAQs</Link>
-            </ul>
-            <ul className="footer__links-list">
-              <h4 className="footer__links-title">Magazine</h4>
-              <Link className="footer__links-item" to="#">Insurance</Link>
-              <Link className="footer__links-item" to="#">Finances</Link>
-              <Link className="footer__links-item" to="#">Health</Link>
-              <Link className="footer__links-item" to="#">Updates</Link>
-            </ul>
-            <ul className="footer__links-list">
-              <h4 className="footer__links-title">More</h4>
-              <Link className="footer__links-item" to="#">Claims</Link>
-              <Link className="footer__links-item" to="#">Terms</Link>
-              <Link className="footer__links-item" to="#">Privacy</Link>
-              <Link className="footer__links-item" to="#">Licenses</Link>
+              <Link className="footer__links-item" to="#">Tarification</Link>
+              <Link className="footer__links-item" to="#">Privacy & terms</Link>
             </ul>
           </div>
         </div>

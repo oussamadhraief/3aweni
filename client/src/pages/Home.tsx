@@ -13,7 +13,7 @@ function App() {
     <main className="mc" id='luxy'>
       <SectionOne />
       <SectionTwo />
-      <SectionThree />
+      {/* <SectionThree /> */}
       <SectionFour />
       <SectionFive />
       <SectionSix />

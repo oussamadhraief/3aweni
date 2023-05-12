@@ -274,7 +274,8 @@ select::-ms-expand {
     width: 100%;
     padding: 100px var(--gap-sh) var(--gap-sv);
     position: relative;
-    background-color: #f8f8f8;
+    /* background-color: #f8f8f8; */
+    background-color: #fff;
   }
   
   .works {
@@ -1036,7 +1037,7 @@ select::-ms-expand {
     min-height: 310px;
     padding: 45px 30px;
     background-color: #ffffff;
-    box-shadow: 0 0 32px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 32px rgba(0, 0, 0, 0.1);
   }
   @media (max-width: 960px) {
     .hands-card__item {

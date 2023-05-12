@@ -26,6 +26,7 @@ import SingleFundraiser from './pages/fundraisers/SingleFundraiser';
 import EditUserFundraiser from './pages/account/dashboard/edit-fundraiser/EditUserFundraiser';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 const { io } = require("socket.io-client");
+import("@lottiefiles/lottie-player");
 
 const socket = io();
 console.log(socket);
