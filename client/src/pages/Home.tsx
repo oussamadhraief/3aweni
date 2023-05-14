@@ -1,8 +1,8 @@
 import React from 'react'
-import SectionOne from '../components/SectionOne'
-import SectionTwo from '../components/SectionTwo'
+import Hero from '../components/Hero'
+import SectionTwo from '../components/CreateFundraiserSection'
 import SectionThree from '../components/SectionThree'
-import SectionFour from '../components/SectionFour'
+import SectionFour from '../components/WhyUse3aweniSection'
 import SectionFive from '../components/SectionFive'
 import SectionSix from '../components/SectionSix'
 import SectionSeven from '../components/SectionSeven'
@@ -11,7 +11,7 @@ import SectionEight from '../components/SectionEight'
 function App() {
   return (
     <main className="mc" id='luxy'>
-      <SectionOne />
+      <Hero />
       <SectionTwo />
       {/* <SectionThree /> */}
       <SectionFour />

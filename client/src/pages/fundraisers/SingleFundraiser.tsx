@@ -13,7 +13,7 @@ export default function SingleFundraiser() {
     const { id } = useParams()
     const { user } = useAuthContext()
 
-    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: '', user: '', image: null, title: '', acheivedMoney:'' })
+    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: '', user: '', image: null, title: '', secondaryImages: [], secondaryVideos: [] })
     const [WarningOpen, setWarningOpen] = useState<boolean>(true)
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function SingleFundraiser() {
   return (
     <main className='relative mt-[94px] py-24  flex flex-col items-center justify-center'>
             <section className="w-full max-w-6xl mx-auto flex flex-col text-gray-600 px-5">
-                {(user?._id === Fundraiser.user && WarningOpen) && <div className='fixed bottom-0 left-0 bg-lighter_main_color/80 w-full flex justify-between items-center py-3 px-10 text-main_color'>
+                {(user?._id === Fundraiser.user && WarningOpen) && <div className='fixed bottom-0 left-0 bg-lighter_primary/80 w-full flex justify-between items-center py-3 px-10 text-primary'>
                     <button className='absolute top-0 right-3 text-lg' onClick={() => setWarningOpen(false)}>x</button>
                     <div className='flex items-center gap-3'>
                         <IconContext.Provider value={{ className: 'w-7 h-7'}}>
@@ -44,7 +44,7 @@ export default function SingleFundraiser() {
                             </p>
                         </div>
                     </div>
-                    <Link to={`/account/dashboard/fundraisers/${Fundraiser._id}`} className='text-sm text-main_color border border-main_color px-2 py-1 rounded'>
+                    <Link to={`/dashboard/fundraisers/${Fundraiser._id}`} className='text-sm text-primary border border-primary px-2 py-1 rounded'>
                         Vous pouvez le modifier  <span className='underline'>ici</span> 
                     </Link>
                 </div>}
@@ -58,8 +58,8 @@ export default function SingleFundraiser() {
 
                         <div className="sticky card w-fit bg-base-100 shadow-modern rounded-lg px-4 top-24 ">
                             <div className="card-body w-72 py-3">
-                                <p className='text-zinc-700 font-thin text-xs'> <strong className='text-black font-semibold text-lg'>{Fundraiser.acheivedMoney}.00DT </strong> collectés men asl {Fundraiser.goal}.00DT</p>
-                                <progress max="100" value={(parseFloat(Fundraiser.acheivedMoney)/parseFloat(Fundraiser.goal))*100} className="w-full h-2 my-1 overflow-hidden rounded bg-secondary_color/10 [&::-webkit-progress-bar]:bg-secondary_color/10 [&::-webkit-progress-value]:bg-secondary_color [&::-moz-progress-bar]:bg-secondary_color" />
+                                <p className='text-zinc-700 font-thin text-xs'> <strong className='text-black font-semibold text-lg'>123.00DT </strong> collectés men asl {Fundraiser.goal}.00DT</p>
+                                <progress max="100" value={30} className="w-full h-2 my-1 overflow-hidden rounded bg-secondary_color/10 [&::-webkit-progress-bar]:bg-secondary_color/10 [&::-webkit-progress-value]:bg-secondary_color [&::-moz-progress-bar]:bg-secondary_color" />
                                 <p className='text-zinc-500 font-thin text-xs'>11.2k dons</p>
 
 
@@ -137,8 +137,8 @@ export default function SingleFundraiser() {
                                 <button className="w-full text-white py-2.5 rounded-lg my-3 flex flex-nowrap items-center gap-2 justify-center shadow-form donate-button">
                                     Donate
                                 </button>
-                                <button className="h-9 border border-main_color text-main_color w-full py-1.5 rounded-lg flex justify-center items-center flex-nowrap gap-1">
-                                    <IconContext.Provider value={{ className: 'text-main_color h-4 w-4 mb-0.5'}}>
+                                <button className="h-9 border border-primary text-primary w-full py-1.5 rounded-lg flex justify-center items-center flex-nowrap gap-1">
+                                    <IconContext.Provider value={{ className: 'text-primary h-4 w-4 mb-0.5'}}>
                                         <MdIosShare />
                                     </IconContext.Provider>
                                     <span>Partager</span>

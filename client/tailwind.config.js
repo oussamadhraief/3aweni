@@ -15,8 +15,8 @@ module.exports = {
         theone: "0 1px 4px rgb(146 161 176 / 15%)"
       },
       colors: {
-        main_color: "#F46752",
-        lighter_main_color: "#ffe8e4",
+        primary: "#F46752",
+        lighter_primary: "#ffe8e4",
         secondary_color: "#007188",
         lighter_blue: "#E5F3FF",
         beige: "#f9f5f2",
@@ -30,8 +30,28 @@ module.exports = {
     require("daisyui")
   ],
   daisyui: {
-    styled: false,
-    themes: false,
+    styled: true,
+    themes: [{
+        mytheme: {
+          
+        "primary": "#F46752",
+                 
+        "secondary": "#007188",
+                 
+        "accent": "#1FB2A5",
+                 
+        "neutral": "#191D24",
+                 
+        "base-100": "#fff",
+                 
+        "info": "#3ABFF8",
+                 
+        "success": "#36D399",
+                 
+        "warning": "#FBBD23",
+                 
+        "error": "#F87272",
+    }}],
     base: true,
     utils: true,
     logs: true,

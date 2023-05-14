@@ -13,9 +13,10 @@ export interface fundraiserInt {
     state: string;
     zipCode: number;
     type: string;
-    goal: string ;
+    goal: string;
     user: string;
     image: string | null;
     title: string;
-    acheivedMoney:string;
+    secondaryImages: string[];
+    secondaryVideos: string[];
 }

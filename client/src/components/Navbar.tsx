@@ -25,17 +25,17 @@ export default function Navbar() {
   //     <img src="/secondary_logo.png" alt="" className='w-32' />
   //   </div>
   //     <div className='w-1/4 h-fit flex gap-7 justify-center'>
-  //       <Link to="" className='px-2 py-1 rounded hover:bg-main_color_hover hover:text-main_color'>Découvrir</Link>
-  //       <Link to="" className='flex items-center gap-2 px-2 py-1 rounded hover:bg-main_color_hover hover:text-main_color'>
+  //       <Link to="" className='px-2 py-1 rounded hover:bg-primary_hover hover:text-primary'>Découvrir</Link>
+  //       <Link to="" className='flex items-center gap-2 px-2 py-1 rounded hover:bg-primary_hover hover:text-primary'>
   //         Recherche
   //         <IconContext.Provider value={{ className: "text-zinc-700 text-xl" }}>
   //           <AiOutlineSearch />
   //         </IconContext.Provider>
   //      </Link>
-  //       <Link to="" className='px-2 py-1 rounded hover:bg-main_color_hover hover:text-main_color'>Aide</Link>
+  //       <Link to="" className='px-2 py-1 rounded hover:bg-primary_hover hover:text-primary'>Aide</Link>
   //     </div>
   //     <div className='w-1/4 flex items-center gap-10 justify-center'>
-  //         <Link to="" className='relative w-fit h-fit rounded hover:text-main_color nav-link'>Se connecter</Link>
-  //         <Link to="" className='w-fit h-fit bg-main_color border rounded text-white py-2 px-5 hover:bg-white border-main_color hover:border hover:text-main_color button-hover-animation'>S'inscrire</Link>
+  //         <Link to="" className='relative w-fit h-fit rounded hover:text-primary nav-link'>Se connecter</Link>
+  //         <Link to="" className='w-fit h-fit bg-primary border rounded text-white py-2 px-5 hover:bg-white border-primary hover:border hover:text-primary button-hover-animation'>S'inscrire</Link>
   //     </div>
   // </nav>

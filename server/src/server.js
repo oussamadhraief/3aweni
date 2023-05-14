@@ -16,6 +16,7 @@ const LocalStrategy = require("passport-local").Strategy;
 var cloudinary = require('cloudinary').v2;
 const { register } = require('./user/UserService')
 const { createFundraiser } = require('./fundraiser/FundraiserService')
+const compression = require('compression')
 
 
  
@@ -29,32 +30,34 @@ cloudinary.config({
 });
 
 
-const app = express ();
 const { MONGO_USER,MONGO_PASSWORD,MONGO_PATH } = process.env
 mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,{
-        // useCreateIndex: true,
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      }, (err) => {
-        if (err) throw err;
-        console.log("Connected To Mongo")
-      })
+  // useCreateIndex: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}, (err) => {
+  if (err) throw err;
+  console.log("Connected To Mongo")
+})
 
+const app = express();
+app.use(express.json({ limit: '50mb' }))
+app.use(cors({
+  origin: "https://localhost:3000",
+  credentials : true
+}))
+app.use(cookieParser())
 app.use(session({
   secret: "secretcode",
   resave: true,
   saveUninitialized: true
 }))
+app.use(express.urlencoded({ limit: '50mb', extended: true }))
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(passport.initialize());
 app.use(passport.session());
-app.use (bodyParser.json());
-app.use (bodyParser.urlencoded({extended:true}));
-app.use(cors({
-  origin: "https://localhost:3000",
-  credentials : true
-}))
+app.use(compression())
 
-app.use(cookieParser())
 
 passport.use(new LocalStrategy({usernameField: "email", passwordField: "password"},( email, password, done ) => {
   User.findOne({ email }, (err, user ) => {
@@ -309,11 +312,11 @@ app.post('/api/delete-image', async ( req, res ) => {
 app.post('/api/create-fundraiser/register', async (req, res) => {
 
   try {
-    const { email, password, category, state, zipCode, type, title, goal, name, phone,acheivedMoney } = req?.body
+    const { email, password, category, state, zipCode, type, title, goal, name, phone } = req?.body
   
     const newUser = await register(email, password, name, phone)
     
-    const newFundraiser = await createFundraiser(newUser._id, category, state, zipCode, type, title, goal,acheivedMoney)
+    const newFundraiser = await createFundraiser(newUser._id, category, state, zipCode, type, title, goal)
     
     res.status(201).json({ success: true, fundraiser: newFundraiser })
     
@@ -327,11 +330,11 @@ app.post('/api/create-fundraiser/register', async (req, res) => {
 app.post('/api/create-fundraiser/loggedin', async (req, res) => {
 
   try {
-    const { id, category, state, zipCode, type, title, goal } = req?.body
+    const { category, state, zipCode, type, title, goal } = req?.body
 
-    const newFundraiser = await createFundraiser(id, category, state, zipCode, type, title, goal,acheivedMoney)
+    const newFundraiser = await createFundraiser(req.user._id, category, state, zipCode, type, title, goal)
     
-    res.status(201).json({ success: true, user: newUser, fundraiser: newFundraiser })
+    res.status(201).json({ success: true, fundraiser: newFundraiser })
     
   } catch (error) {
     
@@ -344,9 +347,9 @@ app.post('/api/create-fundraiser/loggedin', async (req, res) => {
 app.post('/api/create-fundraiser', async (req, res) => {
 
   try {
-    const { category, state, zipCode, type, title, goal,acheivedMoney } = req?.body
+    const { category, state, zipCode, type, title, goal } = req?.body
 
-    const newFundraiser = await createFundraiser(req?.user?._id, category, state, zipCode, type, title, goal,acheivedMoney)
+    const newFundraiser = await createFundraiser(req?.user?._id, category, state, zipCode, type, title, goal)
     
     res.status(201).json({ success: true, fundraiser: newFundraiser })
     
@@ -389,7 +392,52 @@ app.patch('/api/fundraiser/image/:id', async (req, res) => {
     
   }
 })
-let fundId;
+
+
+app.patch('/api/fundraiser/secondary-images/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { secondaryImages } = req.body
+    
+    const fundraiser = await Fundraiser.findOneAndUpdate({ _id: id},{
+      secondaryImages
+    },{
+      new: true 
+    })
+
+    console.log(fundraiser);
+    
+    res.status(204).json({ success: true, fundraiser: fundraiser })
+    
+  } catch (error) {
+    
+    res.status(404).json({ success: false })
+    
+  }
+})
+
+app.patch('/api/fundraiser/secondary-videos/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { secondaryVideos } = req.body
+    
+    const fundraiser = await Fundraiser.findOneAndUpdate({ _id: id},{
+      secondaryVideos
+    },{
+      new: true 
+    })
+
+    console.log(fundraiser);
+    
+    res.status(204).json({ success: true, fundraiser: fundraiser })
+    
+  } catch (error) {
+    
+    res.status(404).json({ success: false })
+    
+  }
+})
+
 app.patch('/api/fundraiser/:id', async (req, res) => {
   try {
     const { id } = req.params

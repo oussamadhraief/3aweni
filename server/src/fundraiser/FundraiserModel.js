@@ -78,11 +78,9 @@ const Fundraiser = new mongoose.Schema({
     minlength: 3,
     maxlength: 9
   },
-  acheivedMoney: {
+  description: {
     type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 9
+    default: null
   },
   image: {
     type: String,
@@ -96,6 +94,12 @@ const Fundraiser = new mongoose.Schema({
     type: Boolean,
     required: true,
     default: false
+  },
+  secondaryImages: {
+    type: [String],
+  },
+  secondaryVideos: {
+    type: [String],
   }
 },
 { timestamps: true });

@@ -90,14 +90,14 @@ export default function() {
                               </div>
                           </div>
                           <div className="flex w-full">
-                              <button type="submit" className="py-2 px-4  bg-main_color hover:bg-secondary_color text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md rounded-lg ">
+                              <button type="submit" className="py-2 px-4  bg-primary hover:bg-secondary_color text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md rounded-lg ">
                                   Se connecter
                               </button>
                           </div>
                       </form>
                   </div>
                   <div className="flex items-center justify-center mt-6">
-                    <p className="text-sm">Vous n'êtes pas déjà inscrit ?  <Link to="/register" className="text-main_color hover:underline">Créez un compte</Link> </p>
+                    <p className="text-sm">Vous n'êtes pas déjà inscrit ?  <Link to="/register" className="text-primary hover:underline">Créez un compte</Link> </p>
                   </div>
               </div>
       </main>

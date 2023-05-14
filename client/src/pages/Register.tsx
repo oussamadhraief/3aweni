@@ -101,14 +101,14 @@ export default function
                     </div>
                 
                     <div className="flex w-full">
-                        <button type="submit" className="py-2 px-4  bg-main_color hover:bg-secondary_color text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md rounded-lg ">
+                        <button type="submit" className="py-2 px-4  bg-primary hover:bg-secondary_color text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md rounded-lg ">
                             S'inscrire
                         </button>
                     </div>
                 </form>
             </div>
             <div className="flex items-center justify-center mt-6">
-                <p className="text-sm">Vous êtes déjà inscrit ?  <Link to="/login" className="text-main_color hover:underline">S'identifier</Link> </p>
+                <p className="text-sm">Vous êtes déjà inscrit ?  <Link to="/login" className="text-primary hover:underline">S'identifier</Link> </p>
             </div>
         </div>
 </main>

@@ -89,7 +89,7 @@ export default function New3aweniCategoryLocation() {
             <div className='flex justify-start gap-4 items-center flex-wrap mt-8'>
         
             {categories.map(item => 
-            <label className={`relative px-4 py-2 text-sm border ${Form.category == item.value ? "bg-lighter_main_color border-main_color" : "bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color border-white"} hover:cursor-pointer rounded-full select-none`} htmlFor={item.value}> <input type="radio" name="category" id={item.value} className='sr-only' onChange={e => handleChange(e)} required value={item.value} checked={Form.category === item.value} /> {item.label} </label> 
+            <label className={`relative px-4 py-2 text-sm border ${Form.category == item.value ? "bg-lighter_primary border-primary" : "bg-white shadow-form hover:bg-lighter_primary hover:border-lighter_primary border-white"} hover:cursor-pointer rounded-full select-none`} htmlFor={item.value}> <input type="radio" name="category" id={item.value} className='sr-only' onChange={e => handleChange(e)} required value={item.value} checked={Form.category === item.value} /> {item.label} </label> 
             )}
         
         
@@ -109,15 +109,15 @@ export default function New3aweniCategoryLocation() {
               </div>
 
               <div className="relative w-full xl:w-96">
-                <input type="number" className="peer block w-full h-10 bg-transparent border  border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-main_color valid:border-main_color rounded-lg" name="zipCode" id='zipCode' required value={Form.zipCode || ''} onChange={handleChange} />
-                <label htmlFor="zipCode" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-main_color border-0 outline-none peer-valid:text-main_color peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">Code zip</label>
+                <input type="number" className="peer block w-full h-10 bg-transparent border  border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-primary valid:border-primary rounded-lg" name="zipCode" id='zipCode' required value={Form.zipCode || ''} onChange={handleChange} />
+                <label htmlFor="zipCode" className="absolute peer-focus:text-xs peer-focus:-top-[7px] peer-focus:outline-none bg-white peer-focus:text-primary border-0 outline-none peer-valid:text-primary peer-valid:text-xs peer-valid:-top-[7px] peer-valid:outline-none cursor-text z-10 top-[11px] left-2 text-sm font-medium px-[2px] text-[rgb(80,80,80)] transition-all">Code zip</label>
             </div>
               
               
             </div>
           </div>
         
-            <button  className='w-fit h-fit px-6 py-3 bg-main_color rounded shadow-form text-white flex items-center font-medium gap-1 self-end'> Suivant </button>
+            <button  className='w-fit h-fit px-6 py-3 bg-primary rounded shadow-form text-white flex items-center font-medium gap-1 self-end'> Suivant </button>
         </div>  
     </form>
     </main>

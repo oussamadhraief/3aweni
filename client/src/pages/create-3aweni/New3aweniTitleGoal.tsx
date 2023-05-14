@@ -12,7 +12,7 @@ interface FormState {
   zipCode: number;
   type: string;
   title: string;
-  goal: string | undefined;
+  goal: string;
 }
 
 
@@ -21,7 +21,7 @@ export default function New3aweniTitleGoal() {
   const { user } = useAuthContext()
   const navigate = useNavigate()
 
-  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', title: '', goal: undefined})
+  const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', title: '', goal: ''})
 
   useEffect(() => {
     const session3aweni = sessionStorage.getItem('create3aweni')
@@ -104,28 +104,29 @@ export default function New3aweniTitleGoal() {
             <input type="text" name="title" id="title" required value={Form.title || ''} onChange={e => setForm({
             ...Form,
             title: e.target.value
-          })} placeholder="In memory of oussema" className="input w-full outline-none border h-10 rounded-lg" />
+          })} placeholder="En mémoire de.." className="px-1 border-[#ccc] placeholder:text-sm placeholder:text-zinc-400 w-full outline-none border h-10 rounded-lg" />
           </label>
 
           <label className="label mt-10">
             <span className="label-text">Objectif de la collecte</span>
           </label>
           <label className="input-group">
-            {/* <input type="number" name="goal" id="goal" required value={Form.goal || ''} onChange={handleChange} placeholder="1 000.00" className="input w-full outline-none border-y border-l h-10" /> */}
             <CurrencyInput
             id="input-example"
             name="input-name"
-            placeholder="Please enter a number"
-            defaultValue={undefined}
+            placeholder="1,000,000"
+            defaultValue={''}
             decimalsLimit={2}
             maxLength={7}
             allowNegativeValue={false}
             value={Form.goal}
-            onValueChange={(value) => setForm({
+            onValueChange={(value) => {
+              const newValue = value as string
+              setForm({
               ...Form,
-              goal: value
-            })}
-            className='input w-full outline-none border-y border-l h-10'
+              goal: newValue
+            })}}
+            className='w-full outline-none border-y border-l h-10 px-1 border-[#ccc] placeholder:text-sm placeholder:text-zinc-400'
            />
             <span> TND</span>
           </label>
@@ -147,7 +148,7 @@ export default function New3aweniTitleGoal() {
                     <HiOutlineArrowNarrowLeft /> 
             </IconContext.Provider>
           </Link>
-          <button className='w-fit h-fit px-6 py-3 bg-main_color rounded shadow-form text-white flex items-center font-medium gap-1 self-end'> Suivant</button>
+          <button className='w-fit h-fit px-6 py-3 bg-primary rounded shadow-form text-white flex items-center font-medium gap-1 self-end'> Suivant</button>
           </div>
       </div> 
 

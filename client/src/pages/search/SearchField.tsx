@@ -168,7 +168,7 @@ export default function SearchField() {
                         <div className='flex flex-wrap justify-start gap-3 mt-1'>
 
                             {categories.map(item => 
-                            <label className={`relative px-4 py-2 text-sm border ${Filters.category.some(element => element === item.value) ? "bg-lighter_main_color border-main_color" : "bg-white shadow-form hover:bg-lighter_main_color hover:border-lighter_main_color border-white"} hover:cursor-pointer rounded-full select-none`} htmlFor={item.value}> <input type="checkbox" name="category" id={item.value} className='sr-only' onChange={handleFiltersCategoriesChange} required value={item.value} /> {item.label} </label> 
+                            <label className={`relative px-4 py-2 text-sm border ${Filters.category.some(element => element === item.value) ? "bg-lighter_primary border-primary" : "bg-white shadow-form hover:bg-lighter_primary hover:border-lighter_primary border-white"} hover:cursor-pointer rounded-full select-none`} htmlFor={item.value}> <input type="checkbox" name="category" id={item.value} className='sr-only' onChange={handleFiltersCategoriesChange} required value={item.value} /> {item.label} </label> 
                             )}
                              
                     </div>
@@ -178,7 +178,7 @@ export default function SearchField() {
                 <div className='w-full flex flex-nowrap items-center justify-around shrink-0 pt-3 px-3'>
                 <button className='border rounded-2xl border-gray-500 px-4 py-2' onClick={handleFiltersReset}>Restaurer</button>
 
-                <button onClick={() => setOpen(false)} className='border rounded-2xl border-main_color px-4 py-2 bg-main_color text-white'>Voir résultats</button>
+                <button onClick={() => setOpen(false)} className='border rounded-2xl border-primary px-4 py-2 bg-primary text-white'>Voir résultats</button>
                 </div>
             </div>
         

@@ -71,15 +71,15 @@ interface FormState {
 
             <label htmlFor="email" className="text-gray-700 w-fit self-start">Adresse Email: </label>
 
-            <input type="text" className="peer block w-full h-10 bg-transparent border  border-[#ccc] px-1 rounded outline-none z-0 focus:border-main_color valid:border-main_color text-sm" name="email" id='email' placeholder='example@email.com' required value={Form.email} onChange={handleChange} />
+            <input type="text" className="peer block w-full h-10 bg-transparent border  border-[#ccc] px-1 rounded outline-none z-0 focus:border-primary valid:border-primary text-sm" name="email" id='email' placeholder='example@email.com' required value={Form.email} onChange={handleChange} />
 
             <div className="relative w-full flex justify-between items-center mt-8">
                 <label htmlFor="password" className="text-gray-700">Mot de passe: </label>
             <Link to='/password-reset' className='hover:underline text-gray-600 hover:text-gray-800 text-sm'>Mot de passe oublié ?</Link>
             </div>
-            <input type="password" className="peer block w-full h-10 bg-transparent border  border-[#ccc] px-1 rounded outline-none z-0 focus:border-main_color valid:border-main_color mb-8" name="password" id='password' required value={Form.password} onChange={handleChange} />
+            <input type="password" className="peer block w-full h-10 bg-transparent border  border-[#ccc] px-1 rounded outline-none z-0 focus:border-primary valid:border-primary mb-8" name="password" id='password' required value={Form.password} onChange={handleChange} />
               
-            <p>Vous n'êtes pas déjà inscrit ? <Link to='/create/register' className='underline text-main_color'>S'inscrire</Link></p>
+            <p>Vous n'êtes pas déjà inscrit ? <Link to='/create/register' className='underline text-primary'>S'inscrire</Link></p>
 
         </div>
 
@@ -94,7 +94,7 @@ interface FormState {
                 </IconContext.Provider>
               </Link>
               
-              <button type='submit' className='w-fit h-fit px-6 py-3 bg-main_color rounded shadow-form text-white flex items-center font-medium gap-1 self-end'> Créer mon 3aweni </button>
+              <button type='submit' className='w-fit h-fit px-6 py-3 bg-primary rounded shadow-form text-white flex items-center font-medium gap-1 self-end'> Créer mon 3aweni </button>
 
             </div>
           </div>

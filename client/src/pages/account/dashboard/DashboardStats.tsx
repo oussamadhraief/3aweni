@@ -36,7 +36,7 @@ export const options = {
 };
 
 
-export default function AdminAnalytics() {
+export default function DashboardStats() {
 
     var dateoptions = { year: 'numeric', month: 'long', day: 'numeric' }
     const thisWeek:any = new Date((new Date().getTime() - (7 * 24 * 60 * 60 * 1000)))
