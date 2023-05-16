@@ -32,16 +32,21 @@ export default function EditUserFundraiser() {
     const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", description: '', goal: '', user: '', image: null, title: '' , secondaryImages: [], secondaryVideos: [], createdAt: null, updatedAt: null})
 
 	useEffect(() => {
+		document.body.style.overflow = 'hidden';
+		
         if(id){
-            axios.get(`/api/fundraiser/${id}`,{
-                withCredentials: true
+			axios.get(`/api/fundraiser/${id}`,{
+				withCredentials: true
             }).then((response) => {
-                const { data: { fundraiser }} = response
+				const { data: { fundraiser }} = response
                 
                 setFundraiser(fundraiser)
 				setLoading(false)
             })
         }
+		return () => {
+			document.body.style.overflow = '';
+		}
     },[])
 
     const handleChange = (event: FormEvent) => {
@@ -325,8 +330,8 @@ export default function EditUserFundraiser() {
 								<div className="absolute inset-0 bg-white/60 flex items-end pb-5 justify-center flex-nowrap">
 									<progress ref={progressBarRef} value={0} max={100} className='w-[96%] ml-[2%] h-2 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary' ></progress>
 								</div>}
-								<button className='absolute top-1 right-1 bg-gray-700 p-1 rounded-full shadow-modern' type='button' onClick={() => setOpen(true)}>
-									<IconContext.Provider value={{className: " text-white h-5 w-5"}}>
+								<button className='absolute top-1 right-1 bg-white p-1 rounded-full shadow-modern' type='button' onClick={() => setOpen(true)}>
+									<IconContext.Provider value={{className: " text-gray-700 h-[18px] w-[18px]"}}>
 											<RiImageEditFill /> 
 									</IconContext.Provider>
 								</button>
@@ -362,7 +367,7 @@ export default function EditUserFundraiser() {
 								</div>)}
 								</>
 							}
-							{Fundraiser.secondaryImages.length < 4 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center bg-white'>
+							{Fundraiser.secondaryImages.length < 4 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center'>
 								<input ref={imagesUploadInputRef} type="file" className='sr-only' onChange={handleSecondaryImagesInput} />
 								<IconContext.Provider value={{ className: 'text-secondary h-6 w-6'}}>
 									<FiUploadCloud />
@@ -395,7 +400,7 @@ export default function EditUserFundraiser() {
 										<source  className="object-cover object-center max-h-full max-w-full" src={`https://res.cloudinary.com/dhwfr0ywo/video/upload/${item}`} />
 									</video>)
 							}
-							{Fundraiser.secondaryVideos.length < 2 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center bg-white'>
+							{Fundraiser.secondaryVideos.length < 2 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center'>
 								<input ref={videosUploadInputRef} type="file" accept='video/mp4' className='sr-only' onChange={handleUploadSecondaryVideos} />
 								<IconContext.Provider value={{ className: 'text-secondary h-6 w-6'}}>
 									<FiUploadCloud />

@@ -1914,16 +1914,13 @@ input[type=number] {
 }
 
 .dashboard-main-section {
-  height: calc(100vh - 48px);
+  height: calc(100% - 48px);
 }
 
 .dashboard-navbar {
   box-shadow: rgba(0, 0, 0, 0.10) 4px 2px 4px;
 }
 
-.fundraiser-sidebar {
-  height: calc(100%);
-}
 
 .donate-button {
   background: rgb(255,27,0);

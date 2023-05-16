@@ -99,7 +99,7 @@ export default function SingleFundraiser() {
                 </div>}
                 <h1 className='text-2xl font-semibold text-gray-800'>{Fundraiser.title}</h1>
                 <div className=" lg:w-4/6 xl:w-full mx-auto flex flex-nowrap items-start justify-between mt-5">
-                    <div className='w-full mr-8 overflow-hidden'>
+                    <div className='w-full mr-8'>
                         <div className='w-full aspect-[7/4] flex items-center justify-center'>
                             {ShowMain.type == 'image' && <img className="max-h-full max-w-full max rounded-md object-cover object-center " src={Fundraiser.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${Fundraiser.image}` : "/3aweni_placeholder.png"} alt="content" /> }
                             {ShowMain.type == 'secondaryImages' && <img className="max-h-full max-w-full rounded-md object-cover object-center " src={`https://res.cloudinary.com/dhwfr0ywo/image/upload/${Fundraiser.secondaryImages[ShowMain.index]}`} alt="content" /> }
@@ -176,7 +176,7 @@ export default function SingleFundraiser() {
                         </div>
                         
                     </div>
-                    <div className='relative fundraiser-sidebar'>
+                    <div className='relative fundraiser-sidebar h-full min-h-full'>
 
                         <div className="sticky card w-fit bg-base-100 shadow-modern rounded-lg px-4 top-24">
                             <div className="w-72 py-8 flex flex-col">
