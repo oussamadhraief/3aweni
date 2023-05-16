@@ -2,6 +2,8 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { fundraiserInt } from "../../../utils/interfaces"
 import { Link } from "react-router-dom"
+import { IconContext } from "react-icons"
+import { BiDotsVerticalRounded } from "react-icons/bi"
 
 
 export default function DashboardFundraisers() {
@@ -34,9 +36,15 @@ export default function DashboardFundraisers() {
 
       <div className="flex flex-wrap gap-0 md:gap-[7.5%] xl:gap-[2.5%] -m-4 bg-transparent px-3">
           {Fundraisers.map(item => 
-            <Link to={`/dashboard/fundraisers/${item._id}`} className="xl:w-[18%] md:w-[45%] pb-4 w-full bg-white rounded mb-10 shadow-form">
+          //component ???
+            <Link to={`/dashboard/fundraisers/${item._id}`} className="relative xl:w-[18%] md:w-[45%] pb-4 w-full bg-white rounded mb-10 shadow-form">
+                <button className="absolute top-1 right-1 text-zinc-700 bg-white rounded-md p-0.5 z-10">
+                  <IconContext.Provider value={{ className: 'w-5 h-5'}}>
+                    <BiDotsVerticalRounded />
+                  </IconContext.Provider>
+                </button>
                 <div className="block relative w-full rounded-t overflow-hidden">
-                  <img alt="ecommerce" className="object-cover object-center w-full h-full block" src={item.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.image}` : "https://dummyimage.com/420x260"} />
+                  <img alt="ecommerce" className="object-cover object-center w-full h-full block" src={item.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.image}` : "https://dummyimage.com/700x400"} />
                 </div>
                 <div className="mt-4 px-4">
                   <h2 className="text-gray-900 title-font text-lg font-medium">The Catalyzer</h2>

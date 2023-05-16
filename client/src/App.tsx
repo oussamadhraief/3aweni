@@ -46,6 +46,50 @@ function App() {
           <Route path="password-reset" element={Loading ? null :  user ? <Navigate to="/" /> : <RequestPasswordReset />} />
           <Route path="search" element={<SearchField />} />
           <Route path="fundraisers/:id" element={<SingleFundraiser />} />
+          <Route
+                path="/fundraisers/animals"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/education"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/environment"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/event"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/family"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/funerals"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/religion"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/health"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/sports"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/emergencies"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
+              <Route
+                path="/fundraisers/other"
+                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+              />
         </Route> 
         <Route path="/dashboard" element={<DashboardLayout />}>
             <Route path="stats"  element={!Loading ?  (user ?  <DashboardStats /> : <Navigate to="/login" />) : null} />

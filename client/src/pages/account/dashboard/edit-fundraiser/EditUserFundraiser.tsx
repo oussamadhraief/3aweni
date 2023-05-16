@@ -29,7 +29,7 @@ export default function EditUserFundraiser() {
 	const [Loading, setLoading] = useState<boolean>(true)
 	const [image, setImage] = useState<string>('');
 	const [croppedImage, setCroppedImage] = useState('');
-    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", description: '', goal: '', user: '', image: null, title: '' , secondaryImages: [], secondaryVideos: []})
+    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", description: '', goal: '', user: '', image: null, title: '' , secondaryImages: [], secondaryVideos: [], createdAt: null, updatedAt: null})
 
 	useEffect(() => {
         if(id){
@@ -224,7 +224,7 @@ export default function EditUserFundraiser() {
 	}
 
   return (
-    <main className="text-gray-600 bg-gray-100 dashboard-main-section overflow-auto">
+    <main className="text-gray-600 bg-gray-100 dashboard-main-section overflow-x-auto">
         <section className="p-6">
 			<button onClick={() => navigate('/dashboard/fundraisers')}>
 				<IconContext.Provider value={{className: " text-gray-700 h-6 w-6"}}>
@@ -299,7 +299,7 @@ export default function EditUserFundraiser() {
 						</div>
 						<div className="col-span-full">
 							<label htmlFor="description" className="text-sm">Description</label>
-							<textarea id="description" name="description" placeholder="Description" value={Fundraiser.description} onChange={handleChange} className="w-full rounded-md outline-none text-sm h-32 p-1"></textarea>
+							<textarea id="description" name="description" placeholder="Description" value={Fundraiser.description} onChange={handleChange} className="w-full rounded-md outline-none text-sm h-40 p-1"></textarea>
 						</div>
 						<div className='col-span-full flex justify-end'>
 							<button className='w-fit h-fit px-4 py-1.5 rounded bg-primary text-white hover:-translate-y-1 transition-all text-sm'>Sauvegarder</button>
@@ -307,7 +307,7 @@ export default function EditUserFundraiser() {
 						</div>
 					</form>
 				</fieldset>
-				<fieldset className="grid grid-cols-4 gap-6 p-6 rounded-md shadow-sm ">
+				<fieldset className="grid grid-cols-4 gap-6 p-6 rounded-md shadow-sm">
 					<div className="space-y-2 col-span-full lg:col-span-1">
 						<p className="font-medium">Ajoutez des images et des vidéos à votre 3aweni</p>
 						<p className="text-xs">C'est optionnel, mais cela pourrait rendre votre 3aweni plus accessible</p>
@@ -362,7 +362,7 @@ export default function EditUserFundraiser() {
 								</div>)}
 								</>
 							}
-							{Fundraiser.secondaryImages.length < 4 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center'>
+							{Fundraiser.secondaryImages.length < 4 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center bg-white'>
 								<input ref={imagesUploadInputRef} type="file" className='sr-only' onChange={handleSecondaryImagesInput} />
 								<IconContext.Provider value={{ className: 'text-secondary h-6 w-6'}}>
 									<FiUploadCloud />
@@ -395,7 +395,7 @@ export default function EditUserFundraiser() {
 										<source  className="object-cover object-center max-h-full max-w-full" src={`https://res.cloudinary.com/dhwfr0ywo/video/upload/${item}`} />
 									</video>)
 							}
-							{Fundraiser.secondaryVideos.length < 2 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center'>
+							{Fundraiser.secondaryVideos.length < 2 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center bg-white'>
 								<input ref={videosUploadInputRef} type="file" accept='video/mp4' className='sr-only' onChange={handleUploadSecondaryVideos} />
 								<IconContext.Provider value={{ className: 'text-secondary h-6 w-6'}}>
 									<FiUploadCloud />

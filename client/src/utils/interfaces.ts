@@ -20,4 +20,6 @@ export interface fundraiserInt {
     description: string;
     secondaryImages: string[];
     secondaryVideos: string[];
+    createdAt: Date | null;
+    updatedAt: Date | null;
 }

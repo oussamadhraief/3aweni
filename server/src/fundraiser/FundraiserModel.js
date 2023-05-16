@@ -4,26 +4,7 @@ const Fundraiser = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: [
-      "Animaux",
-      "Bénévolat",
-      "Communauté",
-      "Compétition",
-      "Créativité",
-      "Dépensescourantes",
-      "Éducation",
-      "Entreprises",
-      "Environnement",
-      "Événements",
-      "Famille",
-      "Obsèquesetcommémorations",
-      "Religion",
-      "Rêves",
-      "Santé",
-      "Sports",
-      "Urgences",
-      "Autre"
-    ],
+    enum: ['animals', 'education', 'environment', 'event', 'family', 'funerals', 'religion', 'health', 'sports', 'emergencies', 'other'],
   },
   user: {
     type: mongoose.Schema.Types.ObjectId, ref: 'User',

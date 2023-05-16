@@ -32,7 +32,7 @@ export default function UserDashboard() {
 
   return (
 
-    <div className='flex w-screen h-screen flex-nowrap items-start overflow-hidden'>
+    <div className='flex w-screen h-screen flex-nowrap justify-start items-start overflow-hidden'>
         <div className={`relative ${ShowSidebar ? "w-72" : "w-0"} transition-all bg-white  shrink-0`}>
                 <div className={`absolute top-0 ${ShowSidebar ? "left-0" : "-left-72"} transition-all duration-150 h-screen w-72 min-w-[288px] max-w-[288px] shadow-form`}>
                     <Link to="/"><img className="h-12 mx-auto mt-5" src="/secondary_logo.png"/></Link>
