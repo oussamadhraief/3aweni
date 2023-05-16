@@ -9,15 +9,17 @@ const cookieParser=require("cookie-parser");
 const bcrypt=require("bcryptjs");
 const session = require("express-session");
 const bodyParser=require("body-parser");
-const User = require('./user/UserModel');
-const Fundraiser = require('./fundraiser/FundraiserModel');
 require( 'dotenv/config')
 const LocalStrategy = require("passport-local").Strategy;
 var cloudinary = require('cloudinary').v2;
-const { register } = require('./user/UserService')
-const { createFundraiser } = require('./fundraiser/FundraiserService')
 const compression = require('compression')
 const multer = require('multer');
+const User = require('./user/UserModel');
+const Fundraiser = require('./fundraiser/FundraiserModel');
+const Donation = require('./donation/DonationModel');
+const ContactUser = require('./contact-user/ContactUserModel');
+const { createFundraiser } = require('./fundraiser/FundraiserService')
+const { register } = require('./user/UserService')
 const fs = require('fs');
 const { promisify } = require('util');
 
@@ -396,9 +398,26 @@ app.get('/api/fundraiser/:id', async (req, res) => {
   try {
     const { id } = req.params
 
-    const fundraiser = await Fundraiser.findOne({ _id: id })
+    const fundraiser = await Fundraiser.findOne({ _id: id }).populate('user')
 
     res.status(200).json({ success: true, fundraiser: fundraiser })
+  } catch (error) {
+    
+    res.status(404).json({ success: false })
+  }
+})
+
+
+//fundraisers by categorie
+
+app.get('/api/fundraisers/category/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const fundraisers = await Fundraiser.find({ category: id })
+
+    res.status(200).json({ success: true, fundraisers: fundraisers })
+    
   } catch (error) {
     
     res.status(404).json({ success: false })
@@ -558,6 +577,44 @@ app.get('/api/chart-fundraisers', async (req, res) => {
   }
 })
 
+//Contact User
+
+app.post('/api/contact-user', async (req,res) => {
+  try {
+    
+    let contact
+    const { message, id } = req.body
+    if(req.isAuthenticated()){
+
+      contact = {
+        senderId: req.user._id,
+        recipientId: id,
+        name: req.user.name,
+        email: req.user.email,
+        message
+      }
+
+    }else{
+
+      contact = {
+        senderId: null,
+        recipientId: id,
+        name: req.body.name,
+        email: req.body.email,
+        message
+      }
+
+    }
+    
+    await ContactUser.create(contact)
+
+    res.status(201).json({ success: true })
+
+  } catch (error) {
+    res.status(400).json({ success: false, error: error })
+  }
+})
+
 
 
 
@@ -566,8 +623,7 @@ app.get('/api/chart-fundraisers', async (req, res) => {
 const http = require("http");
 const { Server } = require("socket.io");
 const server = http.createServer(app);
-const Donation = require('./donations/DonationModel');
-server.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, () => {
   console.log("server is running");
 });
 

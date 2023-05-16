@@ -21,7 +21,7 @@ export default function Navbar() {
           </button>
           <div className={Show ? `rounded-md absolute left-0 top-[150%] w-96 h-60 flex flex-wrap px-4 py-2 space-x-1 bg-white shadow-form transition-[display] duration-500` : `hidden transition-[display] delay-500`}>
               <h3 className='font-semibold w-full text-xs'>Catégories</h3>
-              {categories.map(item => <Link to={`/fundraisers/${item.value}`} className='w-32 h-5 whitespace-nowrap text-sm hover:underline' onClick={() => setShow(false)}>{item.label}</Link>)}
+              {categories.map(item => <Link to={`/discover/${item.value}`} className='w-32 h-5 whitespace-nowrap text-sm hover:underline' onClick={() => setShow(false)}>{item.label}</Link>)}
           </div>
         </li>
         <li className="main-menu__item"><Link to="/search" className='flex items-center gap-1 main-menu__link g-link group'>

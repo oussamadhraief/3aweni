@@ -1926,3 +1926,49 @@ input[type=number] {
   background: rgb(255,27,0);
   background: linear-gradient(0deg, rgba(255,27,0,1) 0%, rgba(251,75,2,1) 100%);
 }
+
+.fundraiser-container {
+  display: grid;
+  grid-template-columns: 4fr 4fr .5fr 4fr;
+  grid-template-rows: auto;
+  grid-template-areas:
+  "title title title title"
+  "image image . sidebar"
+  "secondary secondary . sidebar"
+  "date date . sidebar"
+  "organizer organizer . sidebar"
+  "description description . sidebar"
+  "buttons buttons . sidebar";
+}
+
+.grid-fundraiser-title {
+  grid-area: title;
+}
+
+.grid-fundraiser-image {
+  grid-area: image;
+}
+
+.grid-fundraiser-sidebar {
+  grid-area: sidebar;
+}
+
+.grid-fundraiser-date-category {
+  grid-area: date;
+}
+
+.grid-fundraiser-organizer {
+  grid-area: organizer;
+}
+
+.grid-fundraiser-buttons {
+  grid-area: buttons;
+}
+
+.grid-fundraiser-secondary {
+  grid-area: secondary;
+}
+
+.grid-fundraiser-description {
+  grid-area: description;
+}

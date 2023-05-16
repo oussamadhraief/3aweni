@@ -22,6 +22,7 @@ import DashboardDonations from './pages/account/dashboard/DashboardDonations';
 import SingleFundraiser from './pages/fundraisers/SingleFundraiser';
 import EditUserFundraiser from './pages/account/dashboard/edit-fundraiser/EditUserFundraiser';
 import DashboardStats from './pages/account/dashboard/DashboardStats';
+import CategoryFundraisers from './pages/fundraisers/CategoryFundraisers';
 const { io } = require("socket.io-client");
 import("@lottiefiles/lottie-player");
 
@@ -47,48 +48,8 @@ function App() {
           <Route path="search" element={<SearchField />} />
           <Route path="fundraisers/:id" element={<SingleFundraiser />} />
           <Route
-                path="/fundraisers/animals"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/education"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/environment"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/event"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/family"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/funerals"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/religion"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/health"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/sports"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/emergencies"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
-              />
-              <Route
-                path="/fundraisers/other"
-                element={!Loading ? (user ? <EditUserFundraiser /> : <Navigate to="/login" />) : null}
+                path="/discover/:category"
+                element={!Loading ? <CategoryFundraisers /> : null}
               />
         </Route> 
         <Route path="/dashboard" element={<DashboardLayout />}>

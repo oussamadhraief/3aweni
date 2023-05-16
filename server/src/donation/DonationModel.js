@@ -10,6 +10,7 @@ const donation = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, ref: 'User' 
 },
   amount: Number,
-});
+},
+{ timestamps: true });
 
 module.exports = mongoose.model("Donation", donation);
