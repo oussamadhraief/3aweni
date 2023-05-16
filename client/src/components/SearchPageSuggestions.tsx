@@ -27,7 +27,7 @@ import { useState } from "react";
                       <p className="font-semibold text-black text-sm px-2 leading-6 line-clamp-1">help 3awnouh</p>
                       <p className="line-clamp-2 leading-7 w-full text-sm px-2">dfsfdf sdfsdf fsdfsd Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet est iusto explicabo magnam ducimus esse rerum sed assumenda dolores saepe sint voluptate ut tempora sit minus, facilis qui itaque? Iusto?</p>
                       <p className='text-zinc-500 font-thin text-xs mt-10 px-2'>Dernier don 2 min</p>
-                      <progress max="100" value="25" className="w-[96%] ml-[2%] h-2 overflow-hidden rounded bg-secondary_color/10 [&::-webkit-progress-bar]:bg-secondary_color/10 [&::-webkit-progress-value]:bg-secondary_color [&::-moz-progress-bar]:bg-secondary_color" />
+                      <progress max="100" value="25" className="w-[96%] ml-[2%] h-2 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary" />
                       <p className='text-zinc-500 font-thin text-xs mt-2 px-2'> <strong className='text-black font-bold'>52.000DT</strong> collectés men asl 1000DT</p>
                   </div>
                   
@@ -41,7 +41,7 @@ import { useState } from "react";
                 <p className="font-semibold text-black text-sm px-2  w-full leading-6 line-clamp-1">heeeeeeeeeeeelp3awnouh</p>
                 <p className="line-clamp-2 leading-7 w-full text-sm px-2">dfsfdf sdfsdf fsdfsd Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet est iusto explicabo magnam ducimus esse rerum sed assumenda dolores saepe sint voluptate ut tempora sit minus, facilis qui itaque? Iusto?</p>
                 <p className='text-zinc-500 font-thin text-xs mt-10 px-2'>Dernier don 2 min</p>
-                <progress max="100" value="25" className="w-[96%] ml-[2%] h-2 overflow-hidden rounded bg-secondary_color/10 [&::-webkit-progress-bar]:bg-secondary_color/10 [&::-webkit-progress-value]:bg-secondary_color [&::-moz-progress-bar]:bg-secondary_color" />
+                <progress max="100" value="25" className="w-[96%] ml-[2%] h-2 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary" />
                 <p className='text-zinc-500 font-thin text-xs mt-2 px-2'> <strong className='text-black font-bold'>52.000DT</strong> collectés men asl 1000DT</p>
             </div>
                   

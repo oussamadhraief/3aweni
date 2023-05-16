@@ -75,7 +75,7 @@ export default function DashboardSettings() {
                         <div className={EditingImage ? "relative flex gap-3" : "relative flex items-center gap-3"}>
                             {EditingImage ? <>
                                 <button type="button" className="text-xs" onClick={handleEditingImage}>annuler</button> 
-                                <button type="button" className="bg-secondary_color px-2 py-0.5 rounded text-white whitespace-nowrap text-sm">enregistrer</button> 
+                                <button type="button" className="bg-secondary px-2 py-0.5 rounded text-white whitespace-nowrap text-sm">enregistrer</button> 
                             </> : 
                             <>
                                 <button type="button" className="bg-gray-300 px-2 py-0.5 rounded text-black whitespace-nowrap text-sm" onClick={handleEditingImage}>Modifer l'image</button>

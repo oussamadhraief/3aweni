@@ -17,10 +17,17 @@ var cloudinary = require('cloudinary').v2;
 const { register } = require('./user/UserService')
 const { createFundraiser } = require('./fundraiser/FundraiserService')
 const compression = require('compression')
+const multer = require('multer');
+const fs = require('fs');
+const { promisify } = require('util');
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
- 
+const writeFile = promisify(fs.writeFile);
+
 let userId;
+
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
@@ -276,12 +283,37 @@ app.post('/api/upload', async ( req, res ) => {
       
       const uploadedResponse = await cloudinary.uploader.upload(file, { upload_preset: process.env.CLOUDINARY_PRESET_NAME })
 
-      res.json({ imagePublicId: uploadedResponse })
+      res.json({ imagePublicId: uploadedResponse.public_id })
   } catch (error) {
 
       console.error(error)
   }
 })
+
+
+app.post('/api/upload-video', upload.single('video'), async (req, res) => {
+  try {
+    const { buffer } = req.file;
+
+    await writeFile('video.mp4', buffer);
+
+    const uploadedResponse = await cloudinary.uploader.upload('video.mp4', {
+      resource_type: 'video',
+      eager_async: true,
+      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
+    });
+
+    res.json({ videoPublicId: uploadedResponse.public_id });
+
+  } catch (error) {
+
+    console.error(error);
+    res.status(400).send('Server Error');
+    
+  }
+});
+
+
 
 app.post('/api/delete-image', async ( req, res ) => {
   try {
@@ -441,13 +473,13 @@ app.patch('/api/fundraiser/secondary-videos/:id', async (req, res) => {
 app.patch('/api/fundraiser/:id', async (req, res) => {
   try {
     const { id } = req.params
-    const { category, state, zipCode, title, type, goal } = req.body
+    const { category, state, zipCode, title, type, goal, description } = req.body
     
     const fundraiser = await Fundraiser.findOneAndUpdate({ _id: id},{
       category,
       state,
       zipCode,
-      // description,
+      description,
       title,
       type,
       goal

@@ -90,7 +90,7 @@ export default function() {
                               </div>
                           </div>
                           <div className="flex w-full">
-                              <button type="submit" className="py-2 px-4  bg-primary hover:bg-secondary_color text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md rounded-lg ">
+                              <button type="submit" className="py-2 px-4  bg-primary hover:bg-secondary text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md rounded-lg ">
                                   Se connecter
                               </button>
                           </div>

@@ -1,12 +1,6 @@
 export const categories = [
     {value: 'Animaux', label: 'Animaux'},
-    {value: 'Bénévolat', label: 'Bénévolat'},
-    {value: 'Communauté', label: 'Communauté'},
-    {value: 'Compétition', label: 'Compétition'},
-    {value: 'Créativité', label: 'Créativité'},
-    {value: 'Dépensescourantes', label: 'Dépenses courantes'},
     {value: 'Éducation', label: 'Éducation'},
-    {value: 'Entreprises', label: 'Entreprises'},
     {value: 'Environnement', label: 'Environnement'},
     {value: 'Événements', label: 'Événements'},
     {value: 'Famille', label: 'Famille'},

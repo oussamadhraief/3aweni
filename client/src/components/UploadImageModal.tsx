@@ -50,8 +50,8 @@ export default function UploadImageModal({ open, onClose, setShow, setImage, han
               <GrFormClose />
             </IconContext.Provider>
           </button>
-          <label htmlFor="main-fundraiser-image" className='cursor-pointer w-1/2 h-40 text-secondary_color'>
-            <div className='w-full h-full flex flex-col items-center justify-center border-2 border-secondary_color rounded'>
+          <label htmlFor="main-fundraiser-image" className='cursor-pointer w-1/2 h-40 text-secondary'>
+            <div className='w-full h-full flex flex-col items-center justify-center border-2 border-secondary rounded'>
               <IconContext.Provider value={{ className: 'h-10 w-10 '}}>
                 <BsUpload />
               </IconContext.Provider>
@@ -67,7 +67,7 @@ export default function UploadImageModal({ open, onClose, setShow, setImage, han
                 className="sr-only" 
             />
           </label>
-          <button disabled={currentImage === null} className='w-1/2 h-40 text-secondary_color disabled:text-gray-400 flex flex-col items-center justify-center border-2 border-secondary_color disabled:border-gray-400 rounded' onClick={handleDeleteImage}>
+          <button disabled={currentImage === null} className='w-1/2 h-40 text-secondary disabled:text-gray-400 flex flex-col items-center justify-center border-2 border-secondary disabled:border-gray-400 rounded' onClick={handleDeleteImage}>
               <IconContext.Provider value={{ className: 'h-10 w-10 '}}>
                 <AiOutlineDelete />
               </IconContext.Provider>

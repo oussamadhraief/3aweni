@@ -88,7 +88,7 @@ const EasyCrop = ({ image, handleImageUpload, setCroppedImage, onClose }: { imag
         </div>
       </div>
       <div className="w-full mt-5 flex justify-center">
-        <button className="z-2 cursor-pointer w-24 py-1 bg-secondary_color rounded self-center text-white"
+        <button className="z-2 cursor-pointer w-24 py-1 bg-secondary rounded self-center text-white"
           onClick={getNewCroppedImage}
         >
           Importer

@@ -99,7 +99,7 @@ export default function SearchField() {
                 </IconContext.Provider>
             </button>
             <input placeholder="Chercher un 3aweni" className='w-full outline-none h-10 placeholder:text-sm placeholder:font-thin placeholder:text-gray-600' value={Search} onChange={handleChange} />
-            <button type='button' className={`rounded-md  ${FiltersCount !== 0 ? 'pl-1.5 pr-3 bg-secondary_color text-white' : 'px-3 bg-gray-200 text-black'} py-1 flex items-center gap-1`} onClick={() => setOpen(true)}>
+            <button type='button' className={`rounded-md  ${FiltersCount !== 0 ? 'pl-1.5 pr-3 bg-secondary text-white' : 'px-3 bg-gray-200 text-black'} py-1 flex items-center gap-1`} onClick={() => setOpen(true)}>
                 <span className={`${FiltersCount !== 0 ? 'w-3' : 'w-0' } transition-all overflow-hidden`}>{FiltersCount}</span>
                 Filtres
                 <IconContext.Provider value={{ className: 'rotate-90 h-4 w-4 text-sm'}}>
@@ -140,7 +140,7 @@ export default function SearchField() {
                                 checked={Filters.nearby}
                                 onChange={handleFiltersChange}
                                 className="hidden peer" />
-                                <div className="w-11 h-6 rounded-full shadow-inner bg-gray-300 peer-checked:bg-secondary_color"></div>
+                                <div className="w-11 h-6 rounded-full shadow-inner bg-gray-300 peer-checked:bg-secondary"></div>
                                 <div className="bg-white absolute inset-y-0 left-0 w-4 h-4 m-1 rounded-full shadow  peer-checked:left-5 transition-all duration-200 ease-in-out"></div>
                             </span>
                         </label>
@@ -155,7 +155,7 @@ export default function SearchField() {
                                 checked={Filters.closeToGoal}
                                 onChange={handleFiltersChange}
                                  className="hidden peer" />
-                                <div className="w-11 h-6 rounded-full shadow-inner bg-gray-300 peer-checked:bg-secondary_color"></div>
+                                <div className="w-11 h-6 rounded-full shadow-inner bg-gray-300 peer-checked:bg-secondary"></div>
                                 <div className="bg-white absolute inset-y-0 left-0 w-4 h-4 m-1 rounded-full shadow  peer-checked:left-5 transition-all duration-200 ease-in-out"></div>
                             </span>
                         </label>

@@ -40,7 +40,7 @@ export default function DashboardFundraisers() {
                 </div>
                 <div className="mt-4 px-4">
                   <h2 className="text-gray-900 title-font text-lg font-medium">The Catalyzer</h2>
-                  <progress max="100" value="25" className="w-full h-1.5 mt-1 overflow-hidden rounded bg-secondary_color/10 [&::-webkit-progress-bar]:bg-secondary_color/10 [&::-webkit-progress-value]:bg-secondary_color [&::-moz-progress-bar]:bg-secondary_color" />
+                  <progress max="100" value="25" className="w-full h-1.5 mt-1 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary" />
                   <div>
                     <span className="mt-1">00.00 TND</span>
                     <span className="text-gray-500 text-xs tracking-widest title-font mb-1"> de {item.goal}.00 TND collectés</span> 

@@ -4,7 +4,6 @@ import { BiDonateHeart, BiIdCard } from 'react-icons/bi'
 import { FiSettings } from 'react-icons/fi'
 import { TiMessage } from 'react-icons/ti'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import AllUserChats from './AllUserChats'
 import { BsArrowBarLeft } from 'react-icons/bs'
 import getUser from '../hooks/getUser'
 import useAuthContext from '../hooks/useAuthContext'
@@ -36,7 +35,6 @@ export default function UserDashboard() {
     <div className='flex w-screen h-screen flex-nowrap items-start overflow-hidden'>
         <div className={`relative ${ShowSidebar ? "w-72" : "w-0"} transition-all bg-white  shrink-0`}>
                 <div className={`absolute top-0 ${ShowSidebar ? "left-0" : "-left-72"} transition-all duration-150 h-screen w-72 min-w-[288px] max-w-[288px] shadow-form`}>
-                <AllUserChats ShowChats={ShowChats} setShowChats={setShowChats} />
                     <Link to="/"><img className="h-12 mx-auto mt-5" src="/secondary_logo.png"/></Link>
 
 
@@ -101,7 +99,7 @@ export default function UserDashboard() {
                 </div>
         </div>
 
-        <div className='w-full flex flex-col flex-nowrap h-full overflow-hidden'>
+        <div className='w-full flex flex-col flex-nowrap h-screen overflow-hidden'>
             <div className="w-full flex flex-nowrap justify-end px-5 relative bg-base-100 z-10 h-12 dashboard-navbar">
                 <button className={`w-fit h-full absolute ${ShowSidebar ? "-left-10" : "left-5"} transition-all top-0`} onClick={() => setShowSidebar(prev => !prev)}>
                     {ShowSidebar ?

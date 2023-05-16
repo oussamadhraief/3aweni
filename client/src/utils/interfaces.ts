@@ -17,6 +17,7 @@ export interface fundraiserInt {
     user: string;
     image: string | null;
     title: string;
+    description: string;
     secondaryImages: string[];
     secondaryVideos: string[];
 }

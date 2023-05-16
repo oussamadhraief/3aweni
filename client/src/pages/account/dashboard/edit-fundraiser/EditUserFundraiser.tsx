@@ -29,13 +29,7 @@ export default function EditUserFundraiser() {
 	const [Loading, setLoading] = useState<boolean>(true)
 	const [image, setImage] = useState<string>('');
 	const [croppedImage, setCroppedImage] = useState('');
-    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", goal: '', user: '', image: null, title: '' , secondaryImages: [], secondaryVideos: []})
-
-
-	useEffect(() => {
-		console.log(Fundraiser);
-		
-	},[Fundraiser])
+    const [Fundraiser, setFundraiser] = useState<fundraiserInt>({_id: "", category: "", state: "", zipCode: 0, type: "", description: '', goal: '', user: '', image: null, title: '' , secondaryImages: [], secondaryVideos: []})
 
 	useEffect(() => {
         if(id){
@@ -114,88 +108,93 @@ export default function EditUserFundraiser() {
         const res = await axios.post('/api/upload',{
             data: Base64EncodedImage
         },{
-            headers: {
-                "Content-Type": "application/json"
+			headers: {
+				"Content-Type": "application/json"
             },
             withCredentials: true,
             onUploadProgress: (progressEvent) => {
-                // const percentCompleted = (progressEvent.loaded / progressEvent.total!) * 100
+				// const percentCompleted = (progressEvent.loaded / progressEvent.total!) * 100
                 // progressBarRef.current?.setAttribute('value',`${percentCompleted}`)
                 // if(percentCompleted == 100) {
-                //     add completed
-                // }
-            }
-        })
+					//     add completed
+					// }
+				}
+			})
+			
+			return res?.data?.imagePublicId
+            
+		}
+	
+		const handleMainImage = async (Base64EncodedImage: string) => {
+	
+			setEditingImage(true)
+			
+			const publicId = await handleImageUpload(Base64EncodedImage)
+			
+			if(Fundraiser.image)
+				await Promise.all([handleDeleteCurrentImage(Fundraiser.image), handleUpdateFundraiserImage(publicId)])
+			else
+				await handleUpdateFundraiserImage(publicId)
+	
+			setFundraiser({
+				...Fundraiser,
+				image: publicId
+			})
+			setEditingImage(false)
+		}
+	
+		async  function handleSecondaryImagesInput(e: React.FormEvent){
+			if(imagesUploadInputRef.current)
+				imagesUploadInputRef.current.disabled = true
+			const target = e.target as HTMLInputElement
+			const files: FileList | null = target?.files
+			const reader = new FileReader();
+			reader.onload = async function () {
+				if(reader.result)
+				handleUploadSecondaryImages(reader.result)
+			}
+			if(files)
+				reader.readAsDataURL(files[0])
+		}
+	
+	
+		const handleUploadSecondaryImages = async (Base64EncodedImage: any) => {
+	
+			const publicId = await handleImageUpload(Base64EncodedImage)
+			await handleUpdateFundraiserSecondaryImages(publicId)
+	
+			setFundraiser(prev => {return {
+				...prev,
+				secondaryImages: [
+					...prev.secondaryImages,
+					publicId
+				]
+			}})
+			if(imagesUploadInputRef.current)
+				imagesUploadInputRef.current.disabled = false
+		}
 
-		return res?.data?.imagePublicId.public_id
+	const handleVideoUpload = async (e: React.FormEvent) => {
+		const formData = new FormData();
+		const target = e.target as HTMLInputElement
+		
+		if(target.files)
+			formData.append('video', target.files[0])
+		
+        const res = await axios.post('/api/upload-video', formData ,{
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            withCredentials: true,
+    
+        })
+		
+		return res?.data?.videoPublicId
             
     }
+	const handleUploadSecondaryVideos = async (e: React.FormEvent) => {
 
-	const handleMainImage = async (Base64EncodedImage: string) => {
-
-		setEditingImage(true)
-
-		const currentImage = Fundraiser.image as string
-
-		const publicId = await handleImageUpload(Base64EncodedImage)
-		
-		await Promise.all([handleDeleteCurrentImage(currentImage), handleUpdateFundraiserImage(publicId)])
-
-		setFundraiser({
-			...Fundraiser,
-			image: publicId
-		})
-		setEditingImage(false)
-	}
-
-	async  function handleSecondaryImagesInput(e: React.FormEvent){
-        if(imagesUploadInputRef.current)
-            imagesUploadInputRef.current.disabled = true
-        const target = e.target as HTMLInputElement
-        const files: FileList | null = target?.files
-        const reader = new FileReader();
-        reader.onload = async function () {
-            if(reader.result)
-			handleUploadSecondaryImages(reader.result)
-        }
-        if(files)
-            reader.readAsDataURL(files[0])
-    }
-
-
-	async  function handleSecondaryVideosInput(e: React.FormEvent){
-        if(videosUploadInputRef.current)
-            videosUploadInputRef.current.disabled = true
-        const target = e.target as HTMLInputElement
-        const files: FileList | null = target?.files
-        const reader = new FileReader();
-        reader.onload = async function () {
-            if(reader.result)
-			handleUploadSecondaryVideos(reader.result)
-        }
-        if(files)
-            reader.readAsDataURL(files[0])
-    }
-
-	const handleUploadSecondaryImages = async (Base64EncodedImage: any) => {
-
-		const publicId = await handleImageUpload(Base64EncodedImage)
-		await handleUpdateFundraiserSecondaryImages(publicId)
-
-		setFundraiser(prev => {return {
-			...prev,
-			secondaryImages: [
-				...prev.secondaryImages,
-				publicId
-			]
-		}})
-		if(imagesUploadInputRef.current)
-            imagesUploadInputRef.current.disabled = false
-	}
-	
-	const handleUploadSecondaryVideos = async (Base64EncodedImage: any) => {
-
-		const publicId = await handleImageUpload(Base64EncodedImage)
+		const publicId = await handleVideoUpload(e)
 		await handleUpdateFundraiserSecondaryVideos(publicId)
 
 		setFundraiser(prev => {return {
@@ -209,6 +208,21 @@ export default function EditUserFundraiser() {
             videosUploadInputRef.current.disabled = false
 	}
 
+
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault()
+
+		axios.patch(`/api/fundraiser/${Fundraiser._id}`, {
+			title: Fundraiser.title,
+			goal: Fundraiser.goal,
+			category: Fundraiser.category,
+			type: Fundraiser.type,
+			state: Fundraiser.state,
+			zipCode: Fundraiser.zipCode,
+			description: Fundraiser.description,
+		})
+	}
+
   return (
     <main className="text-gray-600 bg-gray-100 dashboard-main-section overflow-auto">
         <section className="p-6">
@@ -217,36 +231,15 @@ export default function EditUserFundraiser() {
 						<HiOutlineArrowNarrowLeft /> 
 				</IconContext.Provider>
 			</button>
-			<form  className="container flex flex-col mx-auto space-y-12 ng-untouched ng-pristine ng-valid">
+			<div  className="container flex flex-col mx-auto space-y-12 ng-untouched ng-pristine ng-valid">
 				<fieldset className="grid grid-cols-4 gap-6 p-6 rounded-md shadow-sm">
 					<div className="space-y-2 col-span-full lg:col-span-1">
 						<p className="font-medium">Modifiez votre 3aweni</p>
-						<p className="text-xs">Modifiez toutes les informations relatives à votre funraiser (image, titre, description...)</p>
+						<p className="text-xs">Modifiez les informations relatives à votre funraiser (image, titre, description...)</p>
 					</div>
-					<div className="grid grid-cols-6 gap-4 col-span-full lg:col-span-3">
+					<form onSubmit={handleSubmit} className="grid grid-cols-6 gap-4 col-span-full lg:col-span-3">
 
-						<div className='col-span-full grid grid-cols-6 gap-4'>
-							<div className='relative col-span-full sm:col-span-3 aspect-[7/4] rounded-md overflow-hidden'>
-								{Loading ?
-								<div className='w-full h-full bg-gray-300 animate-pulse'>
-
-								</div>
-								 :
-								<><img className="object-cover object-center w-full" src={Fundraiser.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${Fundraiser.image}` : "/3aweni_placeholder.png"} alt="content" />
-								{EditingImage &&
-								<div className="absolute inset-0 bg-white/60 flex items-end pb-5 justify-center flex-nowrap">
-									<progress ref={progressBarRef} value={0} max={100} className='w-[96%] ml-[2%] h-2 overflow-hidden rounded bg-secondary_color/10 [&::-webkit-progress-bar]:bg-secondary_color/10 [&::-webkit-progress-value]:bg-secondary_color [&::-moz-progress-bar]:bg-secondary_color' ></progress>
-								</div>}
-								<button className='absolute top-1 right-1 bg-gray-700 p-1 rounded-full shadow-modern' type='button' onClick={() => setOpen(true)}>
-									<IconContext.Provider value={{className: " text-white h-5 w-5"}}>
-											<RiImageEditFill /> 
-									</IconContext.Provider>
-								</button>
-								</>
-								}
-							</div>
-
-						</div>
+						
 
 
 						<div className="col-span-full sm:col-span-3">
@@ -280,14 +273,14 @@ export default function EditUserFundraiser() {
 						
 						<div className="col-span-full sm:col-span-3">
 							<label htmlFor="category" className="text-sm">Categorie</label>
-							<select id="category" name="category" placeholder='Categorie'  className="block w-full h-9 text-sm text-gray-900 rounded-lg outline-none">
+							<select onChange={handleChange} id="category" name="category" placeholder='Categorie'  className="block w-full h-9 text-sm text-gray-900 rounded-lg outline-none">
 									{categories.map(item => <option value={item.value} selected={item.value === Fundraiser.category}>{item.label}</option>)}
 	
 							</select>
 						</div>
 						<div className="col-span-full sm:col-span-3">
 							<label htmlFor="type" className="text-sm">Type</label>
-							<select id="type" name="type" placeholder='Categorie'  className="block w-full h-9 text-sm text-gray-900 rounded-lg outline-none">
+							<select onChange={handleChange} id="type" name="type" placeholder='Categorie'  className="block w-full h-9 text-sm text-gray-900 rounded-lg outline-none">
 									<option value="Forme" selected={Fundraiser.type === "Forme"}>Pour moi</option> 
         
 									<option value="Forsomeone" selected={Fundraiser.type === "Forsomeone"}>Pour quelqu'un d'autre</option> 
@@ -295,7 +288,7 @@ export default function EditUserFundraiser() {
 						</div>
 						<div className="col-span-full sm:col-span-3">
 							<label htmlFor="state" className="text-sm">State</label>
-							<select id="state" name="state" placeholder='State'  className="block w-full h-9 text-sm text-gray-900 rounded-lg outline-none">
+							<select onChange={handleChange} id="state" name="state" placeholder='State'  className="block w-full h-9 text-sm text-gray-900 rounded-lg outline-none">
 									{states.map(item => <option value={item.value} selected={item.value === Fundraiser.state}>{item.label}</option>)}
 	
 							</select>
@@ -304,14 +297,44 @@ export default function EditUserFundraiser() {
 							<label htmlFor="zipCode" className="text-sm">Code zip</label>
 							<input id="zipCode" name="zipCode" type="text" placeholder="Code zip" value={Fundraiser.zipCode} onChange={handleChange} className="w-full rounded-md outline-none text-sm h-9 px-1" />
 						</div>
-					</div>
+						<div className="col-span-full">
+							<label htmlFor="description" className="text-sm">Description</label>
+							<textarea id="description" name="description" placeholder="Description" value={Fundraiser.description} onChange={handleChange} className="w-full rounded-md outline-none text-sm h-32 p-1"></textarea>
+						</div>
+						<div className='col-span-full flex justify-end'>
+							<button className='w-fit h-fit px-4 py-1.5 rounded bg-primary text-white hover:-translate-y-1 transition-all text-sm'>Sauvegarder</button>
+
+						</div>
+					</form>
 				</fieldset>
 				<fieldset className="grid grid-cols-4 gap-6 p-6 rounded-md shadow-sm ">
 					<div className="space-y-2 col-span-full lg:col-span-1">
-						<p className="font-medium">Ajoutez des images, des vidéos ou une description</p>
+						<p className="font-medium">Ajoutez des images et des vidéos à votre 3aweni</p>
 						<p className="text-xs">C'est optionnel, mais cela pourrait rendre votre 3aweni plus accessible</p>
 					</div>
 					<div className="grid grid-cols-6 gap-4 col-span-full lg:col-span-3">
+					<div className='col-span-full grid grid-cols-6 gap-4'>
+							<div className='relative col-span-full sm:col-span-3 aspect-[7/4] rounded-md overflow-hidden'>
+								{Loading ?
+								<div className='w-full h-full bg-gray-300 animate-pulse'>
+
+								</div>
+								 :
+								<><img className="object-cover object-center w-full" src={Fundraiser.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${Fundraiser.image}` : "/3aweni_placeholder.png"} alt="content" />
+								{EditingImage &&
+								<div className="absolute inset-0 bg-white/60 flex items-end pb-5 justify-center flex-nowrap">
+									<progress ref={progressBarRef} value={0} max={100} className='w-[96%] ml-[2%] h-2 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary' ></progress>
+								</div>}
+								<button className='absolute top-1 right-1 bg-gray-700 p-1 rounded-full shadow-modern' type='button' onClick={() => setOpen(true)}>
+									<IconContext.Provider value={{className: " text-white h-5 w-5"}}>
+											<RiImageEditFill /> 
+									</IconContext.Provider>
+								</button>
+								</>
+								}
+							</div>
+
+						</div>
 						<h3 className='col-span-full text-sm'>Images supplémentaires &#10088;4 au maximum&#10089;</h3>
 						<div className='col-span-full'>
 							<div className='w-fit flex flex-wrap items-center justify-start gap-3'>
@@ -339,12 +362,12 @@ export default function EditUserFundraiser() {
 								</div>)}
 								</>
 							}
-							<label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center'>
+							{Fundraiser.secondaryImages.length < 4 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center'>
 								<input ref={imagesUploadInputRef} type="file" className='sr-only' onChange={handleSecondaryImagesInput} />
 								<IconContext.Provider value={{ className: 'text-secondary h-6 w-6'}}>
 									<FiUploadCloud />
 								</IconContext.Provider>
-							</label>
+							</label>}
 						</div>
 						</div>
 						<h3 className='col-span-full text-sm'>Vidéos supplémentaires &#10088;2 au maximum&#10089;</h3>
@@ -368,27 +391,22 @@ export default function EditUserFundraiser() {
 							</>
 								:
 								Fundraiser.secondaryVideos.map(item => 
-									<div className='relative max-w-[288px] h-40 rounded overflow-hidden flex items-center justify-center'>
-									<video> 
-										<source  className="object-cover object-center max-h-full max-w-full" src={`https://res.cloudinary.com/dhwfr0ywo/image/upload/${item}`} />
-									</video>
-								</div>)
+									<video controls muted loop className='relative max-w-[288px] h-40 rounded overflow-hidden flex items-center justify-center'> 
+										<source  className="object-cover object-center max-h-full max-w-full" src={`https://res.cloudinary.com/dhwfr0ywo/video/upload/${item}`} />
+									</video>)
 							}
-							<label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center'>
-								<input ref={videosUploadInputRef} type="file" className='sr-only' onChange={handleSecondaryVideosInput} />
+							{Fundraiser.secondaryVideos.length < 2 && <label className='w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center'>
+								<input ref={videosUploadInputRef} type="file" accept='video/mp4' className='sr-only' onChange={handleUploadSecondaryVideos} />
 								<IconContext.Provider value={{ className: 'text-secondary h-6 w-6'}}>
 									<FiUploadCloud />
 								</IconContext.Provider>
-							</label>
+							</label>}
 							</div>
 						</div>
-						<div className="col-span-full">
-							<label htmlFor="description" className="text-sm">Description</label>
-							<textarea id="description" name="description" placeholder="Description" className="w-full rounded-md outline-none text-sm h-32 p-1"></textarea>
-						</div>
+						
 					</div>
 				</fieldset>
-			</form>
+			</div>
 		</section>
 		<UploadPictureModal open={Open} onClose={() => setOpen(false)} setShow={setShow} setImage={setImage} handleDeleteCurrentImage={handleDeleteCurrentImage} currentImage={Fundraiser.image} setFundraiser={setFundraiser} />
         <EditImageToUploadModal show={Show} onClose={() => setShow(false)} image={image} handleImageUpload={handleMainImage} setCroppedImage={setCroppedImage} />
