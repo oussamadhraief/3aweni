@@ -1,15 +1,22 @@
 const mongoose = require('mongoose');
 
 const donation = new mongoose.Schema({
-  senderId: 
+  user: 
   {
-     type: mongoose.Schema.Types.ObjectId, ref: 'User' 
+     type: mongoose.Schema.Types.ObjectId, ref: 'User',
+     required: true 
     },
-  recipientId: 
+  fundraiser: 
   { 
-    type: mongoose.Schema.Types.ObjectId, ref: 'User' 
+    type: mongoose.Schema.Types.ObjectId, ref: 'Fundraiser',
+    required: true 
 },
-  amount: Number,
+amount: {
+  type: Number,
+  required: true,
+  minlength: 1000000,
+  maxlength: 50
+},
 },
 { timestamps: true });
 

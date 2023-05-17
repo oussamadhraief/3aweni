@@ -7,6 +7,7 @@ import New3aweniRegister from './pages/create-3aweni/New3aweniRegister';
 import New3aweniLogin from './pages/create-3aweni/New3aweniLogin';
 import New3aweniType from './pages/create-3aweni/New3aweniType';
 import Home from './pages/Home';
+import Donate from './pages/Donate';
 import Login from './pages/Login';
 import PasswordReset from './pages/PasswordReset';
 import Register from './pages/Register';
@@ -46,6 +47,7 @@ function App() {
           <Route path="password-reset" element={Loading ? null :  user ? <Navigate to="/" /> : <RequestPasswordReset />} />
           <Route path="search" element={<SearchField />} />
           <Route path="fundraisers/:id" element={<SingleFundraiser />} />
+          <Route path="donate/:id" element={<Donate />} />
           <Route
                 path="/discover/:category"
                 element={!Loading ? <CategoryFundraisers /> : null}

@@ -32,7 +32,7 @@ export default function UserFundraiser({ id, image, title, goal }: { id: string,
             </ul>}
         </div>
         <div className="block relative w-full rounded-t overflow-hidden">
-            <img alt="ecommerce" className="object-cover object-center w-full h-full block" src={image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${image}` : "https://dummyimage.com/700x400"} />
+            <img alt="ecommerce" className="object-cover object-center w-full h-full block" src={image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${image}` : "/3aweni_placeholder.png"} />
         </div>
         <div className="mt-4 px-4">
             <h2 className="text-gray-900 title-font text-lg font-medium">{title}</h2>

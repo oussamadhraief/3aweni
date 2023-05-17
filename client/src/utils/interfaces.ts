@@ -24,3 +24,20 @@ export interface fundraiserInt {
     createdAt: Date | null;
     updatedAt: Date | null;
 }
+
+
+export interface message {
+    senderId: userInt | null;
+    recipientId: userInt;
+    name: string;
+    email: string;
+    message: string;
+}
+
+export interface donation {
+    user: userInt | null;
+    fundraiser: fundraiserInt | null;
+    amount: number;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+}

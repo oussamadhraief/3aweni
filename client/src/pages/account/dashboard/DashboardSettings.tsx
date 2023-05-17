@@ -6,10 +6,12 @@ import UserImageModal from "../../../components/UserImageModal";
 import { userInt } from "../../../utils/interfaces";
 import useAuthContext from "../../../hooks/useAuthContext";
 import useLoadingAuthContext from "../../../hooks/useLoadingAuthContext";
+import getUser from "../../../hooks/getUser";
 
 export default function DashboardSettings() {
-  const { user } = useAuthContext();
-  const { Loading } = useLoadingAuthContext();
+  const { login } = useAuthContext()
+    const { Loading } = useLoadingAuthContext()
+    const { user } = useAuthContext()
 
   const imageUploadInputRef = useRef<HTMLInputElement>(null);
   const progressBarRef = useRef<HTMLProgressElement>(null);
@@ -91,6 +93,11 @@ export default function DashboardSettings() {
       );
     
         await handleUpdateUserImage(res.data.imagePublicId)
+
+        login({
+          ...user!,
+          image: res.data.imagePublicId
+        })
 
       setUserInformation({
         ...UserInformation,

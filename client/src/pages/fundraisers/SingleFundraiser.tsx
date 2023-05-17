@@ -3,13 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import { IconContext } from "react-icons";
 import { MdIosShare } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
-import { fundraiserInt } from "../../utils/interfaces";
+import { donation, fundraiserInt } from "../../utils/interfaces";
 import { AiFillWarning } from "react-icons/ai";
 import useAuthContext from "../../hooks/useAuthContext";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { categories } from "../../utils/categoriesData";
 import { HiOutlineTag } from "react-icons/hi";
-import ContactModal from '../../components/ContactModal'
+import ContactModal from "../../components/ContactModal";
 
 export default function SingleFundraiser() {
   const carousel = useRef<HTMLDivElement>(null);
@@ -35,19 +35,58 @@ export default function SingleFundraiser() {
   const [WarningOpen, setWarningOpen] = useState<boolean>(true);
   const [Open, setOpen] = useState<boolean>(false);
   const [ShowMain, setShowMain] = useState({ type: "image", index: 0 });
+  const [FundraiserCollectedAmount, setFundraiserCollectedAmount] =
+    useState<number>(0);
+  const [Goal, setGoal] =
+    useState<number>(0);
+  const [FundraiserTopDonation, setFundraiserTopDonation] = useState<donation>({
+    user: null,
+    fundraiser: null,
+    amount: 0,
+    createdAt: null,
+    updatedAt: null,
+  });
+  const [FundraiserMostRecentDonation, setFundraiserMostRecentDonation] =
+    useState<donation>({
+      user: null,
+      fundraiser: null,
+      amount: 0,
+      createdAt: null,
+      updatedAt: null,
+    });
+  const [FundraiserFirstDonation, setFundraiserFirstDonation] =
+    useState<donation>({
+      user: null,
+      fundraiser: null,
+      amount: 0,
+      createdAt: null,
+      updatedAt: null,
+    })
+    
 
   useEffect(() => {
     if (id) {
       axios
-        .get(`/api/fundraiser/${id}`, {
+        .get(`/api/single-fundraiser/${id}`, {
           withCredentials: true,
         })
         .then((response) => {
           const {
-            data: { fundraiser },
+            data: {
+              fundraiser,
+              collectedAmount,
+              topDonation,
+              mostRecentDonation,
+              firstDonation,
+            },
           } = response;
 
+          setFundraiserCollectedAmount(collectedAmount);
+          setFundraiserTopDonation(topDonation);
+          setFundraiserMostRecentDonation(mostRecentDonation);
+          setFundraiserFirstDonation(firstDonation);
           setFundraiser(fundraiser);
+          setGoal(fundraiser.goal);
         });
     }
   }, []);
@@ -243,10 +282,7 @@ export default function SingleFundraiser() {
         <div className="mt-5 mb-2 text-sm flex items-center gap-1 grid-fundraiser-date-category">
           <p>créé il y a {calculateTimeAgo(Fundraiser.createdAt)} - </p>
           <HiOutlineTag />
-          <Link
-            to={`/discover/${Fundraiser.category}`}
-            className="underline"
-          >
+          <Link to={`/discover/${Fundraiser.category}`} className="underline">
             {
               categories.find(
                 (category) => category.value === Fundraiser.category
@@ -259,19 +295,26 @@ export default function SingleFundraiser() {
           <div className="flex space-x-6">
             <div className="flex-shrink-0 w-16 mb-6 h-16 sm:h-16 sm:w-16 sm:mb-0">
               <img
-                src="https://source.unsplash.com/100x100/?portrait?1"
+                src={
+                  Fundraiser.user?.image
+                    ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${Fundraiser.user?.image}`
+                    : `/profile.png`
+                }
                 alt=""
                 className="object-cover object-center w-full h-full rounded-full"
               />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-secondary">
-                Leroy Jenkins
+                {Fundraiser.user?.name}
               </h2>
               <p className="text-sm text-zinc-600">Organisateur</p>
             </div>
           </div>
-          <button className="border rounded px-2 py-0.5 border-secondary text-secondary self-center" onClick={() => setOpen(true)}>
+          <button
+            className="border rounded px-2 py-0.5 border-secondary text-secondary self-center"
+            onClick={() => setOpen(true)}
+          >
             Contacter
           </button>
         </div>
@@ -281,9 +324,12 @@ export default function SingleFundraiser() {
         </p>
 
         <div className="flex gap-3 items-center grid-fundraiser-buttons">
-          <button className="w-full text-white py-2.5 rounded-lg my-3 flex flex-nowrap items-center gap-2 justify-center shadow-form bg-secondary hover:-translate-y-1 transition-all">
+          <Link
+            to={`/donate/${Fundraiser._id}`}
+            className="w-full text-white py-2.5 rounded-lg my-3 flex flex-nowrap items-center gap-2 justify-center shadow-form bg-secondary hover:-translate-y-1 transition-all"
+          >
             Donate
-          </button>
+          </Link>
           <button className="h-fit border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-[9px] rounded-lg flex justify-center items-center flex-nowrap gap-1">
             <IconContext.Provider value={{ className: "h-4 w-4 mb-0.5" }}>
               <MdIosShare />
@@ -298,13 +344,13 @@ export default function SingleFundraiser() {
               <p className="text-zinc-700 font-thin text-xs">
                 {" "}
                 <strong className="text-black font-semibold text-lg">
-                  123.00DT{" "}
+                  {FundraiserCollectedAmount}.00DT{" "}
                 </strong>{" "}
                 collectés men asl {Fundraiser.goal}.00DT
               </p>
               <progress
                 max="100"
-                value={30}
+                value={Fundraiser.goal ?  (FundraiserCollectedAmount / Goal) * 100 : 0}
                 className="w-full h-2 my-1 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
               />
               <p className="text-zinc-500 font-thin text-xs">11.2k dons</p>
@@ -391,9 +437,12 @@ export default function SingleFundraiser() {
                 Voir tous
               </button>
 
-              <button className="w-full text-white py-2.5 rounded-lg my-3 flex flex-nowrap items-center gap-2 justify-center shadow-form bg-secondary hover:-translate-y-1 transition-all">
+              <Link
+                to={`/donate/${Fundraiser._id}`}
+                className="w-full text-white py-2.5 rounded-lg my-3 flex flex-nowrap items-center gap-2 justify-center shadow-form bg-secondary hover:-translate-y-1 transition-all"
+              >
                 Donate
-              </button>
+              </Link>
               <button className="h-9 border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-1.5 rounded-lg flex justify-center items-center flex-nowrap gap-1">
                 <IconContext.Provider value={{ className: "h-4 w-4 mb-0.5" }}>
                   <MdIosShare />
@@ -404,7 +453,12 @@ export default function SingleFundraiser() {
           </div>
         </div>
       </section>
-      <ContactModal open={Open} onClose={() => setOpen(false)} name={Fundraiser.user?.name} id={Fundraiser.user?._id} />
+      <ContactModal
+        open={Open}
+        onClose={() => setOpen(false)}
+        name={Fundraiser.user?.name}
+        id={Fundraiser.user?._id}
+      />
     </main>
   );
 }

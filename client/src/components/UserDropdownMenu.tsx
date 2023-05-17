@@ -30,7 +30,7 @@ export default function UserDropdownMenu({ main }: { main: Boolean }) {
       <div className="dropdown dropdown-bottom dropdown-end flex items-center gap-3">
         <label tabIndex={0} className="btn btn-ghost flex items-center gap-3 hover:bg-zinc-100 font-medium normal-case px-2 py-1">
           {main && <p>{user?.name}</p>}
-          <img src="/profile.png" alt="" className='w-8 h-8' />
+          <img src={user?.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${user?.image}` :  "/profile.png"} alt="" className='w-8 h-8 rounded-full mx-auto object-cover ' />
         </label>
           <ul tabIndex={0} className="dropdown-content menu shadow-form rounded-lg w-52 px-3 py-1 bg-white text-sm">
             <li className='py-1 flex bg-white'><Link to={main ? '/dashboard/stats' : '/'} className='flex items-center gap-2 w-full text-center'>{main ? 'Tableau de bord' : 'Accueil'}</Link></li>

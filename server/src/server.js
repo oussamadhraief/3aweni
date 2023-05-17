@@ -18,7 +18,7 @@ const User = require('./user/UserModel');
 const Fundraiser = require('./fundraiser/FundraiserModel');
 const Donation = require('./donation/DonationModel');
 const ContactUser = require('./contact-user/ContactUserModel');
-const { createFundraiser } = require('./fundraiser/FundraiserService')
+const { createFundraiser, fetchFundraiser, fetchFundraiserCollectedAmount, fetchFundraiserTopDonation, fetchFundraiserMostRecentDonation, fetchFundraiserFirstDonation } = require('./fundraiser/FundraiserService')
 const { register } = require('./user/UserService')
 const fs = require('fs');
 const { promisify } = require('util');
@@ -182,6 +182,25 @@ app.patch('/api/user/image', async ( req, res ) => {
       res.status(401).json({ success: false })}
 
 })
+
+
+app.get('/api/received-messages', async (req, res) => {
+
+  try {
+
+    const messages = await ContactUser.find({ recipientId: req.user._id }).populate('senderId recipientId')
+
+    res.status(200).json({success: true, messages: messages })
+    
+  } catch (error) {
+
+    console.log(error);
+    res.status(401).json({ success: false })
+
+  }
+
+})
+
 app.post("/api/user/password-reset", async (req, res) => {
 
   const { email } = req.body;
@@ -394,7 +413,7 @@ app.post('/api/create-fundraiser', async (req, res) => {
   try {
     const { category, state, zipCode, type, title, goal } = req?.body
 
-    const newFundraiser = await createFundraiser(req?.user?._id, category, state, zipCode, type, title, goal)
+    const newFundraiser = await createFundraiser(req.user._id, category, state, zipCode, type, title, goal)
     
     res.status(201).json({ success: true, fundraiser: newFundraiser })
     
@@ -409,7 +428,7 @@ app.get('/api/fundraiser/:id', async (req, res) => {
   try {
     const { id } = req.params
 
-    const fundraiser = await Fundraiser.findOne({ _id: id }).populate('user')
+    const fundraiser = await fetchFundraiser(id)
 
     res.status(200).json({ success: true, fundraiser: fundraiser })
   } catch (error) {
@@ -417,6 +436,22 @@ app.get('/api/fundraiser/:id', async (req, res) => {
     res.status(404).json({ success: false })
   }
 })
+
+
+
+app.get('/api/single-fundraiser/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const [fundraiser, collectedAmount, topDonation, mostRecentDonation, firstDonation] = await Promise.all([fetchFundraiser(id),fetchFundraiserCollectedAmount(id),fetchFundraiserTopDonation(id),fetchFundraiserMostRecentDonation(id),fetchFundraiserFirstDonation(id)])
+
+    res.status(200).json({ success: true, fundraiser, collectedAmount, topDonation, mostRecentDonation, firstDonation })
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ success: false })
+  }
+})
+
 
 
 //fundraisers by categorie
@@ -525,6 +560,28 @@ app.patch('/api/fundraiser/:id', async (req, res) => {
 })
 
 
+app.post('/api/create-donation/:id', async (req,res) => {
+  
+  try {
+    
+    const { donation } = req.body
+    const { id } = req.params
+    
+    await Donation.create({
+      user: req.user._id,
+      fundraiser: id,
+      amount: donation
+    })
+
+  } catch (error) {
+
+    console.log(error);
+    res.status(400).json({ success: false })
+
+  }
+
+})
+
 app.get('/api/chart-fundraisers', async (req, res) => {
 
   try {
@@ -625,9 +682,6 @@ app.post('/api/contact-user', async (req,res) => {
 })
 
 
-
-
-
 //socket IO
 const http = require("http");
 const { Server } = require("socket.io");
@@ -636,33 +690,36 @@ app.listen(process.env.PORT, () => {
   console.log("server is running");
 });
 
-  const io = new Server(server, {
-    cors: {
-      origin: "http://localhost:3000",
-    },
-  });
 
-    io.on('connection', (socket) => {
+
+
+  // const io = new Server(server, {
+  //   cors: {
+  //     origin: "http://localhost:3000",
+  //   },
+  // });
+
+  //   io.on('connection', (socket) => {
       
-    console.log(`User Connected: ${socket.id}`);
-    sok=socket.id;
-    User.updateOne({ _id: req.user._id }, { socketId: socket.id }).exec();
-    socket.on('donate', (data) => {
-      const { senderId = req.user._id , recipientId, amount } = data;
+  //   console.log(`User Connected: ${socket.id}`);
+  //   sok=socket.id;
+  //   User.updateOne({ _id: req.user._id }, { socketId: socket.id }).exec();
+  //   socket.on('donate', (data) => {
+  //     const { user = req.user._id , fundraiser, amount } = data;
   
-      const donation = new Donation({
-        senderId: senderId,
-        recipientId: recipientId,
-        amount: amount,
-      });
-      donation.save();
+  //     const donation = new Donation({
+  //       user,
+  //       fundraiser,
+  //       amount,
+  //     });
+  //     donation.save();
   
-      User.findOne({ _id: recipientId }, (err, user) => {
-        if (!user) {
-          return;
-        }
-        const socketId = user.socketId;
-        io.to(socketId).emit('donation', { amount: amount });
-      });
-    });
-  });
+  //     User.findOne({ _id: fundraiser.user._id }, (err, user) => {
+  //       if (!user) {
+  //         return;
+  //       }
+  //       const socketId = user.socketId;
+  //       io.to(socketId).emit('donation', { amount: amount });
+  //     });
+  //   });
+  // });

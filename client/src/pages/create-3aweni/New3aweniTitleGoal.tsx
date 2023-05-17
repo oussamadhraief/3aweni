@@ -48,14 +48,17 @@ export default function New3aweniTitleGoal() {
       
       if(user){
         
+          const goal = parseFloat(Form.goal.replace(/,/g, ''))
           axios.post('/api/create-fundraiser',{
-            ...Form
+            ...Form,
+            goal
           },{
             withCredentials: true
           }).then((response) => {
 
-            localStorage.removeItem('create3aweni')
+            // localStorage.removeItem('create3aweni')
 
+            
             const { data: { fundraiser } } = response
             
 
