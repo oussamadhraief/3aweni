@@ -15,7 +15,7 @@ interface ContactFormInt {
   message: string;
 }
 
-export default function UploadImageModal({ open, onClose, name, id }: Props) {
+export default function ContactModal({ open, onClose, name, id }: Props) {
   const [Form, setForm] = useState<ContactFormInt>({
     name: "",
     email: "",

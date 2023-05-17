@@ -3,6 +3,7 @@ export interface userInt {
     name: string;
     phone: string;
     email: string;
+    image: string;
     // role: string;
 }
 

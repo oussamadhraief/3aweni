@@ -28,8 +28,6 @@ const upload = multer({ storage });
 
 const writeFile = promisify(fs.writeFile);
 
-let userId;
-
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
@@ -95,8 +93,8 @@ passport.deserializeUser(( id, cb ) => {
           email: user.email,
           phone: user.phone,
           name: user.name,
+          image: user.image,
           role: user.role,
-          address: user.address,
           sokcetId:user.socketId
       }
       cb(err, userInformation)
@@ -117,8 +115,6 @@ app.post("/api/user/login", (req, res, next) => {
       req.logIn(user, (err) => {
         if (err) { return next(err); }
         res.status(200).json({ success: true, user: user })
-        userId = req.user._id;
-        userId= userId.toString();
       });
     }
 
@@ -130,17 +126,34 @@ app.post('/api/user/register', async ( req, res ) => {
 
   try {
     const { email, password, name, phone } = req?.body
-    socketId=""
-    const newUser = await register(email, password, name, phone, socketId)
+    
+    const newUser = await register(email, password, name, phone, '')
     
     res.status(200).json({ success: true, user: newUser })
     
   } catch (error) {
-    
+    console.log(error);
     res.status(400).json({ success: false })
   }
   
 })
+
+app.patch('/api/user/image', async ( req, res ) => {
+
+  try {
+    const { image } = req?.body
+    
+    await User.findOneAndUpdate({ _id: req.user._id }, { image },{ new: true })
+    
+    res.status(200).json({ success: true })
+    
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false })
+  }
+  
+})
+
 
   app.get('/api/user/logout', async ( req, res, done ) => {
 
@@ -163,8 +176,6 @@ app.post('/api/user/register', async ( req, res ) => {
 
     {
       res.status(200).json({success: true, user: req.user })
-        userId = req.user._id;
-        userId= userId.toString();
     }
 
     else{ 
@@ -637,9 +648,9 @@ app.listen(process.env.PORT, () => {
       
     console.log(`User Connected: ${socket.id}`);
     sok=socket.id;
-    User.updateOne({ _id: userId }, { socketId: socket.id }).exec();
+    User.updateOne({ _id: req.user._id }, { socketId: socket.id }).exec();
     socket.on('donate', (data) => {
-      const { senderId = userId , recipientId, amount } = data;
+      const { senderId = req.user._id , recipientId, amount } = data;
   
       const donation = new Donation({
         senderId: senderId,

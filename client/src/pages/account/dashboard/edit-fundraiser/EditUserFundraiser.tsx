@@ -181,7 +181,7 @@ export default function EditUserFundraiser() {
     setEditingImage(false);
   };
 
-  async function handleSecondaryImagesInput(e: React.FormEvent) {
+  function handleSecondaryImagesInput(e: React.FormEvent) {
     if (imagesUploadInputRef.current)
       imagesUploadInputRef.current.disabled = true;
     const target = e.target as HTMLInputElement;
