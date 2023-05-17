@@ -467,7 +467,6 @@ app.patch('/api/fundraiser/secondary-images/:id', async (req, res) => {
       new: true 
     })
 
-    console.log(fundraiser);
     
     res.status(204).json({ success: true, fundraiser: fundraiser })
     
@@ -489,7 +488,6 @@ app.patch('/api/fundraiser/secondary-videos/:id', async (req, res) => {
       new: true 
     })
 
-    console.log(fundraiser);
     
     res.status(204).json({ success: true, fundraiser: fundraiser })
     

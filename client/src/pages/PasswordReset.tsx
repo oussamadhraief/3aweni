@@ -31,7 +31,6 @@ export default function PasswordReset() {
                 withCredentials: true
             }).then((response) => {
                 
-                console.log(response);
             
             })
             } catch (error) {

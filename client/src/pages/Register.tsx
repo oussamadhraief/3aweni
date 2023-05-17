@@ -40,7 +40,6 @@ export default function
                 withCredentials: true
                 }).then((response) => {
                 
-                    console.log(response)
                     navigate('/login')
                     
                 })

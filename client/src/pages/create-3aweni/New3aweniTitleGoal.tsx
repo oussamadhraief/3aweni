@@ -47,7 +47,6 @@ export default function New3aweniTitleGoal() {
       e.preventDefault()
       
       if(user){
-        console.log(Form);
         
           axios.post('/api/create-fundraiser',{
             ...Form
@@ -58,7 +57,6 @@ export default function New3aweniTitleGoal() {
             localStorage.removeItem('create3aweni')
 
             const { data: { fundraiser } } = response
-            console.log(response);
             
 
             navigate(`/fundraisers/${fundraiser._id}`)

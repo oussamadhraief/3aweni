@@ -65,7 +65,6 @@ export default function DashboardStats() {
     useEffect(() => {
         axios.get('/api/chart-fundraisers').then((response) => {
             const { data: { data } } = response
-            console.log(data);
             
             setChartData(data)
         })

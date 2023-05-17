@@ -27,7 +27,6 @@ const { io } = require("socket.io-client");
 import("@lottiefiles/lottie-player");
 
 const socket = io();
-console.log(socket);
 
 
 function App() {

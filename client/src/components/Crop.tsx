@@ -81,7 +81,6 @@ export default async function getCroppedImg(
   //         reader.readAsDataURL(file)
   // }, "image/jpeg");
 
-  // console.log(imageUrl);
     
   // return imageUrl
 }

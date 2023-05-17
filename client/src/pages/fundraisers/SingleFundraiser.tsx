@@ -46,7 +46,6 @@ export default function SingleFundraiser() {
           const {
             data: { fundraiser },
           } = response;
-          console.log(fundraiser.category);
 
           setFundraiser(fundraiser);
         });

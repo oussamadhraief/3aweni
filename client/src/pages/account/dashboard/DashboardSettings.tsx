@@ -28,7 +28,6 @@ export default function DashboardSettings() {
   useEffect(() => {
     if (user) 
         setUserInformation(user);
-    console.log(user);
     
   }, [Loading]);
 

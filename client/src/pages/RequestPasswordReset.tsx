@@ -18,7 +18,6 @@ export default function RequestPasswordReset() {
                 withCredentials: true
             }).then((response) => {
                 
-                console.log(response);
             
             })
             } catch (error) {

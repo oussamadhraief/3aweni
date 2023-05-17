@@ -4,7 +4,7 @@ const bcrypt= require("bcryptjs");
 
 const register = async (email, password, name, phone,socketId) => {
     try {
-        console.log(1);
+        
         const user = await User.findOne({ email })
         if(user) throw new Error('User already exists')
       
