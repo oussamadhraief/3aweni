@@ -24,6 +24,9 @@ const fs = require('fs');
 const helmet = require('helmet');
 const { promisify } = require('util');
 
+const port = process.env.PORT || 5000
+const url = process.env.CORS_ORIGIN_URL || 'http://localhost:3000/'
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -51,7 +54,7 @@ mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,{
 const app = express();
 app.use(express.json({ limit: '50mb' }))
 app.use(cors({
-  origin: "https://localhost:3000",
+  origin: url,
   credentials : true
 }))
 app.use(cookieParser())
@@ -225,7 +228,7 @@ app.post("/api/user/password-reset", async (req, res) => {
     });
 
 
-    const link = `http://localhost:3000/password-reset/${oldUser._id}/${token}`;
+    const link = `${url}password-reset/${oldUser._id}/${token}`;
 
     var transporter = nodemailer.createTransport(
       {
@@ -683,8 +686,8 @@ app.post('/api/contact-user', async (req,res) => {
 const http = require("http");
 const { Server } = require("socket.io");
 const server = http.createServer(app);
-app.listen(process.env.PORT, () => {
-  console.log("server is running");
+app.listen(port, () => {
+  console.log("server is running on port",port);
 });
 
 
