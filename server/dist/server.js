@@ -382,7 +382,7 @@ app.get("/api/trending-fundraisers", async (req, res) => {
         totalDonations: -1
       }
     }, {
-      $limit: 10
+      $limit: 5
     }, {
       $project: {
         _id: '$fundraiserData._id',
