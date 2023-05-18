@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "../../../utils/axiosConfig"
 import { useEffect, useState } from "react"
 import { fundraiserInt } from "../../../utils/interfaces"
 import { Link } from "react-router-dom"

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { donation } from '../utils/interfaces'
-import axios from 'axios'
+import axios from '../utils/axiosConfig'
 import UserDonationsPagination from './UserDonationsPagination'
 
 export default function UserDonations({ShowAll } : { ShowAll: boolean }) {

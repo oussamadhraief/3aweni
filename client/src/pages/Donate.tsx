@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../utils/axiosConfig";
 import { useState } from "react";
 import CurrencyInput from "react-currency-input-field";
 import { useNavigate, useParams } from "react-router-dom";

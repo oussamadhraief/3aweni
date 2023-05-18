@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from "axios"
+import axios from "../utils/axiosConfig"
 import { BsFillPersonFill } from 'react-icons/bs';
 import { AiTwotonePhone } from 'react-icons/ai';
 

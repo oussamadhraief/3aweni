@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../utils/axiosConfig";
 import { useEffect, useRef, useState } from "react";
 import { IconContext } from "react-icons";
 import { MdIosShare } from "react-icons/md";

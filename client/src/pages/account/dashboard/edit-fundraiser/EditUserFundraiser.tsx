@@ -6,7 +6,7 @@ import { RiImageEditFill } from "react-icons/ri";
 import { categories } from "../../../../utils/categoriesData";
 import UploadPictureModal from "../../../../components/UploadImageModal";
 import EditImageToUploadModal from "../../../../components/EditImageToUploadModal";
-import axios from "axios";
+import axios from "../../../../utils/axiosConfig";
 import { fundraiserInt } from "../../../../utils/interfaces";
 import { states } from "../../../../utils/statesData";
 import CurrencyInput from "react-currency-input-field";
@@ -62,7 +62,7 @@ export default function EditUserFundraiser() {
           setLoading(false);
         });
     }
-    
+
   }, []);
 
   const handleChange = (event: FormEvent) => {

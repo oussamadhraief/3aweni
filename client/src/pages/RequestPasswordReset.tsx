@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom';
 import Footer from '../components/Footer'

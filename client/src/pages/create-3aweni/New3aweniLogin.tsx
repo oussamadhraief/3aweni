@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../utils/axiosConfig';
 import { FormEvent, useState } from 'react'
 import { IconContext } from 'react-icons';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';

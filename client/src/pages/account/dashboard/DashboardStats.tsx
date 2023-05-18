@@ -10,7 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import axios from "axios";
+import axios from "../../../utils/axiosConfig";
 import UserDonations from "../../../components/UserDonations";
 import { IconContext } from "react-icons";
 import { BiMessageSquare } from "react-icons/bi";
