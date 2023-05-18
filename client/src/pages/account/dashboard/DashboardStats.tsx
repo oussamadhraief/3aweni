@@ -37,24 +37,25 @@ export const options = {
 
 export default function DashboardStats() {
   var dateoptions = { year: "numeric", month: "long", day: "numeric" };
-  const thisWeek: any = new Date(
-    new Date().getTime() - 7 * 24 * 60 * 60 * 1000
-  );
+  const another: any = new Date(new Date().getTime());
+  const thisWeek: any = new Date(another - 7 * 24 * 60 * 60 * 1000);
   const WeekThree: any = new Date(thisWeek - 7 * 24 * 60 * 60 * 1000);
   const WeekTwo: any = new Date(WeekThree - 7 * 24 * 60 * 60 * 1000);
   const WeekOne: any = new Date(WeekTwo - 7 * 24 * 60 * 60 * 1000);
-  const WeekZero: any = new Date(WeekOne - 7 * 24 * 60 * 60 * 1000);
-  const another: any = new Date(WeekOne - 7 * 24 * 60 * 60 * 1000);
 
   const [ChartData, setChartData] = useState([]);
+  const [TotalDonations, setTotalDonations] = useState<number>(0);
+  const [TotalFundraisers, setTotalFundraisers] = useState<number>(0);
+  const [TotalMoneySent, setTotalMoneySent] = useState<number>(0);
+  const [TotalMoneyReceived, setTotalMoneyReceived] = useState<number>(0);
 
   const data = {
     labels: [
-      WeekZero.toLocaleDateString("fr-FR", dateoptions),
       WeekOne.toLocaleDateString("fr-FR", dateoptions),
       WeekTwo.toLocaleDateString("fr-FR", dateoptions),
       WeekThree.toLocaleDateString("fr-FR", dateoptions),
       thisWeek.toLocaleDateString("fr-FR", dateoptions),
+      another.toLocaleDateString("fr-FR", dateoptions),
     ],
     datasets: [
       {
@@ -69,8 +70,19 @@ export default function DashboardStats() {
   useEffect(() => {
     axios.get("/api/chart-fundraisers").then((response) => {
       const {
-        data: { data },
+        data: {
+          data,
+          totalDonations,
+          totalFundraisers,
+          totalMoneySent,
+          totalMoneyReceived,
+        },
       } = response;
+      
+      setTotalDonations(totalDonations)
+      setTotalFundraisers(totalFundraisers)
+      setTotalMoneySent(totalMoneySent)
+      setTotalMoneyReceived(totalMoneyReceived)
 
       setChartData(data);
     });
@@ -78,11 +90,11 @@ export default function DashboardStats() {
 
   return (
     <main className="text-gray-600 bg-gray-50 dashboard-main-section grid grid-cols-6 p-10">
-      <div className="col-span-3">
+      <div className="col-span-3 shadow bg-white rounded-2xl h-fit p-4">
         <Line options={options} data={data} />
       </div>
       <div className="col-span-3 flex justify-center items-start">
-        <div className="w-8/12 min-w-[386px] p-4 bg-white shadow-lg rounded-2xl">
+        <div className="w-8/12 p-4 bg-white shadow rounded-2xl">
           <p className="font-bold text-black text-md">Messages</p>
           <ul>
             <li className="flex items-center my-6 space-x-2">
@@ -158,7 +170,7 @@ export default function DashboardStats() {
       </div>
 
       <div className="col-span-full flex justify-center">
-        <div className="w-3/4 stats shadow h-fit">
+        <div className="w-full stats shadow h-fit">
           <div className="stats shadow">
             <div className="stat">
               <div className="stat-figure text-secondary">
@@ -176,8 +188,29 @@ export default function DashboardStats() {
                   ></path>
                 </svg>
               </div>
+              <div className="stat-title">Total money received</div>
+              <div className="stat-value">{TotalMoneyReceived}</div>
+              <div className="stat-desc">Jan 1st - Feb 1st</div>
+            </div>
+
+            <div className="stat">
+              <div className="stat-figure text-secondary">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="inline-block w-8 h-8 stroke-current"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </div>
               <div className="stat-title">Total fundraisers created</div>
-              <div className="stat-value">31K</div>
+              <div className="stat-value">{TotalFundraisers}</div>
               <div className="stat-desc">Jan 1st - Feb 1st</div>
             </div>
 
@@ -198,7 +231,7 @@ export default function DashboardStats() {
                 </svg>
               </div>
               <div className="stat-title">Total donations received</div>
-              <div className="stat-value">4,200</div>
+              <div className="stat-value">{TotalDonations}</div>
               <div className="stat-desc">↗︎ 400 (22%)</div>
             </div>
 
@@ -218,8 +251,8 @@ export default function DashboardStats() {
                   ></path>
                 </svg>
               </div>
-              <div className="stat-title">Total money received</div>
-              <div className="stat-value">1,200</div>
+              <div className="stat-title">Total money spent</div>
+              <div className="stat-value">{TotalMoneySent}</div>
               <div className="stat-desc">↘︎ 90 (14%)</div>
             </div>
           </div>

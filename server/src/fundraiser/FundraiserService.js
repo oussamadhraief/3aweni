@@ -1,6 +1,6 @@
 const Fundraiser = require("./FundraiserModel");
 const Donation = require("../donation/DonationModel");
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 
 const createFundraiser = async (
   uid,
@@ -62,6 +62,12 @@ const fetchFundraiserCollectedAmount = async (id) => {
   }
 };
 
+const fetchFundraiserTotalDonations = async (id) => {
+  const totalDonations = await Donation.find({ fundraiser: id }).count();
+
+  return totalDonations;
+};
+
 const fetchFundraiserTopDonation = async (id) => {
   const topDonation = await Donation.findOne(
     { fundraiser: id },
@@ -92,9 +98,22 @@ const fetchFundraiserFirstDonation = async (id) => {
   return firstDonation;
 };
 
+const fetchFundraisersCreatedCountByDate = async (startDate, endDate) => {
+  const count = Fundraiser.find({
+    createdAt: {
+      $gte: startDate,
+      $lt: endDate,
+    },
+  }).count();
+
+  return count
+};
+
 exports.createFundraiser = createFundraiser;
 exports.fetchFundraiser = fetchFundraiser;
 exports.fetchFundraiserCollectedAmount = fetchFundraiserCollectedAmount;
+exports.fetchFundraiserTotalDonations = fetchFundraiserTotalDonations;
 exports.fetchFundraiserTopDonation = fetchFundraiserTopDonation;
 exports.fetchFundraiserMostRecentDonation = fetchFundraiserMostRecentDonation;
 exports.fetchFundraiserFirstDonation = fetchFundraiserFirstDonation;
+exports.fetchFundraisersCreatedCountByDate = fetchFundraisersCreatedCountByDate;

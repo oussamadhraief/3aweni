@@ -35,18 +35,20 @@ export default function SingleFundraiser() {
   const [WarningOpen, setWarningOpen] = useState<boolean>(true);
   const [Open, setOpen] = useState<boolean>(false);
   const [ShowMain, setShowMain] = useState({ type: "image", index: 0 });
-  const [FundraiserCollectedAmount, setFundraiserCollectedAmount] =
+  const [CollectedAmount, setCollectedAmount] =
     useState<number>(0);
   const [Goal, setGoal] =
     useState<number>(0);
-  const [FundraiserTopDonation, setFundraiserTopDonation] = useState<donation>({
+  const [TotalDonations, setTotalDonations] =
+    useState<string>('0');
+  const [TopDonation, setTopDonation] = useState<donation>({
     user: null,
     fundraiser: null,
     amount: 0,
     createdAt: null,
     updatedAt: null,
   });
-  const [FundraiserMostRecentDonation, setFundraiserMostRecentDonation] =
+  const [MostRecentDonation, setMostRecentDonation] =
     useState<donation>({
       user: null,
       fundraiser: null,
@@ -54,7 +56,7 @@ export default function SingleFundraiser() {
       createdAt: null,
       updatedAt: null,
     });
-  const [FundraiserFirstDonation, setFundraiserFirstDonation] =
+  const [FirstDonation, setFirstDonation] =
     useState<donation>({
       user: null,
       fundraiser: null,
@@ -75,21 +77,37 @@ export default function SingleFundraiser() {
             data: {
               fundraiser,
               collectedAmount,
+              totalDonations,
               topDonation,
               mostRecentDonation,
               firstDonation,
             },
           } = response;
 
-          setFundraiserCollectedAmount(collectedAmount);
-          setFundraiserTopDonation(topDonation);
-          setFundraiserMostRecentDonation(mostRecentDonation);
-          setFundraiserFirstDonation(firstDonation);
+          console.log(response.data);
+          
+
+          setCollectedAmount(collectedAmount);
+          const formattedTotalDonation = formatNumber(totalDonations)
+          setTotalDonations(formattedTotalDonation)
+          setTopDonation(topDonation);
+          setMostRecentDonation(mostRecentDonation);
+          setFirstDonation(firstDonation);
           setFundraiser(fundraiser);
           setGoal(fundraiser.goal);
         });
     }
   }, []);
+
+  const formatNumber = (num: number) => {
+    const suffixes = ["", "k", "M", "B", "T"];
+    const suffixNum = Math.floor(("" + num).length / 3);
+    let shortValue: any = parseFloat((suffixNum !== 0 ? (num / Math.pow(1000, suffixNum)) : num).toPrecision(2));
+    if (shortValue % 1 !== 0) {
+      shortValue = shortValue.toFixed(1);
+    }
+    return shortValue + suffixes[suffixNum];
+  }
 
   const handleScrollLeftCarousel = () => {
     carousel.current?.scroll(
@@ -344,16 +362,16 @@ export default function SingleFundraiser() {
               <p className="text-zinc-700 font-thin text-xs">
                 {" "}
                 <strong className="text-black font-semibold text-lg">
-                  {FundraiserCollectedAmount}.00DT{" "}
+                  {CollectedAmount}.00DT{" "}
                 </strong>{" "}
                 collectés men asl {Fundraiser.goal}.00DT
               </p>
               <progress
                 max="100"
-                value={Fundraiser.goal ?  (FundraiserCollectedAmount / Goal) * 100 : 0}
+                value={Fundraiser.goal ?  (CollectedAmount / Goal) * 100 : 0}
                 className="w-full h-2 my-1 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
               />
-              <p className="text-zinc-500 font-thin text-xs">11.2k dons</p>
+              <p className="text-zinc-500 font-thin text-xs">{TotalDonations} dons</p>
 
               <div className="rounded-2xl bg-white p-4">
                 <div className="flex-row gap-4 flex justify-start items-center">
@@ -361,19 +379,19 @@ export default function SingleFundraiser() {
                     <a href="#" className="relative block">
                       <img
                         alt="profil"
-                        src="/profile.png"
+                        src={TopDonation?.user?.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${TopDonation?.user?.image}` : "/profile.png"}
                         className="mx-auto object-cover rounded-full h-9 w-9 "
                       />
                     </a>
                   </div>
                   <div className=" flex flex-col">
                     <span className="text-sm font-medium text-gray-700">
-                      Charlie
+                      {TopDonation?.user?.name}
                     </span>
                     <div className="text-xs flex flex-nowrap items-center">
-                      <p className=" font-bold">50 TND &nbsp;</p> - &nbsp;
+                      <p className=" font-bold">{TopDonation?.amount}  TND &nbsp;</p> - &nbsp;
                       <button className="hover:underline text-black">
-                        Top donation
+                        plus gros don
                       </button>
                     </div>
                   </div>
@@ -387,19 +405,19 @@ export default function SingleFundraiser() {
                     <a href="#" className="relative block">
                       <img
                         alt="profil"
-                        src="/profile.png"
+                        src={MostRecentDonation?.user?.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${MostRecentDonation?.user?.image}` : "/profile.png"}
                         className="mx-auto object-cover rounded-full h-9 w-9 "
                       />
                     </a>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-medium text-gray-700">
-                      Charlie
+                      {MostRecentDonation?.user?.name}
                     </span>
                     <div className="text-xs flex flex-nowrap items-center">
-                      <p className=" font-bold">50 TND &nbsp;</p> - &nbsp;
+                      <p className=" font-bold">{MostRecentDonation?.amount} TND &nbsp;</p> - &nbsp;
                       <button className="hover:underline text-black">
-                        Recent donation
+                        dernier don
                       </button>
                     </div>
                   </div>
@@ -414,19 +432,19 @@ export default function SingleFundraiser() {
                     <a href="#" className="relative block">
                       <img
                         alt="profil"
-                        src="/profile.png"
+                        src={FirstDonation?.user?.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${FirstDonation?.user?.image}` : "/profile.png"}
                         className="mx-auto object-cover rounded-full h-9 w-9 "
                       />
                     </a>
                   </div>
                   <div className=" flex flex-col">
                     <span className="text-sm font-medium text-gray-700">
-                      Charlie
+                    {FirstDonation?.user?.name}
                     </span>
                     <div className="text-xs flex flex-nowrap items-center">
-                      <p className=" font-bold">50 TND &nbsp;</p> - &nbsp;
+                      <p className=" font-bold">{FirstDonation?.amount}  TND &nbsp;</p> - &nbsp;
                       <button className="hover:underline text-black">
-                        First donation
+                      plus ancien don
                       </button>
                     </div>
                   </div>

@@ -18,9 +18,10 @@ const User = require('./user/UserModel');
 const Fundraiser = require('./fundraiser/FundraiserModel');
 const Donation = require('./donation/DonationModel');
 const ContactUser = require('./contact-user/ContactUserModel');
-const { createFundraiser, fetchFundraiser, fetchFundraiserCollectedAmount, fetchFundraiserTopDonation, fetchFundraiserMostRecentDonation, fetchFundraiserFirstDonation } = require('./fundraiser/FundraiserService')
-const { register } = require('./user/UserService')
+const { createFundraiser, fetchFundraiser, fetchFundraiserCollectedAmount, fetchFundraiserTopDonation, fetchFundraiserMostRecentDonation, fetchFundraiserFirstDonation, fetchFundraiserTotalDonations, fetchFundraisersCreatedCountByDate } = require('./fundraiser/FundraiserService')
+const { register, fetchUserTotalDonations, fetchUserTotalFundraisers, fetchUserTotalMoneySent, fetchUserTotalMoneyReceived } = require('./user/UserService')
 const fs = require('fs');
+const helmet = require('helmet');
 const { promisify } = require('util');
 
 const storage = multer.memoryStorage();
@@ -64,15 +65,16 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(compression())
+app.use(helmet());
 
 
 passport.use(new LocalStrategy({usernameField: "email", passwordField: "password"},( email, password, done ) => {
   User.findOne({ email }, (err, user ) => {
-      
+    
+    if(err) throw err
+    if(!user) return done(null,false)
+    bcrypt.compare(password, user.password, (err, result) => {
       if(err) throw err
-      if(!user) return done(null,false)
-      bcrypt.compare(password, user.password, (err, result) => {
-          if(err) throw err
           if(result === true) {
               return done(null,user)
           }else{
@@ -443,15 +445,28 @@ app.get('/api/single-fundraiser/:id', async (req, res) => {
   try {
     const { id } = req.params
 
-    const [fundraiser, collectedAmount, topDonation, mostRecentDonation, firstDonation] = await Promise.all([fetchFundraiser(id),fetchFundraiserCollectedAmount(id),fetchFundraiserTopDonation(id),fetchFundraiserMostRecentDonation(id),fetchFundraiserFirstDonation(id)])
+    const [fundraiser, collectedAmount, totalDonations, topDonation, mostRecentDonation, firstDonation] = await Promise.all([fetchFundraiser(id),fetchFundraiserCollectedAmount(id),fetchFundraiserTotalDonations(id),fetchFundraiserTopDonation(id),fetchFundraiserMostRecentDonation(id),fetchFundraiserFirstDonation(id)])
 
-    res.status(200).json({ success: true, fundraiser, collectedAmount, topDonation, mostRecentDonation, firstDonation })
+    res.status(200).json({ success: true, fundraiser, collectedAmount, totalDonations, topDonation, mostRecentDonation, firstDonation })
   } catch (error) {
     console.log(error);
     res.status(404).json({ success: false })
   }
 })
 
+
+app.get('/api/user-donations', async ( req, res ) => {
+  try {
+
+    const donations = await Donation.find({ user: req.user._id }).limit(10).populate('fundraiser user')
+
+    res.status(200).json({ success: true, donations: donations })
+
+  } catch (error) {
+    
+    res.status(404).json({ success: false })
+  }
+})
 
 
 //fundraisers by categorie
@@ -592,7 +607,7 @@ app.get('/api/chart-fundraisers', async (req, res) => {
     const WeekOne = new Date((WeekTwo - (7 * 24 * 60 * 60 * 1000)))
     const WeekZero = new Date((WeekOne - (7 * 24 * 60 * 60 * 1000)))
 
-    Promise.all([
+    const [last7, third7, second7, first7, before7, totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived] = await Promise.all([
       Fundraiser.find({
         createdAt: 
         {
@@ -600,45 +615,22 @@ app.get('/api/chart-fundraisers', async (req, res) => {
         }
       }
       ).count(),
-      Fundraiser.find({
-        createdAt: 
-        {
-            $gte: WeekThree,
-            $lt: thisWeek
-        }
-    }
-    ).count(),
-      Fundraiser.find({
-        createdAt: 
-        {
-            $gte: WeekTwo,
-            $lt: WeekThree
-        }
-    }
-    ).count(),
-    Fundraiser.find({
-      createdAt: 
-      {
-          $gte: WeekOne,
-          $lt: WeekTwo
-      }
-    }
-    ).count(),
-    Fundraiser.find({
-      createdAt: 
-      {
-          $gte: WeekZero,
-          $lt: WeekOne
-      }
-  }
-  ).count(),
-    ]).then( ([ last7, third7, second7, first7, before7 ]) => {
-      res.status(200).json({ success: true, data: [before7, first7, second7, third7, last7] })
-    });
+      fetchFundraisersCreatedCountByDate(WeekThree,thisWeek),
+      fetchFundraisersCreatedCountByDate(WeekTwo,WeekThree),
+      fetchFundraisersCreatedCountByDate(WeekOne,WeekTwo),
+      fetchFundraisersCreatedCountByDate(WeekZero,WeekOne),
+      fetchUserTotalDonations(req.user._id),
+      fetchUserTotalFundraisers(req.user._id),
+      fetchUserTotalMoneySent(req.user._id),
+      fetchUserTotalMoneyReceived(req.user._id),
+    ])
+      
+      res.status(200).json({ success: true, data: [before7, first7, second7, third7, last7], totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived })
+    
 
 
   } catch (error) {
-    
+    console.log(error);
     res.status(404).json({ success: false })
   }
 })
