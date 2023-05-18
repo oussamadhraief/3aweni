@@ -19,7 +19,8 @@ import useLoadingAuthContext from './hooks/useLoadingAuthContext';
 import DashboardFundraisers from './pages/account/dashboard/DashboardFundraisers';
 import DashboardSettings from './pages/account/dashboard/DashboardSettings';
 import DashboardMessages from './pages/account/dashboard/DashboardMessages';
-import DashboardDonations from './pages/account/dashboard/DashboardDonations';
+import DashboardDonationsSent from './pages/account/dashboard/DashboardDonationsSent';
+import DashboardReceivedDonations from './pages/account/dashboard/DashboardReceivedDonations';
 import SingleFundraiser from './pages/fundraisers/SingleFundraiser';
 import EditUserFundraiser from './pages/account/dashboard/edit-fundraiser/EditUserFundraiser';
 import DashboardStats from './pages/account/dashboard/DashboardStats';
@@ -60,7 +61,8 @@ function App() {
               <Route path=":id"  element={!Loading ?  (user ?  <EditUserFundraiser /> : <Navigate to="/login" />) : null} />
             </Route> 
             <Route path="messages"  element={!Loading ?  (user ?  <DashboardMessages /> : <Navigate to="/login" />) : null} />
-            <Route path="donations"  element={!Loading ?  (user ?  <DashboardDonations /> : <Navigate to="/login" />) : null} />
+            <Route path="my-donations"  element={!Loading ?  (user ?  <DashboardDonationsSent /> : <Navigate to="/login" />) : null} />
+            <Route path="received-donations"  element={!Loading ?  (user ?  <DashboardReceivedDonations /> : <Navigate to="/login" />) : null} />
             <Route path="settings"  element={!Loading ?  (user ?  <DashboardSettings /> : <Navigate to="/login" />) : null} />
             <Route path="fundraisers/:id" element={<SingleFundraiser />} />
         </Route> 

@@ -47,7 +47,6 @@ export default function EditUserFundraiser() {
   });
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
 
     if (id) {
       axios
@@ -63,9 +62,7 @@ export default function EditUserFundraiser() {
           setLoading(false);
         });
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    
   }, []);
 
   const handleChange = (event: FormEvent) => {
@@ -492,7 +489,7 @@ export default function EditUserFundraiser() {
                     </>
                   )}
                   {Fundraiser.secondaryImages.length < 4 && (
-                    <label className="w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center">
+                    <label className="relative w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center">
                       <input
                         ref={imagesUploadInputRef}
                         type="file"
@@ -536,7 +533,7 @@ export default function EditUserFundraiser() {
                     ))
                   )}
                   {Fundraiser.secondaryVideos.length < 2 && (
-                    <label className="w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center">
+                    <label className="relative w-24 h-40 text-3xl border border-secondary cursor-pointer rounded flex items-center justify-center">
                       <input
                         ref={videosUploadInputRef}
                         type="file"

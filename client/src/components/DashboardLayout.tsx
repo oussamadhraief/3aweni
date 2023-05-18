@@ -9,6 +9,7 @@ import getUser from '../hooks/getUser'
 import useAuthContext from '../hooks/useAuthContext'
 import useLoadingAuthContext from '../hooks/useLoadingAuthContext'
 import { AiOutlineSearch } from 'react-icons/ai'
+import { RiUserHeartLine } from 'react-icons/ri'
 import UserDropdownMenu from './UserDropdownMenu'
 import { MdOutlineSpaceDashboard } from 'react-icons/md'
 
@@ -59,6 +60,26 @@ export default function UserDashboard() {
                             <span className="flex-grow text-right">
                             </span>
                         </NavLink>
+                        <NavLink className={({ isActive }) => isActive ?  "hover:text-primary flex items-center p-2 my-4 transition-colors duration-200  text-primary rounded-l-lg border-r-2 border-primary bg-primary/10 text-[15px]" : "hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-4 transition-colors  duration-200  text-gray-600 rounded-lg text-[15px]"} to="/dashboard/donations">
+                            <IconContext.Provider value={{ className: 'w-5 h-5 text-gray-700'}}>
+                                <RiUserHeartLine />
+                            </IconContext.Provider>
+                            <span className="mx-4 font-normal">
+                                Mes dons
+                            </span>
+                            <span className="flex-grow text-right">
+                            </span>
+                        </NavLink>
+                        <NavLink className={({ isActive }) => isActive ?  "hover:text-primary flex items-center p-2 my-4 transition-colors duration-200  text-primary rounded-l-lg border-r-2 border-primary bg-primary/10 text-[15px]" : "hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-4 transition-colors  duration-200  text-gray-600 rounded-lg text-[15px]"} to="/dashboard/donations">
+                            <IconContext.Provider value={{ className: 'w-5 h-5 text-gray-700'}}>
+                                <BiDonateHeart />
+                            </IconContext.Provider>
+                            <span className="mx-4 font-normal">
+                                Dons reçus
+                            </span>
+                            <span className="flex-grow text-right">
+                            </span>
+                        </NavLink>
                         <NavLink className={({ isActive }) => isActive  ? "hover:text-primary flex items-center p-2 my-4 transition-colors duration-200  text-primary rounded-l-lg border-r-2 border-primary bg-primary/10 text-[15px]" : "hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-4 transition-colors  duration-200  text-gray-600 rounded-lg text-[15px]"} to="/dashboard/messages">
                             <IconContext.Provider value={{ className: 'w-5 h-5 text-gray-700'}}>
                                 <TiMessage />
@@ -72,16 +93,6 @@ export default function UserDashboard() {
                                         7
                                     </span>
                                 </button>
-                            </span>
-                        </NavLink>
-                        <NavLink className={({ isActive }) => isActive ?  "hover:text-primary flex items-center p-2 my-4 transition-colors duration-200  text-primary rounded-l-lg border-r-2 border-primary bg-primary/10 text-[15px]" : "hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-4 transition-colors  duration-200  text-gray-600 rounded-lg text-[15px]"} to="/dashboard/donations">
-                            <IconContext.Provider value={{ className: 'w-5 h-5 text-gray-700'}}>
-                                <BiDonateHeart />
-                            </IconContext.Provider>
-                            <span className="mx-4 font-normal">
-                                Mes dons
-                            </span>
-                            <span className="flex-grow text-right">
                             </span>
                         </NavLink>
                         <NavLink className={({ isActive }) => isActive ?  "hover:text-primary flex items-center p-2 my-4 transition-colors duration-200  text-primary rounded-l-lg border-r-2 border-primary bg-primary/10 text-[15px]" : "hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-4 transition-colors  duration-200  text-gray-600 rounded-lg text-[15px]"} to="/dashboard/settings">

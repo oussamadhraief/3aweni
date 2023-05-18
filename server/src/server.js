@@ -186,11 +186,14 @@ app.patch('/api/user/image', async ( req, res ) => {
 })
 
 
-app.get('/api/received-messages', async (req, res) => {
+app.get('/api/received-messages/:page', async (req, res) => {
 
   try {
 
-    const messages = await ContactUser.find({ recipientId: req.user._id }).populate('senderId recipientId')
+    const { page } = req.params
+
+
+    const messages = await ContactUser.find({ recipientId: req.user._id }).skip(page).limit(page * 10).populate('senderId recipientId')
 
     res.status(200).json({success: true, messages: messages })
     
@@ -597,7 +600,7 @@ app.post('/api/create-donation/:id', async (req,res) => {
 
 })
 
-app.get('/api/chart-fundraisers', async (req, res) => {
+app.get('/api/user-stats', async (req, res) => {
 
   try {
 
@@ -607,7 +610,7 @@ app.get('/api/chart-fundraisers', async (req, res) => {
     const WeekOne = new Date((WeekTwo - (7 * 24 * 60 * 60 * 1000)))
     const WeekZero = new Date((WeekOne - (7 * 24 * 60 * 60 * 1000)))
 
-    const [last7, third7, second7, first7, before7, totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived] = await Promise.all([
+    const [last7, third7, second7, first7, before7, totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived, messages] = await Promise.all([
       Fundraiser.find({
         createdAt: 
         {
@@ -623,9 +626,11 @@ app.get('/api/chart-fundraisers', async (req, res) => {
       fetchUserTotalFundraisers(req.user._id),
       fetchUserTotalMoneySent(req.user._id),
       fetchUserTotalMoneyReceived(req.user._id),
+      ContactUser.find({ recipientId: req.user._id }).limit(5).populate('senderId recipientId')
+
     ])
       
-      res.status(200).json({ success: true, data: [before7, first7, second7, third7, last7], totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived })
+      res.status(200).json({ success: true, data: [before7, first7, second7, third7, last7], totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived, messages })
     
 
 

@@ -11,6 +11,10 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
+import UserDonations from "../../../components/UserDonations";
+import { IconContext } from "react-icons";
+import { BiMessageSquare } from "react-icons/bi";
+import { message } from "../../../utils/interfaces";
 
 ChartJS.register(
   CategoryScale,
@@ -48,6 +52,7 @@ export default function DashboardStats() {
   const [TotalFundraisers, setTotalFundraisers] = useState<number>(0);
   const [TotalMoneySent, setTotalMoneySent] = useState<number>(0);
   const [TotalMoneyReceived, setTotalMoneyReceived] = useState<number>(0);
+  const [Messages, setMessages] = useState<message[]>();
 
   const data = {
     labels: [
@@ -61,14 +66,14 @@ export default function DashboardStats() {
       {
         label: "Nouvelles 3awenis créées",
         data: ChartData,
-        borderColor: "#007188",
-        backgroundColor: "#007188",
+        borderColor: "#F46752",
+        backgroundColor: "#F46752",
       },
     ],
   };
 
   useEffect(() => {
-    axios.get("/api/chart-fundraisers").then((response) => {
+    axios.get("/api/user-stats").then((response) => {
       const {
         data: {
           data,
@@ -76,95 +81,52 @@ export default function DashboardStats() {
           totalFundraisers,
           totalMoneySent,
           totalMoneyReceived,
+          messages
         },
       } = response;
-      
-      setTotalDonations(totalDonations)
-      setTotalFundraisers(totalFundraisers)
-      setTotalMoneySent(totalMoneySent)
-      setTotalMoneyReceived(totalMoneyReceived)
 
+      setTotalDonations(totalDonations);
+      setTotalFundraisers(totalFundraisers);
+      setTotalMoneySent(totalMoneySent);
+      setTotalMoneyReceived(totalMoneyReceived);
+      setMessages(messages)
       setChartData(data);
     });
   }, []);
 
   return (
-    <main className="text-gray-600 bg-gray-50 dashboard-main-section grid grid-cols-6 p-10">
-      <div className="col-span-3 shadow bg-white rounded-2xl h-fit p-4">
+    <main className="text-gray-600 bg-gray-50 dashboard-main-section grid grid-cols-6 p-10 overflow-y-auto gap-y-10">
+      <div className="col-span-3 shadow bg-white rounded-2xl h-fit min-h-full p-4">
         <Line options={options} data={data} />
       </div>
-      <div className="col-span-3 flex justify-center items-start">
-        <div className="w-8/12 p-4 bg-white shadow rounded-2xl">
-          <p className="font-bold text-black text-md">Messages</p>
+      <div className="col-span-3 h-full min-h-[400px] flex justify-center items-start">
+        <div className="w-8/12 min-h-full h-full p-4 bg-white shadow rounded-2xl">
+          <div className="flex gap-1 items-center">
+            <IconContext.Provider value={{ className: "text-2xl" }}>
+              <BiMessageSquare />
+            </IconContext.Provider>
+            <p className="font-bold text-black text-md">Messages</p>
+          </div>
           <ul>
+            {Messages?.map(item => 
             <li className="flex items-center my-6 space-x-2">
               <a href="#" className="relative block">
                 <img
                   alt="profil"
-                  src="/images/person/1.jpg"
+                  src={item.senderId?.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.senderId?.image}` :  "/profile.png"}
                   className="mx-auto object-cover rounded-full h-10 w-10 "
                 />
               </a>
               <div className="flex flex-col">
                 <span className="ml-2 text-sm font-semibold text-gray-900">
-                  Charlie Rabiller
+                  {item.senderId?.name}
                 </span>
                 <span className="ml-2 text-sm text-gray-400">
-                  Hey John ! Do you read the NextJS doc ?
+                  {item.senderId?.email}
                 </span>
               </div>
             </li>
-            <li className="flex items-center my-6 space-x-2">
-              <a href="#" className="relative block">
-                <img
-                  alt="profil"
-                  src="/images/person/5.jpg"
-                  className="mx-auto object-cover rounded-full h-10 w-10 "
-                />
-              </a>
-              <div className="flex flex-col">
-                <span className="ml-2 text-sm font-semibold text-gray-900">
-                  Marie Lou
-                </span>
-                <span className="ml-2 text-sm text-gray-400">
-                  No I think the dog is better...
-                </span>
-              </div>
-            </li>
-            <li className="flex items-center my-6 space-x-2">
-              <a href="#" className="relative block">
-                <img
-                  alt="profil"
-                  src="/images/person/6.jpg"
-                  className="mx-auto object-cover rounded-full h-10 w-10 "
-                />
-              </a>
-              <div className="flex flex-col">
-                <span className="ml-2 text-sm font-semibold text-gray-900">
-                  Ivan Buck
-                </span>
-                <span className="ml-2 text-sm text-gray-400">
-                  Seriously ? haha Bob is not a child !
-                </span>
-              </div>
-            </li>
-            <li className="flex items-center my-6 space-x-2">
-              <a href="#" className="relative block">
-                <img
-                  alt="profil"
-                  src="/images/person/7.jpg"
-                  className="mx-auto object-cover rounded-full h-10 w-10 "
-                />
-              </a>
-              <div className="flex flex-col">
-                <span className="ml-2 text-sm font-semibold text-gray-900">
-                  Marina Farga
-                </span>
-                <span className="ml-2 text-sm text-gray-400">
-                  Do you need that design ?
-                </span>
-              </div>
-            </li>
+            )}
           </ul>
         </div>
       </div>
@@ -194,7 +156,7 @@ export default function DashboardStats() {
             </div>
 
             <div className="stat">
-              <div className="stat-figure text-secondary">
+              <div className="stat-figure text-yellow-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -215,7 +177,7 @@ export default function DashboardStats() {
             </div>
 
             <div className="stat">
-              <div className="stat-figure text-secondary">
+              <div className="stat-figure text-pink-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -236,7 +198,7 @@ export default function DashboardStats() {
             </div>
 
             <div className="stat">
-              <div className="stat-figure text-secondary">
+              <div className="stat-figure text-violet-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -257,6 +219,10 @@ export default function DashboardStats() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="col-span-full">
+        <UserDonations ShowAll={false} />
       </div>
     </main>
   );

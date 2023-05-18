@@ -16,6 +16,7 @@ export default function SingleFundraiser() {
   const { id } = useParams();
   const { user } = useAuthContext();
 
+  
   const [Fundraiser, setFundraiser] = useState<fundraiserInt>({
     _id: "",
     category: "",
@@ -36,11 +37,11 @@ export default function SingleFundraiser() {
   const [Open, setOpen] = useState<boolean>(false);
   const [ShowMain, setShowMain] = useState({ type: "image", index: 0 });
   const [CollectedAmount, setCollectedAmount] =
-    useState<number>(0);
+  useState<number>(0);
   const [Goal, setGoal] =
-    useState<number>(0);
+  useState<number>(0);
   const [TotalDonations, setTotalDonations] =
-    useState<string>('0');
+  useState<string>('0');
   const [TopDonation, setTopDonation] = useState<donation>({
     user: null,
     fundraiser: null,
@@ -49,29 +50,29 @@ export default function SingleFundraiser() {
     updatedAt: null,
   });
   const [MostRecentDonation, setMostRecentDonation] =
-    useState<donation>({
-      user: null,
-      fundraiser: null,
-      amount: 0,
-      createdAt: null,
-      updatedAt: null,
-    });
+  useState<donation>({
+    user: null,
+    fundraiser: null,
+    amount: 0,
+    createdAt: null,
+    updatedAt: null,
+  });
   const [FirstDonation, setFirstDonation] =
-    useState<donation>({
-      user: null,
-      fundraiser: null,
-      amount: 0,
-      createdAt: null,
-      updatedAt: null,
-    })
-    
-
+  useState<donation>({
+    user: null,
+    fundraiser: null,
+    amount: 0,
+    createdAt: null,
+    updatedAt: null,
+  })
+  
+  
   useEffect(() => {
     if (id) {
       axios
-        .get(`/api/single-fundraiser/${id}`, {
-          withCredentials: true,
-        })
+      .get(`/api/single-fundraiser/${id}`, {
+        withCredentials: true,
+      })
         .then((response) => {
           const {
             data: {
@@ -83,10 +84,10 @@ export default function SingleFundraiser() {
               firstDonation,
             },
           } = response;
-
+          
           console.log(response.data);
           
-
+          
           setCollectedAmount(collectedAmount);
           const formattedTotalDonation = formatNumber(totalDonations)
           setTotalDonations(formattedTotalDonation)
@@ -96,14 +97,15 @@ export default function SingleFundraiser() {
           setFundraiser(fundraiser);
           setGoal(fundraiser.goal);
         });
-    }
-  }, []);
-
-  const formatNumber = (num: number) => {
-    const suffixes = ["", "k", "M", "B", "T"];
-    const suffixNum = Math.floor(("" + num).length / 3);
-    let shortValue: any = parseFloat((suffixNum !== 0 ? (num / Math.pow(1000, suffixNum)) : num).toPrecision(2));
-    if (shortValue % 1 !== 0) {
+      }
+    }, []);
+    
+    
+    const formatNumber = (num: number) => {
+      const suffixes = ["", "k", "M", "B", "T"];
+      const suffixNum = Math.floor(("" + num).length / 3);
+      let shortValue: any = parseFloat((suffixNum !== 0 ? (num / Math.pow(1000, suffixNum)) : num).toPrecision(2));
+      if (shortValue % 1 !== 0) {
       shortValue = shortValue.toFixed(1);
     }
     return shortValue + suffixes[suffixNum];
@@ -196,7 +198,7 @@ export default function SingleFundraiser() {
         <div className="aspect-[7/4] flex items-center justify-center grid-fundraiser-image">
           {ShowMain.type == "image" && (
             <img
-              className="w-full max-h-full max-w-full max rounded-md object-cover object-center "
+              className="w-full max-h-full max-w-full rounded-md object-cover object-center "
               src={
                 Fundraiser.image
                   ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${Fundraiser.image}`
@@ -207,7 +209,7 @@ export default function SingleFundraiser() {
           )}
           {ShowMain.type == "secondaryImages" && (
             <img
-              className="max-h-full max-w-full rounded-md object-cover object-center "
+              className="w-full max-h-full max-w-full rounded-md object-cover object-center "
               src={`https://res.cloudinary.com/dhwfr0ywo/image/upload/${
                 Fundraiser.secondaryImages[ShowMain.index]
               }`}
@@ -216,17 +218,15 @@ export default function SingleFundraiser() {
           )}
           {ShowMain.type == "secondaryVideos" && (
             <video
-              className="relative w-full rounded-md overflow-hidden flex items-center justify-center"
+              className="relative w-full rounded-md overflow-hidden"
+              src={`https://res.cloudinary.com/dhwfr0ywo/video/upload/${
+                  Fundraiser.secondaryVideos[ShowMain.index]
+                }`}
               controls
               autoPlay
               muted
+              disablePictureInPicture
             >
-              <source
-                className="object-cover object-center max-h-full max-w-full rounded-md"
-                src={`https://res.cloudinary.com/dhwfr0ywo/video/upload/${
-                  Fundraiser.secondaryVideos[ShowMain.index]
-                }`}
-              />
             </video>
           )}
         </div>
@@ -272,17 +272,16 @@ export default function SingleFundraiser() {
               ))}
               {Fundraiser.secondaryVideos.map((item, index) => (
                 <button
-                  className="w-fit h-fit rounded-md shrink-0"
+                  className="relative max-w-[224px] h-32 rounded-md overflow-hidden flex items-center justify-center shrink-0"
                   onClick={() =>
                     setShowMain({ type: "secondaryVideos", index: index })
                   }
                 >
-                  <video className="relative max-w-[224px] h-32 rounded-md overflow-hidden flex items-center justify-center">
-                    <source
-                      className="object-cover object-center max-h-full max-w-full rounded-md"
-                      src={`https://res.cloudinary.com/dhwfr0ywo/video/upload/${item}`}
-                    />
-                  </video>
+                  <img
+                    className="object-cover object-center max-w-full max-h-full self-center rounded-md"
+                    src={`https://res.cloudinary.com/dhwfr0ywo/video/upload/${item}.jpg`}
+                    alt="content"
+                  />
                 </button>
               ))}
             </div>

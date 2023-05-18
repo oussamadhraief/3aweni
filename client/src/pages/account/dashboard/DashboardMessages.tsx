@@ -7,7 +7,7 @@ export default function DashboardMessages() {
   const [Messages, setMessages] = useState<message[]>([])
 
   useEffect(() => {
-    axios.get('/api/received-messages',{ 
+    axios.get('/api/received-messages/0',{ 
       withCredentials: true 
     }).then((res) => {
       setMessages(res.data.messages)
