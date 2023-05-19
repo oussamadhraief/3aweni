@@ -110,7 +110,7 @@ export default function UserDashboard() {
                 </div>
         </div>
 
-        <div className='w-full flex flex-col flex-nowrap h-screen overflow-hidden'>
+        <div className='w-full flex flex-col flex-nowrap h-screen'>
             <div className="w-full flex flex-nowrap justify-end px-5 relative bg-base-100 z-10 h-12 dashboard-navbar">
                 <button className={`w-fit h-full absolute ${ShowSidebar ? "-left-10" : "left-5"} transition-all top-0`} onClick={() => setShowSidebar(prev => !prev)}>
                     {ShowSidebar ?

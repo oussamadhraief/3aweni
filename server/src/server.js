@@ -37,6 +37,7 @@ const {
 const fs = require("fs");
 const helmet = require("helmet");
 const { promisify } = require("util");
+const axios = require('axios');
 
 const port = process.env.PORT || 5000;
 const url = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
@@ -657,21 +658,85 @@ app.patch("/api/fundraiser/:id", async (req, res) => {
   }
 });
 
-app.post("/api/create-donation/:id", async (req, res) => {
+app.post('/api/konnect-gateway/:id', async (req,res) => {
+  
   try {
-    const { donation } = req.body;
-    const { id } = req.params;
+    
+    const { donation } = req.body
+    const { id } = req.params
+    
+    const fund = await Fundraiser.findOne({ _id: id })
+
+    const paymentInfo = {
+      receiverWalletId: "6466799e1874253b580aac46",
+      token: "TND", 
+      amount: donation * 1000,
+      type: "immediate",
+      description: "donation for " + fund.title,
+      lifespan: 10,
+      feesIncluded: true,
+      firstName:  "Ammar",
+      lastName: "Halloul",
+      phoneNumber: "54827070",
+      email: "ammarhalloul7@gmail.com",
+      orderId: id,
+      webhook: `${url}api/create-donation/${id}`,
+      silentWebhook: true,
+      successUrl: `http://localhost:3000/fundraisers/${id}`,
+      failUrl: `http://localhost:3000/donate/${id}`,
+      checkoutForm: true,
+      acceptedPaymentMethods: [
+        "wallet",
+        "bank_card",
+        "e-DINAR",
+        "flouci"
+      ]
+    }
+
+
+      const response = await axios.post("https://api.preprod.konnect.network/api/v2/payments/init-payment", JSON.stringify(paymentInfo) , {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': '6466799e1874253b580aac43:HBuk5KIy9Fy2JaEqII4mxyBG7Rx2INQb'
+      }})
+      
+      
+      res.status(200).json({ success: true, response: response.data })
+
+  } catch (error) {
+
+    console.log(error);
+    res.status(400).json({ success: false, error: error })
+
+  }
+
+})
+
+
+app.get('/api/create-donation/:id', async (req,res) => {
+  try {
+    console.log(1);
+    const { id } = req.params
+
+    const { payment_ref } = req.query.params
+
+    const response = await axios.get(`https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`)
+
+    const { data: { payment: { amount } }} = response
 
     await Donation.create({
       user: req.user._id,
       fundraiser: id,
-      amount: donation,
-    });
+      amount
+    })
+
+    res.status(201).json({ success: true })
+
   } catch (error) {
     console.log(error);
-    res.status(400).json({ success: false });
+    res.status(400).json({ success: false, error })
   }
-});
+})
 
 app.get("/api/user-stats", async (req, res) => {
   try {

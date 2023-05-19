@@ -13,19 +13,21 @@ export default function Donate() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-        axios.post(
-            `/api/create-donation/${id}`,
+       const res = await axios.post(
+            `/api/konnect-gateway/${id}`,
             {
-              donation: Donation,
+              donation: parseFloat(Donation.replace(/,/g, '')),
             },
             {
               withCredentials: true,
             }
           )
-        
-          navigate(`/fundraisers/${id}`)
+          
+          const { data: { response : { payUrl }}} = res
+          window.location.href = payUrl
         
     } catch (error) {
+        console.log(error);
         
     }
     

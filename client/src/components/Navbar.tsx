@@ -2,27 +2,29 @@ import { Link } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import { AiOutlineSearch } from "react-icons/ai";
 import { IoIosArrowDown } from 'react-icons/io';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { categories } from '../utils/categoriesData';
 
 export default function Navbar() {
 
   const discover = useRef<HTMLLIElement>(null)
-  const [Show, setShow] = useState(false)
 
   return (
     <nav className="main-menu" id="main-menu">
       <ul className="main-menu__list">
-        <li ref={discover} className="relative main-menu__item group">
-          <button className="main-menu__link g-link flex items-center gap-1 main-menu__link g-link group" onClick={() => setShow(prev => !prev)}>Découvrir
+
+        <li ref={discover} className="dropdown dropdown-bottom dropdown-end flex items-center gap-3 relative group main-menu__item">
+          <label tabIndex={0} className="flex items-center gap-3 cursor-pointer font-medium normal-case main-menu__link g-link">
+              Découvrir
               <IconContext.Provider value={{ className: 'text-zinc-700 group-hover:text-secondary'}}>
                   <IoIosArrowDown />
               </IconContext.Provider>
-          </button>
-          <div className={Show ? `rounded-md absolute left-0 top-[150%] w-[420px] h-80 flex flex-wrap px-4 py-2 space-x-1 bg-white shadow-form transition-[display] duration-500` : `hidden transition-[display] delay-500`}>
-              <h3 className='font-semibold w-full text-xs'>Catégories</h3>
-              {categories.map(item => <Link to={`/discover/${item.value}`} className='w-36 whitespace-nowrap text-[15px] hover:underline' onClick={() => setShow(false)}>{item.label}</Link>)}
-          </div>
+          </label>
+          <ul tabIndex={0} className="dropdown-content menu shadow-form rounded-lg w-52 px-3 py-1 bg-white text-sm">
+
+              <li><h3 className='font-semibold w-full text-xs'>Catégories</h3></li>
+              {categories.map(item => <li><Link to={`/discover/${item.value}`} className='w-36 whitespace-nowrap text-[15px] hover:underline'>{item.label}</Link></li>)}
+          </ul>
         </li>
         <li className="main-menu__item"><Link to="/search" className='flex items-center gap-1 main-menu__link g-link group'>
            Recherche

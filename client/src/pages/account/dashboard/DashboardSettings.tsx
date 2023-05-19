@@ -7,11 +7,17 @@ import { userInt } from "../../../utils/interfaces";
 import useAuthContext from "../../../hooks/useAuthContext";
 import useLoadingAuthContext from "../../../hooks/useLoadingAuthContext";
 import getUser from "../../../hooks/getUser";
+import { FiCheck, FiEdit2 } from "react-icons/fi";
+import { IoMdClose } from "react-icons/io";
+import { userInfo } from "os";
+
+interface userInfoInt { name: string, phone: string }
+interface userPasswordInt { currentPassowrd: string, newPassword: string, newPasswordConfirmation: string }
 
 export default function DashboardSettings() {
-  const { login } = useAuthContext()
-    const { Loading } = useLoadingAuthContext()
-    const { user } = useAuthContext()
+  const { login } = useAuthContext();
+  const { Loading } = useLoadingAuthContext();
+  const { user } = useAuthContext();
 
   const imageUploadInputRef = useRef<HTMLInputElement>(null);
   const progressBarRef = useRef<HTMLProgressElement>(null);
@@ -24,13 +30,22 @@ export default function DashboardSettings() {
     phone: "",
   });
   const [UserImage, setUserImage] = useState<string | null>(null);
+  const [CurrentUserImage, setCurrentUserImage] = useState<string | null>(null);
+  const [UserEmail, setUserEmail] = useState<string>('');
+  const [UserInfo, setUserInfo] = useState<userInfoInt>({ name: '', phone: '' });
+  const [UserPassword, setUserPassword] = useState<userPasswordInt>({ currentPassowrd: '', newPassword: '', newPasswordConfirmation: '' })
   const [EditingImage, setEditingImage] = useState<boolean>(false);
+  const [EditingEmail, setEditingEmail] = useState<boolean>(false);
+  const [EditingInfo, setEditingInfo] = useState<boolean>(false);
+  const [EditingPassword, setEditingPassword] = useState<boolean>(false);
   const [Show, setShow] = useState<boolean>(false);
 
   useEffect(() => {
-    if (user) 
-        setUserInformation(user);
-    
+    if (user){
+      setCurrentUserImage(user.image)
+      setUserEmail(user.email)
+      setUserInfo({ name: user.name, phone: user.phone })
+    } 
   }, [Loading]);
 
   const handleEditingImage = () => {
@@ -54,18 +69,19 @@ export default function DashboardSettings() {
     if (files) reader.readAsDataURL(files[0]);
   }
 
-  const handleUpdateUserImage = async (publicId: string ) => {
+  const handleUpdateUserImage = async (publicId: string) => {
     try {
-        await axios.patch('/api/user/image', {
-            image: publicId
-        },{
-            withCredentials: true
-        })
-    } catch (error) {
-        
-    }
-   
-  }
+      await axios.patch(
+        "/api/user/image",
+        {
+          image: publicId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+    } catch (error) {}
+  };
 
   const handleImageUpload = async () => {
     try {
@@ -91,25 +107,56 @@ export default function DashboardSettings() {
           },
         }
       );
-    
-        await handleUpdateUserImage(res.data.imagePublicId)
 
-        login({
-          ...user!,
-          image: res.data.imagePublicId
-        })
+      await handleUpdateUserImage(res.data.imagePublicId);
 
-      setUserInformation({
-        ...UserInformation,
+      login({
+        ...user!,
         image: res.data.imagePublicId,
       });
+
+      setCurrentUserImage(res.data.imagePublicId,);
+
     } catch (error) {}
+  };
+
+  const handleSetEditingEmail = () => {
+    if (user)
+      {
+        setUserEmail(user?.email)
+      }
+    setEditingEmail(true);
+    setEditingInfo(false);
+    setEditingPassword(false);
+  };
+
+  const handleSetEditingInfo = () => {
+    if (user)
+      {
+        setUserInfo({
+          name: user.name,
+          phone: user.phone
+        })
+      }
+    setEditingEmail(false);
+    setEditingInfo(true);
+    setEditingPassword(false);
+  };
+
+  const handleSetEditingPassword = () => {
+    if (user)
+      {
+        setUserPassword({ currentPassowrd: '', newPassword: '', newPasswordConfirmation: ''})
+      }
+    setEditingEmail(false);
+    setEditingInfo(false);
+    setEditingPassword(true);
   };
 
   return (
     <section className="dashboard-main-section w-full bg-gray-100/50 flex justify-center items-center">
       <div className="container max-w-2xl mx-auto shadow-md md:w-3/4 rounded-b-lg overflow-hidden">
-        <div className="p-4 border-t-2 border-gray-200 rounded-lg bg-gray-100/5 ">
+        <div className="p-4 border-t border-gray-200 rounded-lg bg-gray-100/5 ">
           <div className="mx-auto md:w-full md:mx-0">
             <div className="relative w-full flex items-center space-x-4 transition-all">
               <div className="relative w-fit h-fit group rounded">
@@ -117,8 +164,8 @@ export default function DashboardSettings() {
                   <img
                     alt="profil"
                     src={
-                      UserInformation.image
-                        ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${UserInformation.image}`
+                      CurrentUserImage
+                        ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${CurrentUserImage}`
                         : "/profile.png "
                     }
                     className="mx-auto object-cover rounded-full h-24 w-24"
@@ -155,56 +202,179 @@ export default function DashboardSettings() {
           </div>
         </div>
         <div className="space-y-6 bg-white">
-          <div className="items-center w-full p-4 space-y-4 text-gray-500 md:inline-flex md:space-y-0">
-            <h2 className="max-w-sm mx-auto md:w-1/3">Account</h2>
-            <div className="max-w-sm mx-auto md:w-2/3">
-              <div className=" relative ">
+          <div className="items-center justify-between w-full px-6 py-4 space-y-4 text-gray-500 md:flex md:space-y-0">
+            <h2 className="w-fit h-fit py-2 whitespace-nowrap">
+              Adresse E-mail
+            </h2>
+            {EditingEmail ? (
+              <div className="flex gap-2 items-end max-w-sm md:w-full">
                 <input
                   type="text"
-                  id="user-info-email"
-                  className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  id="exemple@email.com"
+                  className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
                   placeholder="Email"
+                  name="email"
+                  value={UserEmail}
+                  onChange={e => setUserEmail(e.target.value)}
                 />
+                <button className="w-fit h-fit p-1 rounded-full bg-lighter_blue">
+                  <IconContext.Provider
+                    value={{ className: " text-secondary" }}
+                  >
+                    <FiCheck />
+                  </IconContext.Provider>
+                </button>
+                <button
+                  className="w-fit h-fit p-1 rounded-full bg-[#eee]"
+                  onClick={() => setEditingEmail(false)}
+                >
+                  <IconContext.Provider value={{ className: "" }}>
+                    <IoMdClose />
+                  </IconContext.Provider>
+                </button>
               </div>
-            </div>
+            ) : (
+              <button
+                className="w-fit h-fit p-1.5 rounded-full bg-[#eee]"
+                onClick={handleSetEditingEmail}
+              >
+                <IconContext.Provider value={{ className: "" }}>
+                  <FiEdit2 />
+                </IconContext.Provider>
+              </button>
+            )}
           </div>
           <hr />
-          <div className="items-center w-full p-4 space-y-4 text-gray-500 md:inline-flex md:space-y-0 rounded-b-lg">
-            <h2 className="max-w-sm mx-auto md:w-1/3">Personal info</h2>
-            <div className="max-w-sm mx-auto space-y-5 md:w-2/3">
-              <div>
-                <div className=" relative ">
+          <div className="items-start justify-between w-full px-6 py-4 space-y-4 text-gray-500 md:flex md:space-y-0">
+            <h2 className="w-fit h-fit whitespace-nowrap">
+              Informations personnelles
+            </h2>
+            {EditingInfo ? (
+              <div className="flex gap-2 items-center max-w-sm md:w-full">
+                <div className="flex flex-col gap-5 w-full">
                   <input
                     type="text"
-                    id="user-info-name"
-                    className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                    placeholder="Name"
+                    id="exemple@email.com"
+                    className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
+                    placeholder="Nom et prénom"
+                    name="name"
+                    value={UserInfo.name}
+                    onChange={e => setUserInfo({
+                      ...UserInfo,
+                      name: e.target.value
+                    })}
                   />
-                </div>
-              </div>
-              <div>
-                <div className=" relative ">
                   <input
                     type="text"
-                    id="user-info-phone"
-                    className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                    placeholder="Phone number"
+                    id="exemple@email.com"
+                    className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
+                    placeholder="Num. de tél"
+                    name="phone"
+                    value={UserInfo.phone}
+                    onChange={e => setUserInfo({
+                      ...UserInfo,
+                      phone: e.target.value
+                    })}
                   />
                 </div>
+                <button className="w-fit h-fit p-1 rounded-full bg-lighter_blue">
+                  <IconContext.Provider
+                    value={{ className: " text-secondary" }}
+                  >
+                    <FiCheck />
+                  </IconContext.Provider>
+                </button>
+                <button
+                  className="w-fit h-fit p-1 rounded-full bg-[#eee]"
+                  onClick={() => setEditingInfo(false)}
+                >
+                  <IconContext.Provider value={{ className: "" }}>
+                    <IoMdClose />
+                  </IconContext.Provider>
+                </button>
               </div>
-            </div>
+            ) : (
+              <button
+                className="w-fit h-fit p-1.5 rounded-full bg-[#eee]"
+                onClick={handleSetEditingInfo}
+              >
+                <IconContext.Provider value={{ className: "" }}>
+                  <FiEdit2 />
+                </IconContext.Provider>
+              </button>
+            )}
           </div>
           <hr />
-          <div className="items-center w-full p-8 text-gray-500 rounded-b-lg">
-            <h2 className="w-full text-left">Mot de passe</h2>
-            <div className=" relative ">
-              <input
-                type="text"
-                id="user-info-password"
-                className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                placeholder="Password"
-              />
-            </div>
+          <div className="items-start justify-between w-full px-6 py-4 space-y-4 text-gray-500 md:flex md:space-y-0 pb-10">
+            <h2 className="w-fit h-fit whitespace-nowrap">
+              Mot de passe
+            </h2>
+            {EditingPassword ? (
+              <div className="flex gap-2 items-center max-w-sm md:w-full">
+                <div className="flex flex-col gap-5 w-full">
+                  <input
+                    type="text"
+                    id="exemple@email.com"
+                    className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
+                    placeholder="Ancien mot de passe"
+                    name="currentPassowrd"
+                    value={UserPassword.currentPassowrd}
+                    onChange={e => setUserPassword({
+                      ...UserPassword,
+                      currentPassowrd: e.target.value
+                    })}
+                  />
+                  <input
+                    type="text"
+                    id="exemple@email.com"
+                    className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
+                    placeholder="Nouveau mot de passe"
+                    name="newPassword"
+                    value={UserPassword.newPassword}
+                    onChange={e => setUserPassword({
+                      ...UserPassword,
+                      newPassword: e.target.value
+                    })}
+                  />
+                  <input
+                    type="text"
+                    id="exemple@email.com"
+                    className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
+                    placeholder="Confirmez le nouveau mot de passe"
+                    name="newPasswordConfirmation"
+                    value={UserPassword.newPasswordConfirmation}
+                    onChange={e => setUserPassword({
+                      ...UserPassword,
+                      newPasswordConfirmation: e.target.value
+                    })}
+                  />
+                </div>
+                <button className="w-fit h-fit p-1 rounded-full bg-lighter_blue">
+                  <IconContext.Provider
+                    value={{ className: " text-secondary" }}
+                  >
+                    <FiCheck />
+                  </IconContext.Provider>
+                </button>
+                <button
+                  className="w-fit h-fit p-1 rounded-full bg-[#eee]"
+                  onClick={() => setEditingPassword(false)}
+                >
+                  <IconContext.Provider value={{ className: "" }}>
+                    <IoMdClose />
+                  </IconContext.Provider>
+                </button>
+              </div>
+            ) : (
+              <button
+                className="w-fit h-fit p-1.5 rounded-full bg-[#eee]"
+                onClick={handleSetEditingPassword}
+              >
+                <IconContext.Provider value={{ className: "" }}>
+                  <FiEdit2 />
+                </IconContext.Provider>
+              </button>
+            )}
           </div>
         </div>
       </div>

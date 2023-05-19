@@ -95,8 +95,10 @@ export default function DashboardStats() {
   }, []);
 
   return (
-    <main className="text-gray-600 bg-gray-50 dashboard-main-section grid grid-cols-6 p-10 overflow-y-auto gap-y-10">
-      <div className="col-span-3 shadow bg-white rounded-2xl h-fit min-h-full p-4">
+    <main className="text-gray-600 bg-gray-50 dashboard-main-section flex justify-center items-start overflow-auto">
+      <div className="w-full max-w-[1480px] grid grid-cols-6 p-10 overflow-y-auto gap-y-10">
+
+      <div className="col-span-3 shadow bg-white rounded-2xl h-fit min-h-full p-4 flex items-center justify-center  ">
         <Line options={options} data={data} />
       </div>
       <div className="col-span-3 h-full min-h-[400px] flex justify-center items-start">
@@ -151,7 +153,7 @@ export default function DashboardStats() {
                 </svg>
               </div>
               <div className="stat-title">Total money received</div>
-              <div className="stat-value">{TotalMoneyReceived}</div>
+              <div className="stat-value text-2xl text-zinc-700">{TotalMoneyReceived}</div>
               <div className="stat-desc">Jan 1st - Feb 1st</div>
             </div>
 
@@ -172,7 +174,7 @@ export default function DashboardStats() {
                 </svg>
               </div>
               <div className="stat-title">Total fundraisers created</div>
-              <div className="stat-value">{TotalFundraisers}</div>
+              <div className="stat-value text-2xl text-zinc-700">{TotalFundraisers}</div>
               <div className="stat-desc">Jan 1st - Feb 1st</div>
             </div>
 
@@ -193,7 +195,7 @@ export default function DashboardStats() {
                 </svg>
               </div>
               <div className="stat-title">Total donations received</div>
-              <div className="stat-value">{TotalDonations}</div>
+              <div className="stat-value text-2xl text-zinc-700">{TotalDonations}</div>
               <div className="stat-desc">↗︎ 400 (22%)</div>
             </div>
 
@@ -214,7 +216,7 @@ export default function DashboardStats() {
                 </svg>
               </div>
               <div className="stat-title">Total money spent</div>
-              <div className="stat-value">{TotalMoneySent}</div>
+              <div className="stat-value text-2xl text-zinc-700">{TotalMoneySent}</div>
               <div className="stat-desc">↘︎ 90 (14%)</div>
             </div>
           </div>
@@ -224,6 +226,8 @@ export default function DashboardStats() {
       <div className="col-span-full">
         <UserDonations ShowAll={false} />
       </div>
+      </div>
+
     </main>
   );
 }
