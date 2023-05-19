@@ -132,6 +132,10 @@ passport.deserializeUser((id, cb) => {
 
 //Routes
 
+app.get('/hello', (_,res) => {
+  res.send('working...')
+})
+
 //user
 
 app.post("/api/user/login", (req, res, next) => {
