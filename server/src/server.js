@@ -197,17 +197,19 @@ app.get("/api/user/logout", async (req, res, done) => {
 
 
 app.get("/api/user", async (req, res) => {
-  
-  const user= req.user
-  
-  if(user){
-    
-    res.status(200).json({ success: true, user: user });
+  try {
+    const user= await User.findOne({ _id:  req.user._id })
 
-  }else{
-    
-    res.status(401).json({ success: false });
+    if(user){
+      
+      return res.json({ success: true, user: user });
 
+    }
+      return res.json({ success: false });
+
+  } catch (error) {
+    return res.json({ success: false });
+    
   }
 
 });
@@ -843,6 +845,7 @@ app.post("/api/contact-user", async (req, res) => {
 //socket IO
 const http = require("http");
 const { Server } = require("socket.io");
+const { resolve } = require("path");
 const server = http.createServer(app);
 app.listen(port, () => {
   console.log("server is running on port", port);
