@@ -25,10 +25,10 @@ import SingleFundraiser from './pages/fundraisers/SingleFundraiser';
 import EditUserFundraiser from './pages/account/dashboard/edit-fundraiser/EditUserFundraiser';
 import DashboardStats from './pages/account/dashboard/DashboardStats';
 import CategoryFundraisers from './pages/fundraisers/CategoryFundraisers';
-const { io } = require("socket.io-client");
 import("@lottiefiles/lottie-player");
+// const { io } = require("socket.io-client");
 
-const socket = io();
+// const socket = io();
 
 
 function App() {

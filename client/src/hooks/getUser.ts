@@ -11,6 +11,7 @@ const getUser = ({ login, logout, setLoading }: { login: (user: userInt) => void
         .then((res) => {
             
             const { data: { user } } = res
+            console.log(res);
             
             if(user){ 
                 

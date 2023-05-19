@@ -41,7 +41,7 @@ const {
 } = require("util");
 const axios = require('axios');
 const port = process.env.PORT || 5000;
-const url = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
+const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
 const storage = multer.memoryStorage();
 const upload = multer({
   storage
@@ -71,7 +71,7 @@ app.use(express.json({
   limit: "50mb"
 }));
 app.use(cors({
-  origin: url,
+  origin: BASE_URL,
   credentials: true
 }));
 app.use(cookieParser());
@@ -132,6 +132,10 @@ passport.deserializeUser((id, cb) => {
 });
 
 //Routes
+
+app.get('/hello', (_, res) => {
+  res.send('working...');
+});
 
 //user
 
@@ -258,7 +262,7 @@ app.post("/api/user/password-reset", async (req, res) => {
     }, secret, {
       expiresIn: "5m"
     });
-    const link = `${url}password-reset/${oldUser._id}/${token}`;
+    const link = `${BASE_URL}password-reset/${oldUser._id}/${token}`;
     var transporter = nodemailer.createTransport({
       secure: true,
       service: "gmail",
@@ -745,10 +749,10 @@ app.post('/api/konnect-gateway/:id', async (req, res) => {
       phoneNumber: "54827070",
       email: "ammarhalloul7@gmail.com",
       orderId: id,
-      webhook: `${url}api/create-donation/${id}`,
+      webhook: `${BASE_URL}api/create-donation/${id}`,
       silentWebhook: true,
-      successUrl: `http://localhost:3000/fundraisers/${id}`,
-      failUrl: `http://localhost:3000/donate/${id}`,
+      successUrl: `${BASE_URL}fundraisers/${id}`,
+      failUrl: `${BASE_URL}donate/${id}`,
       checkoutForm: true,
       acceptedPaymentMethods: ["wallet", "bank_card", "e-DINAR", "flouci"]
     };
