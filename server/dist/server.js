@@ -211,11 +211,12 @@ app.get("/api/user/logout", async (req, res, done) => {
     });
   }
 });
-app.get("/api/user", (req, res) => {
-  if (req.isAuthenticated()) {
+app.get("/api/user", async (req, res) => {
+  const user = req.user;
+  if (user) {
     res.status(200).json({
       success: true,
-      user: req.user
+      user: user
     });
   } else {
     res.status(401).json({
@@ -847,7 +848,7 @@ app.post("/api/contact-user", async (req, res) => {
       message,
       id
     } = req.body;
-    if (req.isAuthenticated()) {
+    if (req.user) {
       contact = {
         senderId: req.user._id,
         recipientId: id,

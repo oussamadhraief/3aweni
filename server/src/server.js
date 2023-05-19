@@ -195,18 +195,24 @@ app.get("/api/user/logout", async (req, res, done) => {
   }
 });
 
-app.get("/api/user", (req, res) => {
 
-  if (req.user) {
+app.get("/api/user", async (req, res) => {
+  
+  const user= req.user
+  
+  if(user){
+    
+    res.status(200).json({ success: true, user: user });
 
-    res.status(200).json({ success: true, user: req.user });
-
-  } else {
-
-    res.status(401).json({ success: false })
+  }else{
+    
+    res.status(401).json({ success: false });
 
   }
+
 });
+
+
 
 app.get("/api/received-messages/:page", async (req, res) => {
   try {
