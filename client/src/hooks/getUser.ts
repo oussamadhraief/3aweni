@@ -21,7 +21,9 @@ const getUser = ({ login, logout, setLoading }: { login: (user: userInt) => void
             setLoading(false)
             
 
-        }).catch(() => {
+        }).catch((error) => {
+            console.log(error);
+            
             logout()
             setLoading(false)
         })
