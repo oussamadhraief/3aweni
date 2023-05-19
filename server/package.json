@@ -2,11 +2,12 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
     "start": "node src/server.js",
     "build": "babel src -d dist",
-    "prestart": "npm run build"
+    "prestart": "npm run build",
+    "render-start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
