@@ -672,12 +672,13 @@ app.get('/api/create-donation/:id', passport.authenticate('local'),  async (req,
     console.log(response);
 
     const { data: { payment: { amount } }} = response
-
+    console.log(req.user._id);
     await Donation.create({
       user: req.user._id,
       fundraiser: id,
       amount
     })
+    console.log(25);
 
     res.status(201).json({ success: true })
 
