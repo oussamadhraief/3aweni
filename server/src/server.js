@@ -92,6 +92,7 @@ app.get("/hello", (_, res) => {
 //auth
 
 function authenticateToken(req, res, next) {
+  console.log(req.cookies);
   const token = req.cookies.token;
 
   if (!token) {
@@ -173,7 +174,7 @@ app.post('/api/user/logout', (req, res) => {
   res.json({ message: 'Logout successful' });
 });
 
-app.get('/api/user', authenticateToken, async (req, res) => {
+app.get('/api/user', async (req, res) => {
   try {
     // The user is authenticated, and the user information is available in req.user
     const token = req.cookies.token;
