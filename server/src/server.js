@@ -156,7 +156,7 @@ app.post('/api/user/login', async (req, res) => {
 
     
     
-    res.cookie('token', token, { httpOnly: true });
+    res.cookie('token', token, { httpOnly: true, domain: '.onrender.com' });
     
     res.json({ message: 'Login successful', user });
   } catch (error) {
