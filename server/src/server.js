@@ -176,18 +176,30 @@ app.post('/api/user/logout', (req, res) => {
 app.get('/api/user', authenticateToken, async (req, res) => {
   try {
     // The user is authenticated, and the user information is available in req.user
-    const user = req.user;
+    const token = req.cookies.token;
 
-    // Find the user by ID or any other necessary logic
+  if (!token) {
+    return res.sendStatus(401);
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+
+
     const foundUser = await User.findById(user.userId);
-
     // Check if user exists
     if (!foundUser) {
       return res.status(404).json({ message: 'User not found' });
     }
-
+  
     // Send the user information in the response
     res.status(200).json({ user: foundUser });
+  });
+
+    // Find the user by ID or any other necessary logic
+
   } catch (error) {
     console.error('Error fetching user:', error);
     res.status(500).json({ message: 'Internal server error' });
