@@ -698,7 +698,7 @@ app.post('/api/konnect-gateway/:id', async (req,res) => {
       email: "ammarhalloul7@gmail.com",
       orderId: id,
       webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}`,
-      silentWebhook: false,
+      silentWebhook: true,
       successUrl: `${BASE_URL}/fundraisers/${id}`,
       failUrl: `${BASE_URL}/donate/${id}`,
       checkoutForm: true,
@@ -735,9 +735,11 @@ app.get('/api/create-donation/:id', async (req,res) => {
     console.log(1);
     const { id } = req.params
 
-    const { payment_ref } = req.query.params
+    const { payment_ref } = req.query
 
     const response = await axios.get(`https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`)
+
+    console.log(response);
 
     const { data: { payment: { amount } }} = response
 
