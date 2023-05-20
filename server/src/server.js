@@ -37,7 +37,6 @@ const fs = require("fs");
 const helmet = require("helmet");
 const { promisify } = require("util");
 const axios = require("axios");
-require('./passport')
 
 const port = process.env.PORT || 5000;
 const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
@@ -87,6 +86,7 @@ app.use(passport.session());
 app.use(compression());
 app.use(helmet());
 
+require("./passport");
 
 //Routes
 
@@ -96,7 +96,7 @@ app.get("/hello", (_, res) => {
 
 //auth
 
-app.use('/api/user', require('./routes/auth'));
+app.use("/api/user", require("./routes/auth"));
 
 app.patch("/api/user/image", async (req, res) => {
   try {
@@ -125,8 +125,7 @@ app.get("/api/user/logout", async (req, res, done) => {
   }
 });
 
-
-app.get('/api/user', (req, res) => {
+app.get("/api/user", (req, res) => {
   if (req.isAuthenticated()) {
     // User is authenticated
     const user = req.user;
@@ -134,11 +133,9 @@ app.get('/api/user', (req, res) => {
     res.json({ user });
   } else {
     // User is not authenticated
-    res.status(401).json({ message: 'Unauthorized' });
+    res.status(401).json({ message: "Unauthorized" });
   }
 });
-
-
 
 app.get("/api/received-messages/:page", async (req, res) => {
   try {
@@ -289,18 +286,17 @@ app.get("/api/trending-fundraisers", async (req, res) => {
       },
       {
         $project: {
-          _id: '$fundraiserData._id',
-          name: '$fundraiserData.name',
-          image: '$fundraiserData.image',
-          state: '$fundraiserData.state',
-          title: '$fundraiserData.title',
+          _id: "$fundraiserData._id",
+          name: "$fundraiserData.name",
+          image: "$fundraiserData.image",
+          state: "$fundraiserData.state",
+          title: "$fundraiserData.title",
           // Add other fields you want to include
         },
       },
     ]);
-    
-    res.status(200).json({ success: true, fundraisers: trendingFundraisers });
 
+    res.status(200).json({ success: true, fundraisers: trendingFundraisers });
   } catch (error) {
     console.error(error);
     res.status(404).json({ success: false, error });
@@ -465,17 +461,15 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
       fetchFundraiserFirstDonation(id),
     ]);
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        fundraiser,
-        collectedAmount,
-        totalDonations,
-        topDonation,
-        mostRecentDonation,
-        firstDonation,
-      });
+    res.status(200).json({
+      success: true,
+      fundraiser,
+      collectedAmount,
+      totalDonations,
+      topDonation,
+      mostRecentDonation,
+      firstDonation,
+    });
   } catch (error) {
     console.log(error);
     res.status(404).json({ success: false });
@@ -599,24 +593,22 @@ app.patch("/api/fundraiser/:id", async (req, res) => {
   }
 });
 
-app.post('/api/konnect-gateway/:id', async (req,res) => {
-  
+app.post("/api/konnect-gateway/:id", async (req, res) => {
   try {
-    
-    const { donation } = req.body
-    const { id } = req.params
-    
-    const fund = await Fundraiser.findOne({ _id: id })
+    const { donation } = req.body;
+    const { id } = req.params;
+
+    const fund = await Fundraiser.findOne({ _id: id });
 
     const paymentInfo = {
       receiverWalletId: "6466799e1874253b580aac46",
-      token: "TND", 
+      token: "TND",
       amount: donation * 1000,
       type: "immediate",
       description: "donation for " + fund.title,
       lifespan: 10,
       feesIncluded: true,
-      firstName:  "Ammar",
+      firstName: "Ammar",
       lastName: "Halloul",
       phoneNumber: "54827070",
       email: "ammarhalloul7@gmail.com",
@@ -626,65 +618,72 @@ app.post('/api/konnect-gateway/:id', async (req,res) => {
       successUrl: `${BASE_URL}/fundraisers/${id}`,
       failUrl: `${BASE_URL}/donate/${id}`,
       checkoutForm: true,
-      acceptedPaymentMethods: [
-        "wallet",
-        "bank_card",
-        "e-DINAR",
-        "flouci"
-      ]
+      acceptedPaymentMethods: ["wallet", "bank_card", "e-DINAR", "flouci"],
+    };
+
+    const response = await axios.post(
+      "https://api.preprod.konnect.network/api/v2/payments/init-payment",
+      JSON.stringify(paymentInfo),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key":
+            "6466799e1874253b580aac43:HBuk5KIy9Fy2JaEqII4mxyBG7Rx2INQb",
+        },
+      }
+    );
+
+    res.status(200).json({ success: true, response: response.data });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false, error: error });
+  }
+});
+
+app.get(
+  "/api/waaaaaaaaaaaaaaaaaa",
+  passport.authenticate("local"),
+  async (req, res) => {
+    console.log(req.user);
+  }
+);
+
+app.get(
+  "/api/create-donation/:id",
+  passport.authenticate("local"),
+  async (req, res) => {
+    try {
+      console.log(1);
+      const { id } = req.params;
+
+      const { payment_ref } = req.query;
+
+      const response = await axios.get(
+        `https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`
+      );
+
+      console.log(response);
+
+      const {
+        data: {
+          payment: { amount },
+        },
+      } = response;
+      console.log(req.user._id);
+      await Donation.create({
+        user: req.user._id,
+        fundraiser: id,
+        amount,
+      });
+      console.log(25);
+
+      res.status(201).json({ success: true });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ success: false, error });
     }
-
-
-      const response = await axios.post("https://api.preprod.konnect.network/api/v2/payments/init-payment", JSON.stringify(paymentInfo) , {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': '6466799e1874253b580aac43:HBuk5KIy9Fy2JaEqII4mxyBG7Rx2INQb'
-      }})
-      
-      
-      res.status(200).json({ success: true, response: response.data })
-
-  } catch (error) {
-
-    console.log(error);
-    res.status(400).json({ success: false, error: error })
-
   }
-
-})
-
-app.get('/api/waaaaaaaaaaaaaaaaaa', passport.authenticate('local'),  async (req,res) => {
-   console.log(req.user);
-})
-
-app.get('/api/create-donation/:id', passport.authenticate('local'),  async (req,res) => {
-  try {
-    console.log(1);
-    const { id } = req.params
-
-    const { payment_ref } = req.query
-
-    const response = await axios.get(`https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`)
-
-    console.log(response);
-
-    const { data: { payment: { amount } }} = response
-    console.log(req.user._id);
-    await Donation.create({
-      user: req.user._id,
-      fundraiser: id,
-      amount
-    })
-    console.log(25);
-
-    res.status(201).json({ success: true })
-
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ success: false, error })
-  }
-})
-
+);
 
 app.get("/api/user-stats", async (req, res) => {
   try {
@@ -724,17 +723,15 @@ app.get("/api/user-stats", async (req, res) => {
         .populate("senderId recipientId"),
     ]);
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        data: [before7, first7, second7, third7, last7],
-        totalDonations,
-        totalFundraisers,
-        totalMoneySent,
-        totalMoneyReceived,
-        messages,
-      });
+    res.status(200).json({
+      success: true,
+      data: [before7, first7, second7, third7, last7],
+      totalDonations,
+      totalFundraisers,
+      totalMoneySent,
+      totalMoneyReceived,
+      messages,
+    });
   } catch (error) {
     console.log(error);
     res.status(404).json({ success: false });
