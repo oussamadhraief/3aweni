@@ -156,7 +156,7 @@ app.post('/api/user/login', async (req, res) => {
 
     
     
-    res.cookie('token', token, { httpOnly: true, sameSite: 'none', secure: true });
+    res.cookie('3aweni-token', token, { httpOnly: true, sameSite: 'none', secure: true });
     
     res.json({ message: 'Login successful', user });
   } catch (error) {
@@ -167,7 +167,7 @@ app.post('/api/user/login', async (req, res) => {
 
 app.post('/api/user/logout', (req, res) => {
   // Clear the token cookie
-  res.clearCookie('token');
+  res.clearCookie('3aweni-token');
 
   res.json({ message: 'Logout successful' });
 });
