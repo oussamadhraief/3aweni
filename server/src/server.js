@@ -159,7 +159,7 @@ app.post('/api/user/login', async (req, res) => {
 
     const domain = BASE_URL == 'http://localhost:3000/' ? 'localhost' : '.vercel.app' 
     // Set the token as an HTTP-only cookie
-    res.cookie('token', token, { httpOnly: true, domain: domain });
+    res.cookie('token', token, { httpOnly: true, domain: null });
 
     res.json({ message: 'Login successful', user });
   } catch (error) {
