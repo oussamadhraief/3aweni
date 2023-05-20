@@ -9,7 +9,7 @@ export default function UserDropdownMenu({ main }: { main: Boolean }) {
     const navigate = useNavigate()
 
     const { user, logout } = useAuthContext()
-
+    
     const handleLogout = () => {
         axios.get('/api/user/logout',{ 
           withCredentials: true 

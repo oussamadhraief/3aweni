@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { userInt } from '../utils/interfaces';
+import axiosInstance from '../utils/axiosConfig';
 
 
 // Define the shape of the authentication context
@@ -31,17 +32,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch('/api/user', {
-          method: 'GET',
-          credentials: 'include',
+        const response = await axiosInstance.get('/api/user', {
+          withCredentials: true,
         });
 
-        if (response.ok) {
-          const userData: userInt = await response.json();
-          setUser(userData);
-        } else {
-          setUser(null);
-        }
+        const { data: { user } } = response
+        setUser(user)
+        
       } catch (error) {
         console.error('Error fetching user:', error);
         setUser(null);

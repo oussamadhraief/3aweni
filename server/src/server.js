@@ -3,7 +3,6 @@ const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const express = require("express");
 const cors = require("cors");
-const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
@@ -81,12 +80,8 @@ app.use(
 );
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(compression());
 app.use(helmet());
-
-require("./passport");
 
 //Routes
 
@@ -159,12 +154,12 @@ app.post('/api/user/login', async (req, res) => {
     }
 
     // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // Set the token as an HTTP-only cookie
     res.cookie('token', token, { httpOnly: true });
 
-    res.json({ message: 'Login successful' });
+    res.json({ message: 'Login successful', user });
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -192,7 +187,7 @@ app.get('/api/user', authenticateToken, async (req, res) => {
     }
 
     // Send the user information in the response
-    res.json({ user: foundUser });
+    res.status(200).json({ user: foundUser });
   } catch (error) {
     console.error('Error fetching user:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -205,7 +200,7 @@ app.patch("/api/user/image", authenticateToken, async (req, res) => {
     const { image } = req?.body;
 
     await User.findOneAndUpdate(
-      { _id: req.user._id },
+      { _id: req.user.userId },
       { image },
       { new: true }
     );
@@ -221,7 +216,7 @@ app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
   try {
     const { page } = req.params;
 
-    const messages = await ContactUser.find({ recipientId: req.user._id })
+    const messages = await ContactUser.find({ recipientId: req.user.userId })
       .skip(page)
       .limit(page * 10)
       .populate("senderId recipientId");
@@ -324,7 +319,7 @@ app.post("/password-reset/:id/:token", async (req, res) => {
 
 app.get("/api/user/fundraisers", authenticateToken, async (req, res) => {
   try {
-    const fundraiser = await Fundraiser.find({ user: req.user._id });
+    const fundraiser = await Fundraiser.find({ user: req.user.userId });
 
     res.status(200).json({ success: true, fundraisers: fundraiser });
   } catch (error) {}
@@ -472,30 +467,31 @@ app.post("/api/create-fundraiser/register", async (req, res) => {
 app.post("/api/create-fundraiser/loggedin", authenticateToken, async (req, res) => {
   try {
     const { category, state, zipCode, type, title, goal } = req?.body;
-
+    console.log(req.user);
     const newFundraiser = await createFundraiser(
-      req.user._id,
+      req.user.userId,
       category,
       state,
       zipCode,
       type,
       title,
       goal
-    );
-
-    res.status(201).json({ success: true, fundraiser: newFundraiser });
-  } catch (error) {
-    res.status(400).json({ success: false });
-  }
-});
-
-app.post("/api/create-fundraiser", authenticateToken, async (req, res) => {
-  try {
-    const { category, state, zipCode, type, title, goal } = req?.body;
-
-    const newFundraiser = await createFundraiser(
-      req.user._id,
-      category,
+      );
+      
+      res.status(201).json({ success: true, fundraiser: newFundraiser });
+    } catch (error) {
+      res.status(400).json({ success: false });
+    }
+  });
+  
+  app.post("/api/create-fundraiser", authenticateToken, async (req, res) => {
+    try {
+      const { category, state, zipCode, type, title, goal } = req?.body;
+      
+      console.log(req.user);
+      const newFundraiser = await createFundraiser(
+        req.user.userId,
+        category,
       state,
       zipCode,
       type,
@@ -558,7 +554,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
 
 app.get("/api/user-donations", authenticateToken, async (req, res) => {
   try {
-    const donations = await Donation.find({ user: req.user._id })
+    const donations = await Donation.find({ user: req.user.userId })
       .limit(10)
       .populate("fundraiser user");
 
@@ -741,9 +737,9 @@ app.get(
           payment: { amount },
         },
       } = response;
-      console.log(req.user._id);
+      console.log(req.user.userId);
       await Donation.create({
-        user: req.user._id,
+        user: req.user.userId,
         fundraiser: id,
         amount,
       });
@@ -786,11 +782,11 @@ app.get("/api/user-stats", authenticateToken,async (req, res) => {
       fetchFundraisersCreatedCountByDate(WeekTwo, WeekThree),
       fetchFundraisersCreatedCountByDate(WeekOne, WeekTwo),
       fetchFundraisersCreatedCountByDate(WeekZero, WeekOne),
-      fetchUserTotalDonations(req.user._id),
-      fetchUserTotalFundraisers(req.user._id),
-      fetchUserTotalMoneySent(req.user._id),
-      fetchUserTotalMoneyReceived(req.user._id),
-      ContactUser.find({ recipientId: req.user._id })
+      fetchUserTotalDonations(req.user.userId),
+      fetchUserTotalFundraisers(req.user.userId),
+      fetchUserTotalMoneySent(req.user.userId),
+      fetchUserTotalMoneyReceived(req.user.userId),
+      ContactUser.find({ recipientId: req.user.userId })
         .limit(5)
         .populate("senderId recipientId"),
     ]);
@@ -818,7 +814,7 @@ app.post("/api/contact-user", authenticateToken, async (req, res) => {
     const { message, id } = req.body;
     if (req.user) {
       contact = {
-        senderId: req.user._id,
+        senderId: req.user.userId,
         recipientId: id,
         name: req.user.name,
         email: req.user.email,
@@ -861,9 +857,9 @@ app.listen(port, () => {
 
 //   console.log(`User Connected: ${socket.id}`);
 //   sok=socket.id;
-//   User.updateOne({ _id: req.user._id }, { socketId: socket.id }).exec();
+//   User.updateOne({ _id: req.user.userId }, { socketId: socket.id }).exec();
 //   socket.on('donate', (data) => {
-//     const { user = req.user._id , fundraiser, amount } = data;
+//     const { user = req.user.userId , fundraiser, amount } = data;
 
 //     const donation = new Donation({
 //       user,
