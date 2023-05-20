@@ -200,7 +200,7 @@ app.get('/api/user', authenticateToken, async (req, res) => {
 });
 
 
-app.patch("/api/user/image", async (req, res) => {
+app.patch("/api/user/image", authenticateToken, async (req, res) => {
   try {
     const { image } = req?.body;
 
@@ -217,7 +217,7 @@ app.patch("/api/user/image", async (req, res) => {
   }
 });
 
-app.get("/api/received-messages/:page", async (req, res) => {
+app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
   try {
     const { page } = req.params;
 
@@ -322,7 +322,7 @@ app.post("/password-reset/:id/:token", async (req, res) => {
   }
 });
 
-app.get("/api/user/fundraisers", async (req, res) => {
+app.get("/api/user/fundraisers", authenticateToken, async (req, res) => {
   try {
     const fundraiser = await Fundraiser.find({ user: req.user._id });
 
@@ -469,7 +469,7 @@ app.post("/api/create-fundraiser/register", async (req, res) => {
   }
 });
 
-app.post("/api/create-fundraiser/loggedin", async (req, res) => {
+app.post("/api/create-fundraiser/loggedin", authenticateToken, async (req, res) => {
   try {
     const { category, state, zipCode, type, title, goal } = req?.body;
 
@@ -489,7 +489,7 @@ app.post("/api/create-fundraiser/loggedin", async (req, res) => {
   }
 });
 
-app.post("/api/create-fundraiser", async (req, res) => {
+app.post("/api/create-fundraiser", authenticateToken, async (req, res) => {
   try {
     const { category, state, zipCode, type, title, goal } = req?.body;
 
@@ -556,7 +556,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
   }
 });
 
-app.get("/api/user-donations", async (req, res) => {
+app.get("/api/user-donations", authenticateToken, async (req, res) => {
   try {
     const donations = await Donation.find({ user: req.user._id })
       .limit(10)
@@ -721,16 +721,8 @@ app.post("/api/konnect-gateway/:id", async (req, res) => {
 });
 
 app.get(
-  "/api/waaaaaaaaaaaaaaaaaa",
-  passport.authenticate("local"),
-  async (req, res) => {
-    console.log(req.user);
-  }
-);
-
-app.get(
   "/api/create-donation/:id",
-  passport.authenticate("local"),
+  authenticateToken,
   async (req, res) => {
     try {
       console.log(1);
@@ -765,7 +757,7 @@ app.get(
   }
 );
 
-app.get("/api/user-stats", async (req, res) => {
+app.get("/api/user-stats", authenticateToken,async (req, res) => {
   try {
     const thisWeek = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
     const WeekThree = new Date(thisWeek - 7 * 24 * 60 * 60 * 1000);
@@ -820,7 +812,7 @@ app.get("/api/user-stats", async (req, res) => {
 
 //Contact User
 
-app.post("/api/contact-user", async (req, res) => {
+app.post("/api/contact-user", authenticateToken, async (req, res) => {
   try {
     let contact;
     const { message, id } = req.body;
