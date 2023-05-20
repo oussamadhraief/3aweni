@@ -698,7 +698,7 @@ app.post('/api/konnect-gateway/:id', async (req,res) => {
       email: "ammarhalloul7@gmail.com",
       orderId: id,
       webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}`,
-      silentWebhook: true,
+      silentWebhook: false,
       successUrl: `${BASE_URL}/fundraisers/${id}`,
       failUrl: `${BASE_URL}/donate/${id}`,
       checkoutForm: true,
