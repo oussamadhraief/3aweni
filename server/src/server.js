@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-var nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const express = require("express");
 const cors = require("cors");
@@ -10,7 +10,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 require("dotenv/config");
 const LocalStrategy = require("passport-local").Strategy;
-var cloudinary = require("cloudinary").v2;
+const cloudinary = require("cloudinary").v2;
 const compression = require("compression");
 const multer = require("multer");
 const User = require("./user/UserModel");
@@ -37,7 +37,7 @@ const {
 const fs = require("fs");
 const helmet = require("helmet");
 const { promisify } = require("util");
-const axios = require('axios');
+const axios = require("axios");
 
 const port = process.env.PORT || 5000;
 const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
@@ -78,11 +78,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(
-  session({
-    secret: "secretcode",
-    resave: true,
-    saveUninitialized: true,
-  })
+  session({ secret: "secretcode", resave: false, saveUninitialized: false })
 );
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -111,30 +107,24 @@ passport.use(
   )
 );
 
-passport.serializeUser((user, cb) => {
-  cb(null, user._id);
+passport.serializeUser((user, done) => {
+  done(null, user.id);
 });
 
-passport.deserializeUser((id, cb) => {
-  User.findOne({ _id: id }, (err, user) => {
-    const userInformation = {
-      _id: user._id,
-      email: user.email,
-      phone: user.phone,
-      name: user.name,
-      image: user.image,
-      role: user.role,
-      sokcetId: user.socketId,
-    };
-    cb(err, userInformation);
-  });
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
 });
 
 //Routes
 
-app.get('/hello', (_,res) => {
-  res.send('working...')
-})
+app.get("/hello", (_, res) => {
+  res.send("working...");
+});
 
 //user
 
@@ -143,8 +133,9 @@ app.post("/api/user/login", (req, res, next) => {
     if (err) {
       return next(err);
     }
-    if (!user) res.status(404).send("No User Exists");
-    else {
+    if (!user) {
+      res.status(404).send("No User Exists");
+    } else {
       req.logIn(user, (err) => {
         if (err) {
           return next(err);
@@ -157,7 +148,7 @@ app.post("/api/user/login", (req, res, next) => {
 
 app.post("/api/user/register", async (req, res) => {
   try {
-    const { email, password, name, phone } = req?.body;
+    const { email, password, name, phone } = req.body;
 
     const newUser = await register(email, password, name, phone, "");
 
