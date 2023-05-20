@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-var nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const express = require("express");
 const cors = require("cors");
@@ -9,8 +9,7 @@ const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 require("dotenv/config");
-const LocalStrategy = require("passport-local").Strategy;
-var cloudinary = require("cloudinary").v2;
+const cloudinary = require("cloudinary").v2;
 const compression = require("compression");
 const multer = require("multer");
 const User = require("./user/UserModel");
@@ -39,7 +38,8 @@ const helmet = require("helmet");
 const {
   promisify
 } = require("util");
-const axios = require('axios');
+const axios = require("axios");
+require('./passport');
 const port = process.env.PORT || 5000;
 const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
 const storage = multer.memoryStorage();
@@ -77,8 +77,8 @@ app.use(cors({
 app.use(cookieParser());
 app.use(session({
   secret: "secretcode",
-  resave: true,
-  saveUninitialized: true
+  resave: false,
+  saveUninitialized: false
 }));
 app.use(express.urlencoded({
   limit: "50mb",
@@ -92,91 +92,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(compression());
 app.use(helmet());
-passport.use(new LocalStrategy({
-  usernameField: "email",
-  passwordField: "password"
-}, (email, password, done) => {
-  User.findOne({
-    email
-  }, (err, user) => {
-    if (err) throw err;
-    if (!user) return done(null, false);
-    bcrypt.compare(password, user.password, (err, result) => {
-      if (err) throw err;
-      if (result === true) {
-        return done(null, user);
-      } else {
-        return done(null, false);
-      }
-    });
-  });
-}));
-passport.serializeUser((user, cb) => {
-  cb(null, user._id);
-});
-passport.deserializeUser((id, cb) => {
-  User.findOne({
-    _id: id
-  }, (err, user) => {
-    const userInformation = {
-      _id: user._id,
-      email: user.email,
-      phone: user.phone,
-      name: user.name,
-      image: user.image,
-      role: user.role,
-      sokcetId: user.socketId
-    };
-    cb(err, userInformation);
-  });
-});
 
 //Routes
 
-app.get('/hello', (_, res) => {
-  res.send('working...');
+app.get("/hello", (_, res) => {
+  res.send("working...");
 });
 
-//user
+//auth
 
-app.post("/api/user/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) res.status(404).send("No User Exists");else {
-      req.logIn(user, err => {
-        if (err) {
-          return next(err);
-        }
-        res.status(200).json({
-          success: true,
-          user: user
-        });
-      });
-    }
-  })(req, res, next);
-});
-app.post("/api/user/register", async (req, res) => {
-  try {
-    const {
-      email,
-      password,
-      name,
-      phone
-    } = req?.body;
-    const newUser = await register(email, password, name, phone, "");
-    res.status(200).json({
-      success: true,
-      user: newUser
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({
-      success: false
-    });
-  }
-});
+app.use('/api/user', require('./routes/auth'));
 app.patch("/api/user/image", async (req, res) => {
   try {
     const {
@@ -212,14 +137,21 @@ app.get("/api/user/logout", async (req, res, done) => {
   }
 });
 app.get("/api/user", async (req, res) => {
-  const user = req.user;
-  if (user) {
-    res.status(200).json({
-      success: true,
-      user: user
+  try {
+    const user = await User.findOne({
+      _id: req.user._id
     });
-  } else {
-    res.status(401).json({
+    if (user) {
+      return res.json({
+        success: true,
+        user: user
+      });
+    }
+    return res.json({
+      success: false
+    });
+  } catch (error) {
+    return res.json({
       success: false
     });
   }
@@ -750,10 +682,10 @@ app.post('/api/konnect-gateway/:id', async (req, res) => {
       phoneNumber: "54827070",
       email: "ammarhalloul7@gmail.com",
       orderId: id,
-      webhook: `${BASE_URL}api/create-donation/${id}`,
+      webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}`,
       silentWebhook: true,
-      successUrl: `${BASE_URL}fundraisers/${id}`,
-      failUrl: `${BASE_URL}donate/${id}`,
+      successUrl: `${BASE_URL}/fundraisers/${id}`,
+      failUrl: `${BASE_URL}/donate/${id}`,
       checkoutForm: true,
       acceptedPaymentMethods: ["wallet", "bank_card", "e-DINAR", "flouci"]
     };
@@ -783,8 +715,9 @@ app.get('/api/create-donation/:id', async (req, res) => {
     } = req.params;
     const {
       payment_ref
-    } = req.query.params;
+    } = req.query;
     const response = await axios.get(`https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`);
+    console.log(response);
     const {
       data: {
         payment: {
@@ -882,6 +815,9 @@ const http = require("http");
 const {
   Server
 } = require("socket.io");
+const {
+  resolve
+} = require("path");
 const server = http.createServer(app);
 app.listen(port, () => {
   console.log("server is running on port", port);

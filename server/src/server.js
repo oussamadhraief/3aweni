@@ -9,7 +9,6 @@ const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 require("dotenv/config");
-const LocalStrategy = require("passport-local").Strategy;
 const cloudinary = require("cloudinary").v2;
 const compression = require("compression");
 const multer = require("multer");
@@ -38,6 +37,7 @@ const fs = require("fs");
 const helmet = require("helmet");
 const { promisify } = require("util");
 const axios = require("axios");
+require('./passport')
 
 const port = process.env.PORT || 5000;
 const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
@@ -87,38 +87,6 @@ app.use(passport.session());
 app.use(compression());
 app.use(helmet());
 
-passport.use(
-  new LocalStrategy(
-    { usernameField: "email", passwordField: "password" },
-    (email, password, done) => {
-      User.findOne({ email }, (err, user) => {
-        if (err) throw err;
-        if (!user) return done(null, false);
-        bcrypt.compare(password, user.password, (err, result) => {
-          if (err) throw err;
-          if (result === true) {
-            return done(null, user);
-          } else {
-            return done(null, false);
-          }
-        });
-      });
-    }
-  )
-);
-
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (error) {
-    done(error);
-  }
-});
 
 //Routes
 
@@ -126,38 +94,9 @@ app.get("/hello", (_, res) => {
   res.send("working...");
 });
 
-//user
+//auth
 
-app.post("/api/user/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      res.status(404).send("No User Exists");
-    } else {
-      req.logIn(user, (err) => {
-        if (err) {
-          return next(err);
-        }
-        res.status(200).json({ success: true, user: user });
-      });
-    }
-  })(req, res, next);
-});
-
-app.post("/api/user/register", async (req, res) => {
-  try {
-    const { email, password, name, phone } = req.body;
-
-    const newUser = await register(email, password, name, phone, "");
-
-    res.status(200).json({ success: true, user: newUser });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ success: false });
-  }
-});
+app.use('/api/user', require('./routes/auth'));
 
 app.patch("/api/user/image", async (req, res) => {
   try {
