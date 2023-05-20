@@ -4,7 +4,8 @@ import { IconContext } from "react-icons";
 import { RiDeleteBinLine } from "react-icons/ri";
 import UserImageModal from "../../../components/UserImageModal";
 import { userInt } from "../../../utils/interfaces";
-import { useAuthContext } from "../../../contexts/AuthContext";
+import useAuthContext from "../../../hooks/useAuthContext";
+import useLoadingAuthContext from "../../../hooks/useLoadingAuthContext";
 import getUser from "../../../hooks/getUser";
 import { FiCheck, FiEdit2 } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
@@ -14,7 +15,9 @@ interface userInfoInt { name: string, phone: string }
 interface userPasswordInt { currentPassowrd: string, newPassword: string, newPasswordConfirmation: string }
 
 export default function DashboardSettings() {
-  const { login, user, loading } = useAuthContext();
+  const { login } = useAuthContext();
+  const { Loading } = useLoadingAuthContext();
+  const { user } = useAuthContext();
 
   const imageUploadInputRef = useRef<HTMLInputElement>(null);
   const progressBarRef = useRef<HTMLProgressElement>(null);
@@ -43,7 +46,7 @@ export default function DashboardSettings() {
       setUserEmail(user.email)
       setUserInfo({ name: user.name, phone: user.phone })
     } 
-  }, [loading]);
+  }, [Loading]);
 
   const handleEditingImage = () => {
     setEditingImage((prev) => !prev);

@@ -1,4 +1,4 @@
-import { useAuthContext } from '../contexts/AuthContext'
+import useAuthContext from '../hooks/useAuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from '../utils/axiosConfig'
 import { IoIosNotificationsOutline } from 'react-icons/io'
@@ -9,7 +9,7 @@ export default function UserDropdownMenu({ main }: { main: Boolean }) {
     const navigate = useNavigate()
 
     const { user, logout } = useAuthContext()
-    
+
     const handleLogout = () => {
         axios.get('/api/user/logout',{ 
           withCredentials: true 

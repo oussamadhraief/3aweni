@@ -3,7 +3,7 @@ import { FormEvent, useState, useEffect } from 'react'
 import { IconContext } from 'react-icons';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthContext } from '../../contexts/AuthContext';
+import useAuthContext from '../../hooks/useAuthContext';
 
 interface FormState {
   category: string;

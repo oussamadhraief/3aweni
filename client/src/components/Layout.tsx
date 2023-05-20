@@ -2,14 +2,16 @@ import Header from './Header'
 import Footer from './Footer'
 import { Outlet, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
-import { useAuthContext } from '../contexts/AuthContext'
+import useLoadingAuthContext from '../hooks/useLoadingAuthContext'
+import useAuthContext from '../hooks/useAuthContext'
 import getUser from '../hooks/getUser'
 
 export default function Layout() {
 
   const location = useLocation()
 
-  const { login, logout, loading, setLoading } = useAuthContext()
+  const { login, logout } = useAuthContext()
+  const { Loading, setLoading } = useLoadingAuthContext()
 
   useEffect(() => {
     getUser({ login, logout, setLoading })
@@ -19,7 +21,7 @@ export default function Layout() {
     <>
         <Header />
         <Outlet />
-        {!loading && <Footer />}
+        {!Loading && <Footer />}
     </>
   )
 }

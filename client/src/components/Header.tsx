@@ -1,11 +1,14 @@
 import Navbar from './Navbar'
-import { Link } from 'react-router-dom'
-import { useAuthContext } from '../contexts/AuthContext'
+import { Link, useNavigate } from 'react-router-dom'
+import useAuthContext from '../hooks/useAuthContext'
+
+import useLoadingAuthContext from '../hooks/useLoadingAuthContext'
 import UserDropdownMenu from './UserDropdownMenu'
 
 export default function Header() {
 
-  const { user, loading } = useAuthContext()
+  const { user } = useAuthContext()
+  const { Loading } = useLoadingAuthContext()
 
   return (
     <header className="header" id="header">
@@ -14,7 +17,7 @@ export default function Header() {
         <Navbar />
       </div>
       <div className="header__right">
-        {loading ? 
+        {Loading ? 
         
       <div className="mx-auto rounded-md w-fit">
           <div className="flex flex-row items-center justify-center h-full gap-5 animate-pulse">

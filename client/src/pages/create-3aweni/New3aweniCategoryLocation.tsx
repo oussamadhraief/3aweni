@@ -2,7 +2,8 @@ import { FormEvent, useState, useEffect } from 'react'
 import { states } from '../../utils/statesData'
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'
-import { useAuthContext } from '../../contexts/AuthContext';
+import useAuthContext from '../../hooks/useAuthContext';
+import useLoadingAuthContext from '../../hooks/useLoadingAuthContext';
 import { categories } from '../../utils/categoriesData';
 import getUser from '../../hooks/getUser';
 
@@ -20,7 +21,8 @@ export default function New3aweniCategoryLocation() {
 
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, logout, setLoading } = useAuthContext()
+  const { login, logout } = useAuthContext()
+  const { setLoading } = useLoadingAuthContext()
 
   const [Form, setForm] = useState<FormState>({category: '', state: "", zipCode: 0, type: '', title: '', goal: undefined})
   
