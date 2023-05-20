@@ -79,7 +79,7 @@ app.use(
   session({ secret: "secretcode", resave: false, saveUninitialized: false })
 );
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+// app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(compression());
 app.use(helmet());
 
@@ -157,8 +157,9 @@ app.post('/api/user/login', async (req, res) => {
     // Generate a JWT token
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+    const domain = BASE_URL == 'http://localhost:3000/' ? 'localhost' : '.vercel.app' 
     // Set the token as an HTTP-only cookie
-    res.cookie('token', token, { httpOnly: true });
+    res.cookie('token', token, { httpOnly: true, domain: domain });
 
     res.json({ message: 'Login successful', user });
   } catch (error) {
