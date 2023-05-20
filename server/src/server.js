@@ -77,8 +77,17 @@ app.use(
 );
 app.use(cookieParser());
 app.use(
-  session({ secret: "secretcode", resave: false, saveUninitialized: false })
-);
+  session({ 
+    secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: true, // Set to true if running on HTTPS
+    sameSite: 'none', // Set to 'none' if running on HTTPS
+    // Additional cookie attributes
+    domain: '.onrender.com',
+    // path: '/your-path', })
+  }}));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(passport.initialize());
