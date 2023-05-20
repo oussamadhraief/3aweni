@@ -660,7 +660,7 @@ app.post('/api/konnect-gateway/:id', async (req,res) => {
 })
 
 
-app.get('/api/create-donation/:id', async (req,res) => {
+app.get('/api/create-donation/:id', passport.authenticate('local'),  async (req,res) => {
   try {
     console.log(1);
     const { id } = req.params
