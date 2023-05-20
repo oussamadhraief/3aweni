@@ -2,7 +2,7 @@ import axios from "../utils/axiosConfig"
 import { userInt } from "../utils/interfaces";
 
 
-const getUser = ({ login, logout, setLoading }: { login: (user: userInt) => void, logout: () => void, setLoading: React.Dispatch<React.SetStateAction<boolean>>}) => {
+const getUser = ({ login, logout, setLoading }: { login: (user: userInt) => void, logout: () => void, setLoading: (loading: boolean) => void}) => {
 
 
     setLoading(true)

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import axios from '../utils/axiosConfig'
 import { FormEvent, useState } from 'react'
-import useAuthContext from '../hooks/useAuthContext';
+import { useAuthContext } from '../contexts/AuthContext';
 import { MdAlternateEmail } from 'react-icons/md';
 import { IconContext } from 'react-icons';
 

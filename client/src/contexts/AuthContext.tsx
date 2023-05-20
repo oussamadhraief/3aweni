@@ -1,56 +1,77 @@
-import axios from "../utils/axiosConfig";
-import { createContext, useState, useEffect, useReducer } from "react";
-import { userInt } from "../utils/interfaces";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { userInt } from '../utils/interfaces';
 
+
+// Define the shape of the authentication context
 interface AuthContextType {
-    user: userInt | null;
-    logout: () => void;
-    login: (user: userInt) => void;
+  user: userInt | null;
+  login: (userData: userInt) => void;
+  logout: () => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
 
-interface LoadingAuthContextType {
-    Loading: boolean;
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-}
+// Create the authentication context
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthContext = createContext<AuthContextType | null>(null)
-export const LoadingAuthContext = createContext<LoadingAuthContextType>({ Loading : true, setLoading: () => {}})
+// Custom hook to access the authentication context
+export const useAuthContext = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuthContext must be used within an AuthProvider');
+  }
+  return context;
+};
 
-export const authReducer = (state: any,action: any) => {
+// AuthProvider component to wrap the application with the authentication context
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<userInt | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    switch (action.type){
-        case 'ADD':
-            return {user: action.payload}
-        case 'CLEAR':
-            return {user: null}
-        default: 
-            return state
-    }
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/user', {
+          method: 'GET',
+          credentials: 'include',
+        });
 
-}
+        if (response.ok) {
+          const userData: userInt = await response.json();
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-export const AuthContextProvider = ({children}: { children: React.ReactNode | React.ReactNode[]}) => {
-    const [state,dispatch] = useReducer(authReducer, {
-        user: null
-    })
+    fetchUser();
+  }, []);
 
-    const [Loading, setLoading] = useState<boolean>(true)
+  const login = (userData: userInt) => {
+    setUser(userData);
+  };
 
-    const login = (user: userInt) => {
-        dispatch({ type: 'ADD', payload: user })
-    }
+  const logout = () => {
+    setUser(null);
+  };
 
-    const logout = () => {
-        dispatch({ type: 'CLEAR' })
-    }
-    
+  const authContextValue: AuthContextType = {
+    user,
+    login,
+    logout,
+    loading,
+    setLoading, // Include the loading state in the context value
+  };
 
-    return (
-        <AuthContext.Provider value={{...state, logout, login}}>
-            <LoadingAuthContext.Provider value={{ Loading, setLoading }}>
-                {children}
-            </LoadingAuthContext.Provider>
-        </AuthContext.Provider>
-    )
-    
-}
+  return (
+    <AuthContext.Provider value={authContextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

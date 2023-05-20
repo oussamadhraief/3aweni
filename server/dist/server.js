@@ -39,7 +39,6 @@ const {
   promisify
 } = require("util");
 const axios = require("axios");
-require('./passport');
 const port = process.env.PORT || 5000;
 const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
 const storage = multer.memoryStorage();
@@ -92,6 +91,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(compression());
 app.use(helmet());
+require("./passport");
 
 //Routes
 
@@ -101,7 +101,48 @@ app.get("/hello", (_, res) => {
 
 //auth
 
-app.use('/api/user', require('./routes/auth'));
+app.post('/api/user/login', async (req, res) => {
+  try {
+    // ...
+
+    // Generate a JWT token
+    const token = jwt.sign({
+      userId: user._id
+    }, 'secret-key', {
+      expiresIn: '1h'
+    });
+
+    // Set the token as an HTTP-only cookie
+    res.cookie('token', token, {
+      httpOnly: true
+    });
+    res.json({
+      message: 'Login successful'
+    });
+  } catch (error) {
+    // ...
+  }
+});
+app.post('/logout', (req, res) => {
+  // Clear the token cookie
+  res.clearCookie('token');
+  res.json({
+    message: 'Logout successful'
+  });
+});
+function authenticateToken(req, res, next) {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.sendStatus(401);
+  }
+  jwt.verify(token, 'secret-key', (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+    req.user = user;
+    next();
+  });
+}
 app.patch("/api/user/image", async (req, res) => {
   try {
     const {
@@ -136,23 +177,18 @@ app.get("/api/user/logout", async (req, res, done) => {
     });
   }
 });
-app.get("/api/user", async (req, res) => {
-  try {
-    const user = await User.findOne({
-      _id: req.user._id
+app.get("/api/user", (req, res) => {
+  if (req.isAuthenticated()) {
+    // User is authenticated
+    const user = req.user;
+    // You can access user information from the `user` object and send it in the response
+    res.json({
+      user
     });
-    if (user) {
-      return res.json({
-        success: true,
-        user: user
-      });
-    }
-    return res.json({
-      success: false
-    });
-  } catch (error) {
-    return res.json({
-      success: false
+  } else {
+    // User is not authenticated
+    res.status(401).json({
+      message: "Unauthorized"
     });
   }
 });
@@ -323,11 +359,11 @@ app.get("/api/trending-fundraisers", async (req, res) => {
       $limit: 5
     }, {
       $project: {
-        _id: '$fundraiserData._id',
-        name: '$fundraiserData.name',
-        image: '$fundraiserData.image',
-        state: '$fundraiserData.state',
-        title: '$fundraiserData.title'
+        _id: "$fundraiserData._id",
+        name: "$fundraiserData.name",
+        image: "$fundraiserData.image",
+        state: "$fundraiserData.state",
+        title: "$fundraiserData.title"
         // Add other fields you want to include
       }
     }]);
@@ -658,7 +694,7 @@ app.patch("/api/fundraiser/:id", async (req, res) => {
     });
   }
 });
-app.post('/api/konnect-gateway/:id', async (req, res) => {
+app.post("/api/konnect-gateway/:id", async (req, res) => {
   try {
     const {
       donation
@@ -691,8 +727,8 @@ app.post('/api/konnect-gateway/:id', async (req, res) => {
     };
     const response = await axios.post("https://api.preprod.konnect.network/api/v2/payments/init-payment", JSON.stringify(paymentInfo), {
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': '6466799e1874253b580aac43:HBuk5KIy9Fy2JaEqII4mxyBG7Rx2INQb'
+        "Content-Type": "application/json",
+        "x-api-key": "6466799e1874253b580aac43:HBuk5KIy9Fy2JaEqII4mxyBG7Rx2INQb"
       }
     });
     res.status(200).json({
@@ -707,7 +743,10 @@ app.post('/api/konnect-gateway/:id', async (req, res) => {
     });
   }
 });
-app.get('/api/create-donation/:id', async (req, res) => {
+app.get("/api/waaaaaaaaaaaaaaaaaa", passport.authenticate("local"), async (req, res) => {
+  console.log(req.user);
+});
+app.get("/api/create-donation/:id", passport.authenticate("local"), async (req, res) => {
   try {
     console.log(1);
     const {
@@ -725,11 +764,13 @@ app.get('/api/create-donation/:id', async (req, res) => {
         }
       }
     } = response;
+    console.log(req.user._id);
     await Donation.create({
       user: req.user._id,
       fundraiser: id,
       amount
     });
+    console.log(25);
     res.status(201).json({
       success: true
     });

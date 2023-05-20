@@ -6,8 +6,7 @@ import { TiMessage } from 'react-icons/ti'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { BsArrowBarLeft } from 'react-icons/bs'
 import getUser from '../hooks/getUser'
-import useAuthContext from '../hooks/useAuthContext'
-import useLoadingAuthContext from '../hooks/useLoadingAuthContext'
+import { useAuthContext } from '../contexts/AuthContext'
 import { AiOutlineSearch } from 'react-icons/ai'
 import { RiUserHeartLine } from 'react-icons/ri'
 import UserDropdownMenu from './UserDropdownMenu'
@@ -16,8 +15,7 @@ import { MdOutlineSpaceDashboard } from 'react-icons/md'
 export default function UserDashboard() {
 
     const location = useLocation()
-    const { login, logout } = useAuthContext()
-    const { Loading, setLoading } = useLoadingAuthContext()
+    const { login, logout, loading, setLoading } = useAuthContext()
     const { user } = useAuthContext()
 
   

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import useAuthContext from './hooks/useAuthContext';
+import { useAuthContext } from './contexts/AuthContext';
 import Layout from './components/Layout';
 import New3aweniGoal from './pages/create-3aweni/New3aweniTitleGoal';
 import New3aweniCategoryLocation from './pages/create-3aweni/New3aweniCategoryLocation';
@@ -15,7 +15,6 @@ import RequestPasswordReset from './pages/RequestPasswordReset';
 import Error from './pages/Error';
 import SearchField from './pages/search/SearchField';
 import DashboardLayout from './components/DashboardLayout';
-import useLoadingAuthContext from './hooks/useLoadingAuthContext';
 import DashboardFundraisers from './pages/account/dashboard/DashboardFundraisers';
 import DashboardSettings from './pages/account/dashboard/DashboardSettings';
 import DashboardMessages from './pages/account/dashboard/DashboardMessages';
@@ -33,8 +32,7 @@ import("@lottiefiles/lottie-player");
 
 function App() {
   
-  const { user } = useAuthContext()
-  const { Loading } = useLoadingAuthContext()
+  const { user, loading } = useAuthContext()
   
   
   return (
@@ -42,28 +40,28 @@ function App() {
     <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="login" element={Loading ? null : user ? <Navigate to="/" /> : <Login />} />
-          <Route path="register" element={Loading ? null :  user ? <Navigate to="/" /> : <Register />} />
-          <Route path="password-reset/:id/:productId" element={Loading ? null :  user ? <Navigate to="/" /> : <PasswordReset />} />
-          <Route path="password-reset" element={Loading ? null :  user ? <Navigate to="/" /> : <RequestPasswordReset />} />
+          <Route path="login" element={loading ? null : user ? <Navigate to="/" /> : <Login />} />
+          <Route path="register" element={loading ? null :  user ? <Navigate to="/" /> : <Register />} />
+          <Route path="password-reset/:id/:productId" element={loading ? null :  user ? <Navigate to="/" /> : <PasswordReset />} />
+          <Route path="password-reset" element={loading ? null :  user ? <Navigate to="/" /> : <RequestPasswordReset />} />
           <Route path="search" element={<SearchField />} />
           <Route path="fundraisers/:id" element={<SingleFundraiser />} />
           <Route path="donate/:id" element={<Donate />} />
           <Route
                 path="/discover/:category"
-                element={!Loading ? <CategoryFundraisers /> : null}
+                element={!loading ? <CategoryFundraisers /> : null}
               />
         </Route> 
         <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route path="stats"  element={!Loading ?  (user ?  <DashboardStats /> : <Navigate to="/login" />) : null} />
+            <Route path="stats"  element={!loading ?  (user ?  <DashboardStats /> : <Navigate to="/login" />) : null} />
             <Route path="fundraisers">
-              <Route index element={!Loading ?  (user ?  <DashboardFundraisers /> : <Navigate to="/login" />) : null} />
-              <Route path=":id"  element={!Loading ?  (user ?  <EditUserFundraiser /> : <Navigate to="/login" />) : null} />
+              <Route index element={!loading ?  (user ?  <DashboardFundraisers /> : <Navigate to="/login" />) : null} />
+              <Route path=":id"  element={!loading ?  (user ?  <EditUserFundraiser /> : <Navigate to="/login" />) : null} />
             </Route> 
-            <Route path="messages"  element={!Loading ?  (user ?  <DashboardMessages /> : <Navigate to="/login" />) : null} />
-            <Route path="my-donations"  element={!Loading ?  (user ?  <DashboardDonationsSent /> : <Navigate to="/login" />) : null} />
-            <Route path="received-donations"  element={!Loading ?  (user ?  <DashboardReceivedDonations /> : <Navigate to="/login" />) : null} />
-            <Route path="settings"  element={!Loading ?  (user ?  <DashboardSettings /> : <Navigate to="/login" />) : null} />
+            <Route path="messages"  element={!loading ?  (user ?  <DashboardMessages /> : <Navigate to="/login" />) : null} />
+            <Route path="my-donations"  element={!loading ?  (user ?  <DashboardDonationsSent /> : <Navigate to="/login" />) : null} />
+            <Route path="received-donations"  element={!loading ?  (user ?  <DashboardReceivedDonations /> : <Navigate to="/login" />) : null} />
+            <Route path="settings"  element={!loading ?  (user ?  <DashboardSettings /> : <Navigate to="/login" />) : null} />
             <Route path="fundraisers/:id" element={<SingleFundraiser />} />
         </Route> 
         <Route path="create">

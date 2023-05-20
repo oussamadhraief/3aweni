@@ -2,7 +2,7 @@ import { FormEvent, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { IconContext } from 'react-icons';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
-import useAuthContext from '../../hooks/useAuthContext';
+import { useAuthContext } from '../../contexts/AuthContext';
 import axios from '../../utils/axiosConfig';
 import CurrencyInput from 'react-currency-input-field';
 

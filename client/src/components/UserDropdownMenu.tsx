@@ -1,4 +1,4 @@
-import useAuthContext from '../hooks/useAuthContext'
+import { useAuthContext } from '../contexts/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from '../utils/axiosConfig'
 import { IoIosNotificationsOutline } from 'react-icons/io'

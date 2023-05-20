@@ -5,7 +5,7 @@ import { MdIosShare } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import { donation, fundraiserInt } from "../../utils/interfaces";
 import { AiFillWarning } from "react-icons/ai";
-import useAuthContext from "../../hooks/useAuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { categories } from "../../utils/categoriesData";
 import { HiOutlineTag } from "react-icons/hi";
