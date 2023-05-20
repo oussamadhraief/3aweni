@@ -128,17 +128,16 @@ app.get("/api/user/logout", async (req, res, done) => {
 
 app.get("/api/user", async (req, res) => {
   try {
-    const user= await User.findOne({ _id:  req.user._id })
 
-    if(user){
+    if(req.user){
       
-      return res.json({ success: true, user: user });
+      return res.status(200).json({ success: true, user: req.user });
 
     }
-      return res.json({ success: false });
+      return res.status(401).json({ success: false });
 
   } catch (error) {
-    return res.json({ success: false });
+    return res.status(401).json({ success: false });
     
   }
 
@@ -659,6 +658,9 @@ app.post('/api/konnect-gateway/:id', async (req,res) => {
 
 })
 
+app.get('/api/waaaaaaaaaaaaaaaaaa', passport.authenticate('local'),  async (req,res) => {
+   console.log(req.user);
+})
 
 app.get('/api/create-donation/:id', passport.authenticate('local'),  async (req,res) => {
   try {
@@ -687,6 +689,7 @@ app.get('/api/create-donation/:id', passport.authenticate('local'),  async (req,
     res.status(400).json({ success: false, error })
   }
 })
+
 
 app.get("/api/user-stats", async (req, res) => {
   try {
