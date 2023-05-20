@@ -126,21 +126,16 @@ app.get("/api/user/logout", async (req, res, done) => {
 });
 
 
-app.get("/api/user", async (req, res) => {
-  try {
-
-    if(req.user){
-      
-      return res.status(200).json({ success: true, user: req.user });
-
-    }
-      return res.status(401).json({ success: false });
-
-  } catch (error) {
-    return res.status(401).json({ success: false });
-    
+app.get('/api/user', (req, res) => {
+  if (req.isAuthenticated()) {
+    // User is authenticated
+    const user = req.user;
+    // You can access user information from the `user` object and send it in the response
+    res.json({ user });
+  } else {
+    // User is not authenticated
+    res.status(401).json({ message: 'Unauthorized' });
   }
-
 });
 
 
