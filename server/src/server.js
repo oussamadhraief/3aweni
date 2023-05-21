@@ -163,6 +163,9 @@ app.get("/api/user", async (req, res) => {
     console.log(req.session);
     console.log(req.user);
     console.log(req.cookies);
+    console.log(req.session.passport);
+    console.log(req.session._passport);
+    console.log(req.session.passport.user);
     if (req.session.passport && req.session.passport.user) {
       const userId = req.session.passport.user;
       const user = await User.findOne({ _id: userId });
