@@ -94,6 +94,7 @@ app.use(
     }), // Set the session store
     cookie: {
       sameSite: 'none',
+      secure: true,
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
@@ -146,6 +147,7 @@ app.get('/set-cookie', (req, res) => {
   res.cookie('cookieName', 'cookieValue', {
     httpOnly: true,
     sameSite: 'none',
+    secure: true,
   });
   res.send('Cookie set');
 });
