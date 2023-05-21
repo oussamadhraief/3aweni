@@ -136,6 +136,13 @@ app.get("/api/user/logout", async (req, res, done) => {
   }
 });
 
+app.get('/set-cookie', (req, res) => {
+  res.cookie('cookieName', 'cookieValue', {
+    httpOnly: true
+  });
+  res.send('Cookie set');
+});
+
 app.get("/api/user", async (req, res) => {
   try {
     console.log(req);
