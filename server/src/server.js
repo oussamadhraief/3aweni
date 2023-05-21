@@ -94,7 +94,7 @@ app.use(
     }), // Set the session store
     cookie: {
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: 'lax',
       secure: true,
       maxAge: 1000 * 60 * 60 * 24,
       domain: '.onrender.com'
@@ -149,7 +149,7 @@ app.get("/api/user/logout", async (req, res, done) => {
 app.get('/set-cookie', (req, res) => {
   res.cookie('cookieName', 'cookieValue', {
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: 'lax',
     secure: true,
     maxAge: 1000 * 60 * 60 * 24,
     domain: '.onrender.com'
