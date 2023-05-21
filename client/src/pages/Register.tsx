@@ -36,8 +36,6 @@ export default function
                 passwordConfirmation: RegisterForm.passwordConfirmation,
                 name: RegisterForm.name,
                 phone: RegisterForm.phone,
-                },{
-                withCredentials: true
                 }).then((response) => {
                 
                     navigate('/login')

@@ -13,13 +13,11 @@ export default function Donate() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
+      
        const res = await axios.post(
             `/api/konnect-gateway/${id}`,
             {
               donation: parseFloat(Donation.replace(/,/g, '')),
-            },
-            {
-              withCredentials: true,
             }
           )
           

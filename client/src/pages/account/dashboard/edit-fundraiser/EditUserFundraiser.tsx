@@ -84,8 +84,7 @@ export default function EditUserFundraiser() {
       {
         headers: {
           "Content-Type": "application/json",
-        },
-        withCredentials: true,
+        }
       }
     );
   };
@@ -100,7 +99,6 @@ export default function EditUserFundraiser() {
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true,
       }
     );
   };

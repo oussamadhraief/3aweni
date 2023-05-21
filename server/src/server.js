@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const express = require("express");
-const session = require("express-session");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
@@ -75,38 +74,22 @@ app.use(
 
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-app.use(cookieParser());
-app.use(
-  session({
-    secret: process.env.JWT_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-      domain: '.onrender.com'
-    },
-  })
-);
 // app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 // app.use(compression());
 // app.use(helmet());
 
 //Routes
 
-app.get("/hello", (_, res) => {
-  res.send("working...");
-});
-
 //auth
 
 function authenticateToken(req, res, next) {
-  const token = req.cookies.jwt;
+  const authHeader = req.headers.authorization;
 
-  if (!token) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.sendStatus(401);
   }
+
+  const token = authHeader.split(' ')[1];
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
@@ -117,6 +100,7 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
+
 
 app.post("/api/user/register", async (req, res) => {
   try {
@@ -170,42 +154,26 @@ app.post("/api/user/login", async (req, res) => {
 
     // User authenticated successfully
     // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-    // Set the token as a cookie
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      domain: ".onrender.com"
-    });
-
-    // Return success response
-    res.json({ success: true, message: "Login successful" });
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const resUser= {
+      _id: user._id,
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+      image: user.image
+    }
+    // Return the token in the response
+    res.json({ success: true, token, user: resUser });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
 
-
-app.get("/api/user/logout", authenticateToken, (req, res) => {
-  // Perform logout logic
-  // For example, clear the token from the client-side
-
-  // Delete the token from the client-side by setting an expired token
-  res.cookie("jwt", "", { expires: new Date(0), secure: true, sameSite: "none" });
-
-  // Return success response
-  res.json({ success: true, message: "Logout successful" });
-});
-
-
-
 app.get('/api/user', authenticateToken, async (req, res) => {
   try {
-    console.log(req.user);
-    const userId = req.user.userId;
+    
+    const userId = req.user._id;
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -221,7 +189,8 @@ app.get('/api/user', authenticateToken, async (req, res) => {
   }
 });
 
-app.patch("/api/user/image", async (req, res) => {
+
+app.patch("/api/user/image", authenticateToken, async (req, res) => {
   try {
     const { image } = req?.body;
 
@@ -238,7 +207,7 @@ app.patch("/api/user/image", async (req, res) => {
   }
 });
 
-app.get("/api/received-messages/:page", async (req, res) => {
+app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
   try {
     const { page } = req.params;
 
@@ -254,7 +223,7 @@ app.get("/api/received-messages/:page", async (req, res) => {
   }
 });
 
-app.post("/api/user/password-reset", async (req, res) => {
+app.post("/api/user/password-reset", authenticateToken, async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -299,7 +268,7 @@ app.post("/api/user/password-reset", async (req, res) => {
   }
 });
 
-app.get("/password-reset/:id/:token", async (req, res) => {
+app.get("/password-reset/:id/:token", authenticateToken, async (req, res) => {
   const { id, token } = req.params;
 
   const oldUser = await User.findOne({ _id: id });
@@ -315,7 +284,7 @@ app.get("/password-reset/:id/:token", async (req, res) => {
   }
 });
 
-app.post("/password-reset/:id/:token", async (req, res) => {
+app.post("/password-reset/:id/:token", authenticateToken, async (req, res) => {
   const { id, token } = req.params;
   const { password } = req.body;
 
@@ -343,7 +312,7 @@ app.post("/password-reset/:id/:token", async (req, res) => {
   }
 });
 
-app.get("/api/user/fundraisers", async (req, res) => {
+app.get("/api/user/fundraisers", authenticateToken, async (req, res) => {
   try {
     const fundraiser = await Fundraiser.find({ user: req.user._id });
 
@@ -351,7 +320,7 @@ app.get("/api/user/fundraisers", async (req, res) => {
   } catch (error) {}
 });
 
-app.get("/api/trending-fundraisers", async (req, res) => {
+app.get("/api/trending-fundraisers", authenticateToken, async (req, res) => {
   try {
     const lastWeekStartDate = new Date();
     lastWeekStartDate.setDate(lastWeekStartDate.getDate() - 7);
@@ -490,26 +459,6 @@ app.post("/api/create-fundraiser/register", async (req, res) => {
   }
 });
 
-app.post("/api/create-fundraiser/loggedin", async (req, res) => {
-  try {
-    const { category, state, zipCode, type, title, goal } = req?.body;
-
-    const newFundraiser = await createFundraiser(
-      req.user._id,
-      category,
-      state,
-      zipCode,
-      type,
-      title,
-      goal
-    );
-
-    res.status(201).json({ success: true, fundraiser: newFundraiser });
-  } catch (error) {
-    res.status(400).json({ success: false });
-  }
-});
-
 app.post("/api/create-fundraiser", async (req, res) => {
   try {
     const { category, state, zipCode, type, title, goal } = req?.body;
@@ -577,7 +526,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
   }
 });
 
-app.get("/api/user-donations", async (req, res) => {
+app.get("/api/user-donations", authenticateToken, async (req, res) => {
   try {
     const donations = await Donation.find({ user: req.user._id })
       .limit(10)
@@ -694,7 +643,7 @@ app.patch("/api/fundraiser/:id", async (req, res) => {
   }
 });
 
-app.post("/api/konnect-gateway/:id", async (req, res) => {
+app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
   try {
     const { donation } = req.body;
     const { id } = req.params;
@@ -709,10 +658,10 @@ app.post("/api/konnect-gateway/:id", async (req, res) => {
       description: "donation for " + fund.title,
       lifespan: 10,
       feesIncluded: true,
-      firstName: "Ammar",
-      lastName: "Halloul",
-      phoneNumber: "54827070",
-      email: "ammarhalloul7@gmail.com",
+      firstName: req.user._id,
+      lastName: "",
+      phoneNumber: req.user.phone,
+      email: req.user.email,
       orderId: id,
       webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}`,
       silentWebhook: true,
@@ -742,10 +691,10 @@ app.post("/api/konnect-gateway/:id", async (req, res) => {
 });
 
 app.get(
-  "/api/create-donation/:id",
+  "/api/create-donation/:id", authenticateToken,
   async (req, res) => {
     try {
-      console.log(1);
+      
       const { id } = req.params;
 
       const { payment_ref } = req.query;
@@ -761,7 +710,7 @@ app.get(
           payment: { amount },
         },
       } = response;
-      console.log(req.user._id);
+
       await Donation.create({
         user: req.user._id,
         fundraiser: id,
@@ -777,7 +726,7 @@ app.get(
   }
 );
 
-app.get("/api/user-stats", async (req, res) => {
+app.get("/api/user-stats", authenticateToken, async (req, res) => {
   try {
     const thisWeek = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
     const WeekThree = new Date(thisWeek - 7 * 24 * 60 * 60 * 1000);
@@ -832,7 +781,7 @@ app.get("/api/user-stats", async (req, res) => {
 
 //Contact User
 
-app.post("/api/contact-user", async (req, res) => {
+app.post("/api/contact-user", authenticateToken, async (req, res) => {
   try {
     let contact;
     const { message, id } = req.body;

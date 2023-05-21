@@ -13,9 +13,7 @@ export default function DashboardFundraisers() {
   const [Loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    axios.get('/api/user/fundraisers', {
-      withCredentials: true
-    }).then((response) => {
+    axios.get('/api/user/fundraisers').then((response) => {
       const { data: { fundraisers } } = response
       
       setFundraisers(fundraisers)

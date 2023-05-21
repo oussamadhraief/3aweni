@@ -11,8 +11,17 @@ const getUser = ({
   setLoading: (loading: boolean) => void;
 }) => {
   setLoading(true);
+
+  const token = localStorage.getItem("jwt");
+  
+  if (token) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common["Authorization"];
+  }
+
   axios
-    .get("/api/user", { withCredentials: true })
+    .get("/api/user")
     .then((res) => {
       const {
         data: { user },

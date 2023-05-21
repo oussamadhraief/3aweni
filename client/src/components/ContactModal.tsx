@@ -42,7 +42,7 @@ export default function ContactModal({ open, onClose, name, id }: Props) {
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true,
+        
       }
     );
   };

@@ -1,4 +1,3 @@
-import axios from "../utils/axiosConfig";
 import { createContext, useState, useEffect, useReducer } from "react";
 import { userInt } from "../utils/interfaces";
 

@@ -71,7 +71,7 @@ export default function SingleFundraiser() {
     if (id) {
       axios
       .get(`/api/single-fundraiser/${id}`, {
-        withCredentials: true,
+        
       })
         .then((response) => {
           const {

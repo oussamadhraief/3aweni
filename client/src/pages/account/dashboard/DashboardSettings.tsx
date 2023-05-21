@@ -75,11 +75,7 @@ export default function DashboardSettings() {
         "/api/user/image",
         {
           image: publicId,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+        });
     } catch (error) {}
   };
 
@@ -91,7 +87,6 @@ export default function DashboardSettings() {
           data: UserImage,
         },
         {
-          withCredentials: true,
           onUploadProgress: (progressEvent) => {
             const percentCompleted =
               (progressEvent.loaded / progressEvent.total!) * 100;

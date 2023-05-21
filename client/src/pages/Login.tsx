@@ -27,27 +27,23 @@ export default function() {
   }
 
   const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault()
-        try {
-          
-          axios.post('/api/user/login',{
-            email: LoginForm.email,
-            password: LoginForm.password
-          },{
-            withCredentials: true
-          }).then((res) => {
-            
-            const { data: { user } } = res
-            
-            login(user)
+    event.preventDefault();
+    try {
+      const res = await axios.post("/api/user/login", {
+        email: LoginForm.email,
+        password: LoginForm.password,
+      }, {
         
-            navigate('/')
-
-          })
-        } catch (error) {
-            console.log(error)
-        }
-  }
+      });
+  
+      const { data: { token, user } } = res;
+      login(user); // Call the login function to set the user session
+      localStorage.setItem("jwt", token); // Store the JWT token in localStorage
+      navigate("/"); // Redirect to the home page
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
   return (

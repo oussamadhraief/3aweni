@@ -8,9 +8,8 @@ export default function UserDonations({ShowAll } : { ShowAll: boolean }) {
     const [Donations, setDonations] = useState<donation[]>([])
 
     useEffect(() => {
-        axios.get('/api/user-donations',{
-            withCredentials: true
-        }).then((res) => {
+
+        axios.get('/api/user-donations').then((res) => {
             const { donations } = res.data
             
             setDonations(donations)
