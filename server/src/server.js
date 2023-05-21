@@ -93,6 +93,7 @@ app.use(
       collection: "sessions",
     }), // Set the session store
     cookie: {
+      sameSite: 'none',
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
@@ -143,7 +144,8 @@ app.get("/api/user/logout", async (req, res, done) => {
 
 app.get('/set-cookie', (req, res) => {
   res.cookie('cookieName', 'cookieValue', {
-    httpOnly: true
+    httpOnly: true,
+    sameSite: 'none',
   });
   res.send('Cookie set');
 });
