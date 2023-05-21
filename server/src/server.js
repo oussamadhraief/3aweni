@@ -663,7 +663,7 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
       phoneNumber: req.user.phone,
       email: req.user.email,
       orderId: id,
-      webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}`,
+      webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}/${req.user._id}`,
       silentWebhook: true,
       successUrl: `${BASE_URL}/fundraisers/${id}`,
       failUrl: `${BASE_URL}/donate/${id}`,
@@ -691,17 +691,17 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
 });
 
 app.get(
-  "/api/create-donation/:id", authenticateToken,
+  "/api/create-donation/:id/:userId", authenticateToken,
   async (req, res) => {
     try {
       
-      const { id } = req.params;
+      const { id, userId } = req.params;
 
       const { payment_ref } = req.query;
 
-      const response = await axios.get(
+      const [response, user] = Promise.all([await axios.get(
         `https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`
-      );
+      ),await User.findOne({ _id: userId })])
 
       console.log(response);
 
@@ -712,7 +712,7 @@ app.get(
       } = response;
 
       await Donation.create({
-        user: req.user._id,
+        user: user._id,
         fundraiser: id,
         amount,
       });
