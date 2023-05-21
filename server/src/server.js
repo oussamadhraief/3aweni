@@ -88,6 +88,7 @@ app.use(
       collection: "sessions",
     }), // Set the session store
     cookie: {
+      secure: false,
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
