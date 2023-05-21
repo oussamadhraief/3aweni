@@ -6,7 +6,7 @@ const getUser = ({ login, logout, setLoading }: { login: (user: userInt) => void
 
 
     setLoading(true)
-    axios.post('/api/user',
+    axios.get('/api/user',
         { withCredentials: true })
         .then((res) => {
             

@@ -78,13 +78,14 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 app.use(
   session({
-    secret: "my-secret-key",
+    secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
       httpOnly: true,
       sameSite: "none",
       secure: true,
+      domain: '.onrender.com'
     },
   })
 );
@@ -176,6 +177,7 @@ app.post("/api/user/login", async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      domain: ".onrender.com"
     });
 
     // Return success response
@@ -199,7 +201,7 @@ app.get("/api/user/logout", (req, res) => {
 });
 
 
-app.post('/api/user', authenticateToken, async (req, res) => {
+app.get('/api/user', authenticateToken, async (req, res) => {
   try {
     console.log(req.user);
     const userId = req.user.userId;
