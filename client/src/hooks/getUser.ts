@@ -26,7 +26,6 @@ const getUser = ({
       const {
         data: { user },
       } = res;
-      console.log(user);
 
       if (user) {
         login(user);

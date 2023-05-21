@@ -703,8 +703,6 @@ app.get(
         `https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`
       ),await User.findOne({ _id: userId })])
 
-      console.log(response);
-
       const {
         data: {
           payment: { amount },
@@ -716,7 +714,6 @@ app.get(
         fundraiser: id,
         amount,
       });
-      console.log(25);
 
       res.status(201).json({ success: true });
     } catch (error) {

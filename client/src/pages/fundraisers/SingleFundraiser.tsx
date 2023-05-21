@@ -38,8 +38,6 @@ export default function SingleFundraiser() {
   const [ShowMain, setShowMain] = useState({ type: "image", index: 0 });
   const [CollectedAmount, setCollectedAmount] =
   useState<number>(0);
-  const [Goal, setGoal] =
-  useState<number>(0);
   const [TotalDonations, setTotalDonations] =
   useState<string>('0');
   const [TopDonation, setTopDonation] = useState<donation>({
@@ -85,7 +83,6 @@ export default function SingleFundraiser() {
             },
           } = response;
           
-          console.log(response.data);
           
           
           setCollectedAmount(collectedAmount);
@@ -95,7 +92,6 @@ export default function SingleFundraiser() {
           setMostRecentDonation(mostRecentDonation);
           setFirstDonation(firstDonation);
           setFundraiser(fundraiser);
-          setGoal(fundraiser.goal);
         });
       }
     }, []);
@@ -367,7 +363,7 @@ export default function SingleFundraiser() {
               </p>
               <progress
                 max="100"
-                value={Fundraiser.goal ?  (CollectedAmount / Goal) * 100 : 0}
+                value={Fundraiser.goal ?  (CollectedAmount / parseFloat(String(Fundraiser.goal).replace(/,/g, ''))) * 100 : 0}
                 className="w-full h-2 my-1 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
               />
               <p className="text-zinc-500 font-thin text-xs">{TotalDonations} dons</p>

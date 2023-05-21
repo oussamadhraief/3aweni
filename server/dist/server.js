@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const express = require("express");
-const session = require("express-session");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
@@ -68,42 +67,28 @@ app.use(express.json({
   limit: "50mb"
 }));
 app.use(cors({
-  origin: true,
+  origin: BASE_URL,
   credentials: true
 }));
 app.use(express.urlencoded({
   limit: "50mb",
   extended: true
 }));
-app.use(cookieParser());
-app.use(session({
-  secret: "my-secret-key",
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    sameSite: "none",
-    secure: true
-  }
-}));
+
 // app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 // app.use(compression());
 // app.use(helmet());
 
 //Routes
 
-app.get("/hello", (_, res) => {
-  res.send("working...");
-});
-
 //auth
 
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  if (!token) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.sendStatus(401);
   }
+  const token = authHeader.split(' ')[1];
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       return res.sendStatus(403);
@@ -112,7 +97,7 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
-app.post("/register", async (req, res) => {
+app.post("/api/user/register", async (req, res) => {
   try {
     const {
       email,
@@ -160,7 +145,7 @@ app.post("/register", async (req, res) => {
     });
   }
 });
-app.post("/login", async (req, res) => {
+app.post("/api/user/login", async (req, res) => {
   try {
     const {
       email,
@@ -194,22 +179,22 @@ app.post("/login", async (req, res) => {
     // User authenticated successfully
     // Generate a JWT token
     const token = jwt.sign({
-      userId: user._id
+      _id: user._id
     }, process.env.JWT_SECRET, {
       expiresIn: "1h"
     });
-
-    // Set the token as a cookie
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none"
-    });
-
-    // Return success response
+    const resUser = {
+      _id: user._id,
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+      image: user.image
+    };
+    // Return the token in the response
     res.json({
       success: true,
-      message: "Login successful"
+      token,
+      user: resUser
     });
   } catch (error) {
     console.log(error);
@@ -219,24 +204,9 @@ app.post("/login", async (req, res) => {
     });
   }
 });
-app.get("/logout", (req, res) => {
-  // Perform logout logic
-  // For example, clear the token from the client-side
-
-  // Delete the token from the client-side by setting an expired token
-  res.cookie("jwt", "", {
-    expires: new Date(0)
-  });
-
-  // Return success response
-  res.json({
-    success: true,
-    message: "Logout successful"
-  });
-});
-app.get('/user', authenticateToken, async (req, res) => {
+app.get('/api/user', authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user._id;
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -255,7 +225,7 @@ app.get('/user', authenticateToken, async (req, res) => {
     });
   }
 });
-app.patch("/api/user/image", async (req, res) => {
+app.patch("/api/user/image", authenticateToken, async (req, res) => {
   try {
     const {
       image
@@ -277,7 +247,7 @@ app.patch("/api/user/image", async (req, res) => {
     });
   }
 });
-app.get("/api/received-messages/:page", async (req, res) => {
+app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
   try {
     const {
       page
@@ -296,7 +266,7 @@ app.get("/api/received-messages/:page", async (req, res) => {
     });
   }
 });
-app.post("/api/user/password-reset", async (req, res) => {
+app.post("/api/user/password-reset", authenticateToken, async (req, res) => {
   const {
     email
   } = req.body;
@@ -338,7 +308,7 @@ app.post("/api/user/password-reset", async (req, res) => {
     });
   }
 });
-app.get("/password-reset/:id/:token", async (req, res) => {
+app.get("/password-reset/:id/:token", authenticateToken, async (req, res) => {
   const {
     id,
     token
@@ -362,7 +332,7 @@ app.get("/password-reset/:id/:token", async (req, res) => {
     res.send("Not Verified");
   }
 });
-app.post("/password-reset/:id/:token", async (req, res) => {
+app.post("/password-reset/:id/:token", authenticateToken, async (req, res) => {
   const {
     id,
     token
@@ -399,7 +369,7 @@ app.post("/password-reset/:id/:token", async (req, res) => {
     });
   }
 });
-app.get("/api/user/fundraisers", async (req, res) => {
+app.get("/api/user/fundraisers", authenticateToken, async (req, res) => {
   try {
     const fundraiser = await Fundraiser.find({
       user: req.user._id
@@ -410,7 +380,7 @@ app.get("/api/user/fundraisers", async (req, res) => {
     });
   } catch (error) {}
 });
-app.get("/api/trending-fundraisers", async (req, res) => {
+app.get("/api/trending-fundraisers", authenticateToken, async (req, res) => {
   try {
     const lastWeekStartDate = new Date();
     lastWeekStartDate.setDate(lastWeekStartDate.getDate() - 7);
@@ -551,27 +521,6 @@ app.post("/api/create-fundraiser/register", async (req, res) => {
     });
   }
 });
-app.post("/api/create-fundraiser/loggedin", async (req, res) => {
-  try {
-    const {
-      category,
-      state,
-      zipCode,
-      type,
-      title,
-      goal
-    } = req?.body;
-    const newFundraiser = await createFundraiser(req.user._id, category, state, zipCode, type, title, goal);
-    res.status(201).json({
-      success: true,
-      fundraiser: newFundraiser
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false
-    });
-  }
-});
 app.post("/api/create-fundraiser", async (req, res) => {
   try {
     const {
@@ -631,7 +580,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
     });
   }
 });
-app.get("/api/user-donations", async (req, res) => {
+app.get("/api/user-donations", authenticateToken, async (req, res) => {
   try {
     const donations = await Donation.find({
       user: req.user._id
@@ -779,7 +728,7 @@ app.patch("/api/fundraiser/:id", async (req, res) => {
     });
   }
 });
-app.post("/api/konnect-gateway/:id", async (req, res) => {
+app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
   try {
     const {
       donation
@@ -798,12 +747,12 @@ app.post("/api/konnect-gateway/:id", async (req, res) => {
       description: "donation for " + fund.title,
       lifespan: 10,
       feesIncluded: true,
-      firstName: "Ammar",
-      lastName: "Halloul",
-      phoneNumber: "54827070",
-      email: "ammarhalloul7@gmail.com",
+      firstName: req.user._id,
+      lastName: "",
+      phoneNumber: req.user.phone,
+      email: req.user.email,
       orderId: id,
-      webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}`,
+      webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}/${req.user._id}`,
       silentWebhook: true,
       successUrl: `${BASE_URL}/fundraisers/${id}`,
       failUrl: `${BASE_URL}/donate/${id}`,
@@ -828,20 +777,18 @@ app.post("/api/konnect-gateway/:id", async (req, res) => {
     });
   }
 });
-app.get("/api/waaaaaaaaaaaaaaaaaa", passport.authenticate("local"), async (req, res) => {
-  console.log(req.user);
-});
-app.get("/api/create-donation/:id", passport.authenticate("local"), async (req, res) => {
+app.get("/api/create-donation/:id/:userId", authenticateToken, async (req, res) => {
   try {
-    console.log(1);
     const {
-      id
+      id,
+      userId
     } = req.params;
     const {
       payment_ref
     } = req.query;
-    const response = await axios.get(`https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`);
-    console.log(response);
+    const [response, user] = Promise.all([await axios.get(`https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`), await User.findOne({
+      _id: userId
+    })]);
     const {
       data: {
         payment: {
@@ -849,13 +796,11 @@ app.get("/api/create-donation/:id", passport.authenticate("local"), async (req, 
         }
       }
     } = response;
-    console.log(req.user._id);
     await Donation.create({
-      user: req.user._id,
+      user: user._id,
       fundraiser: id,
       amount
     });
-    console.log(25);
     res.status(201).json({
       success: true
     });
@@ -867,7 +812,7 @@ app.get("/api/create-donation/:id", passport.authenticate("local"), async (req, 
     });
   }
 });
-app.get("/api/user-stats", async (req, res) => {
+app.get("/api/user-stats", authenticateToken, async (req, res) => {
   try {
     const thisWeek = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
     const WeekThree = new Date(thisWeek - 7 * 24 * 60 * 60 * 1000);
@@ -900,7 +845,7 @@ app.get("/api/user-stats", async (req, res) => {
 
 //Contact User
 
-app.post("/api/contact-user", async (req, res) => {
+app.post("/api/contact-user", authenticateToken, async (req, res) => {
   try {
     let contact;
     const {

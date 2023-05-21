@@ -10,7 +10,6 @@ import { Link } from "react-router-dom";
     useEffect(() => {
       axiosInstance.get('/api/trending-fundraisers').then((res) => {
         const { data: { fundraisers } } = res
-        console.log(fundraisers);
         
         setTrendingFundraisers(fundraisers)
 
