@@ -712,7 +712,7 @@ app.get(
       await Donation.create({
         user: userId,
         fundraiser: id,
-        amount,
+        amount: amount / 1000,
       });
 
       res.status(201).json({ success: true });
