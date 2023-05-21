@@ -235,6 +235,7 @@ export default function EditUserFundraiser() {
     e.preventDefault();
 
     const goal = parseFloat(Fundraiser.goal.replace(/,/g, ''))
+    console.log(Fundraiser);
     
     axios.patch(`/api/fundraiser/${Fundraiser._id}`, {
       title: Fundraiser.title,
