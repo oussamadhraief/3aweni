@@ -699,9 +699,9 @@ app.get(
 
       const { payment_ref } = req.query;
 
-      const [response, user] = Promise.all([await axios.get(
+      const response = await axios.get(
         `https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`
-      ),await User.findOne({ _id: userId })])
+      )
 
       const {
         data: {
@@ -710,7 +710,7 @@ app.get(
       } = response;
 
       await Donation.create({
-        user: user._id,
+        user: userId,
         fundraiser: id,
         amount,
       });
