@@ -88,8 +88,6 @@ app.use(
       collection: "sessions",
     }), // Set the session store
     cookie: {
-      secure: false,
-      httpOnly: false,
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
@@ -140,6 +138,10 @@ app.get("/api/user/logout", async (req, res, done) => {
 
 app.get("/api/user", async (req, res) => {
   try {
+    console.log(req);
+    console.log(req.session);
+    console.log(req.user);
+    console.log(req.cookies);
     if (req.session.passport && req.session.passport.user) {
       const userId = req.session.passport.user;
       const user = await User.findOne({ _id: userId });
