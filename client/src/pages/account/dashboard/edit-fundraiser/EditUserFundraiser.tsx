@@ -234,8 +234,7 @@ export default function EditUserFundraiser() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const goal = parseFloat(Fundraiser.goal.replace(/,/g, ''))
-    console.log(Fundraiser);
+    const goal = parseFloat(String(Fundraiser.goal).replace(/,/g, ''))
     
     axios.patch(`/api/fundraiser/${Fundraiser._id}`, {
       title: Fundraiser.title,
