@@ -71,15 +71,11 @@ const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(
   cors({
-    origin: '*',
+    origin: true,
     credentials: true,
   })
 );
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  next();
-});
+
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use(cookieParser());
