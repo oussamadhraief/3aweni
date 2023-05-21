@@ -93,11 +93,8 @@ app.use(
       collection: "sessions",
     }), // Set the session store
     cookie: {
-      httpOnly: true,
-      sameSite: 'lax',
       secure: true,
-      maxAge: 1000 * 60 * 60 * 24,
-      domain: '.onrender.com'
+      sameSite: 'none',
     },
   })
 );
