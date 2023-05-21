@@ -3,9 +3,9 @@ const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const express = require("express");
 const cors = require("cors");
+const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
-const session = require("express-session");
 const bodyParser = require("body-parser");
 require("dotenv/config");
 const cloudinary = require("cloudinary").v2;
@@ -38,6 +38,8 @@ const {
   promisify
 } = require("util");
 const axios = require("axios");
+const session = require("express-session");
+const MongoDBStore = require('connect-mongo')(session);
 const port = process.env.PORT || 5000;
 const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
 const storage = multer.memoryStorage();
@@ -56,7 +58,7 @@ const {
   MONGO_PASSWORD,
   MONGO_PATH
 } = process.env;
-mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`, {
+const connection = mongoose.createConnection(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`, {
   // useCreateIndex: true,
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -72,22 +74,38 @@ app.use(cors({
   origin: BASE_URL,
   credentials: true
 }));
-app.use(cookieParser());
-app.use(session({
-  secret: "secretcode",
-  resave: false,
-  saveUninitialized: false
-}));
 app.use(express.urlencoded({
   limit: "50mb",
   extended: true
 }));
-app.use(bodyParser.urlencoded({
-  limit: "50mb",
-  extended: true
+const sessionStore = new MongoDBStore({
+  // MongoDB connection URL
+  mongooseConnection: connection,
+  collection: "sessions"
+  // Additional options (optional)
+  // ...
+});
+
+sessionStore.on('error', function (error) {
+  console.log(error);
+});
+app.use(cookieParser());
+app.use(session({
+  secret: 'my-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  store: sessionStore,
+  // Set the session store
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24
+  }
 }));
-app.use(compression());
-app.use(helmet());
+// app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(passport.initialize());
+// app.use(compression());
+// app.use(helmet());
+
+require("./passport");
 
 //Routes
 
@@ -97,133 +115,8 @@ app.get("/hello", (_, res) => {
 
 //auth
 
-function authenticateToken(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.sendStatus(401);
-  }
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.sendStatus(403);
-    }
-    req.user = user;
-    next();
-  });
-}
-app.post('/api/user/register', async (req, res) => {
-  const {
-    email,
-    password
-  } = req.body;
-  try {
-    const existingUser = await User.findOne({
-      email
-    });
-    if (existingUser) {
-      return res.status(400).json({
-        message: 'User already exists'
-      });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new UserModel({
-      email,
-      password: hashedPassword
-    });
-    await newUser.save();
-    res.status(201).json({
-      message: 'Registration successful'
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Registration failed'
-    });
-  }
-});
-app.post('/api/user/login', async (req, res) => {
-  try {
-    const {
-      email,
-      password
-    } = req.body;
-
-    // Find the user by email
-    const user = await User.findOne({
-      email
-    });
-
-    // Check if user exists
-    if (!user) {
-      return res.status(401).json({
-        message: 'Invalid email or password'
-      });
-    }
-
-    // Compare the provided password with the stored hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    // Check if the password is valid
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        message: 'Invalid email or password'
-      });
-    }
-
-    // Generate a JWT token
-    const token = jwt.sign({
-      _id: user._id
-    }, process.env.JWT_SECRET, {
-      expiresIn: '1h'
-    });
-
-    // Set the token as an HTTP-only cookie
-    res.cookie('token', token, {
-      httpOnly: true
-    });
-    res.json({
-      message: 'Login successful',
-      user
-    });
-  } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).json({
-      message: 'Internal server error'
-    });
-  }
-});
-app.post('/api/user/logout', (req, res) => {
-  // Clear the token cookie
-  res.clearCookie('token');
-  res.json({
-    message: 'Logout successful'
-  });
-});
-app.get('/api/user', authenticateToken, async (req, res) => {
-  try {
-    // The user is authenticated, and the user information is available in req.user
-    const user = req.user;
-
-    // Find the user by ID or any other necessary logic
-    const foundUser = await User.findById(user.userId);
-
-    // Check if user exists
-    if (!foundUser) {
-      return res.status(404).json({
-        message: 'User not found'
-      });
-    }
-
-    // Send the user information in the response
-    res.status(200).json({
-      user: foundUser
-    });
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    res.status(500).json({
-      message: 'Internal server error'
-    });
-  }
-});
-app.patch("/api/user/image", authenticateToken, async (req, res) => {
+app.use("/api/user", require("./routes/auth"));
+app.patch("/api/user/image", async (req, res) => {
   try {
     const {
       image
@@ -245,7 +138,43 @@ app.patch("/api/user/image", authenticateToken, async (req, res) => {
     });
   }
 });
-app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
+app.get("/api/user/logout", async (req, res, done) => {
+  try {
+    req.logout(done);
+    res.status(204).json({
+      success: true
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false
+    });
+  }
+});
+app.get("/api/user", async (req, res) => {
+  try {
+    if (req.session.passport && req.session.passport.user) {
+      const userId = req.session.passport.user;
+      const user = await User.findOne({
+        _id: userId
+      });
+      if (user) {
+        return res.json({
+          success: true,
+          user: user
+        });
+      }
+    }
+    return res.json({
+      success: false
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      success: false
+    });
+  }
+});
+app.get("/api/received-messages/:page", async (req, res) => {
   try {
     const {
       page
@@ -367,7 +296,7 @@ app.post("/password-reset/:id/:token", async (req, res) => {
     });
   }
 });
-app.get("/api/user/fundraisers", authenticateToken, async (req, res) => {
+app.get("/api/user/fundraisers", async (req, res) => {
   try {
     const fundraiser = await Fundraiser.find({
       user: req.user._id
@@ -519,7 +448,7 @@ app.post("/api/create-fundraiser/register", async (req, res) => {
     });
   }
 });
-app.post("/api/create-fundraiser/loggedin", authenticateToken, async (req, res) => {
+app.post("/api/create-fundraiser/loggedin", async (req, res) => {
   try {
     const {
       category,
@@ -529,7 +458,6 @@ app.post("/api/create-fundraiser/loggedin", authenticateToken, async (req, res) 
       title,
       goal
     } = req?.body;
-    console.log(req.user);
     const newFundraiser = await createFundraiser(req.user._id, category, state, zipCode, type, title, goal);
     res.status(201).json({
       success: true,
@@ -541,7 +469,7 @@ app.post("/api/create-fundraiser/loggedin", authenticateToken, async (req, res) 
     });
   }
 });
-app.post("/api/create-fundraiser", authenticateToken, async (req, res) => {
+app.post("/api/create-fundraiser", async (req, res) => {
   try {
     const {
       category,
@@ -551,7 +479,6 @@ app.post("/api/create-fundraiser", authenticateToken, async (req, res) => {
       title,
       goal
     } = req?.body;
-    console.log(req.user);
     const newFundraiser = await createFundraiser(req.user._id, category, state, zipCode, type, title, goal);
     res.status(201).json({
       success: true,
@@ -601,7 +528,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
     });
   }
 });
-app.get("/api/user-donations", authenticateToken, async (req, res) => {
+app.get("/api/user-donations", async (req, res) => {
   try {
     const donations = await Donation.find({
       user: req.user._id
@@ -798,7 +725,10 @@ app.post("/api/konnect-gateway/:id", async (req, res) => {
     });
   }
 });
-app.get("/api/create-donation/:id", authenticateToken, async (req, res) => {
+app.get("/api/waaaaaaaaaaaaaaaaaa", passport.authenticate("local"), async (req, res) => {
+  console.log(req.user);
+});
+app.get("/api/create-donation/:id", passport.authenticate("local"), async (req, res) => {
   try {
     console.log(1);
     const {
@@ -834,7 +764,7 @@ app.get("/api/create-donation/:id", authenticateToken, async (req, res) => {
     });
   }
 });
-app.get("/api/user-stats", authenticateToken, async (req, res) => {
+app.get("/api/user-stats", async (req, res) => {
   try {
     const thisWeek = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
     const WeekThree = new Date(thisWeek - 7 * 24 * 60 * 60 * 1000);
@@ -867,7 +797,7 @@ app.get("/api/user-stats", authenticateToken, async (req, res) => {
 
 //Contact User
 
-app.post("/api/contact-user", authenticateToken, async (req, res) => {
+app.post("/api/contact-user", async (req, res) => {
   try {
     let contact;
     const {

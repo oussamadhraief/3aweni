@@ -6,7 +6,6 @@ const cors = require("cors");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
-const session = require("express-session");
 const bodyParser = require("body-parser");
 require("dotenv/config");
 const cloudinary = require("cloudinary").v2;
@@ -37,6 +36,8 @@ const fs = require("fs");
 const helmet = require("helmet");
 const { promisify } = require("util");
 const axios = require("axios");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 
 const port = process.env.PORT || 5000;
 const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
@@ -66,7 +67,6 @@ mongoose.connect(
     console.log("Connected To Mongo");
   }
 );
-
 const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(
@@ -75,25 +75,27 @@ app.use(
     credentials: true,
   })
 );
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
 app.use(cookieParser());
 app.use(
-  session({ 
-    secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: true, // Set to true if running on HTTPS
-    sameSite: 'none', // Set to 'none' if running on HTTPS
-    // Additional cookie attributes
-    domain: '.onrender.com',
-    // path: '/your-path', })
-  }}));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+  session({
+    secret: "my-secret-key",
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl: `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,
+      collection: "sessions",
+    }), // Set the session store
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+    },
+  })
+);
+// app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(passport.initialize());
-app.use(passport.session());
-app.use(compression());
-app.use(helmet());
+// app.use(compression());
+// app.use(helmet());
 
 require("./passport");
 
@@ -136,22 +138,21 @@ app.get("/api/user/logout", async (req, res, done) => {
 
 app.get("/api/user", async (req, res) => {
   try {
-    const user= await User.findOne({ _id:  req.user._id })
+    if (req.session.passport && req.session.passport.user) {
+      const userId = req.session.passport.user;
+      const user = await User.findOne({ _id: userId });
 
-    if(user){
-      
-      return res.json({ success: true, user: user });
-
+      if (user) {
+        return res.json({ success: true, user: user });
+      }
     }
-      return res.json({ success: false });
 
-  } catch (error) {
     return res.json({ success: false });
-    
+  } catch (error) {
+    console.log(error);
+    return res.json({ success: false });
   }
-
 });
-
 
 app.get("/api/received-messages/:page", async (req, res) => {
   try {
