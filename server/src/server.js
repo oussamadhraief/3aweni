@@ -691,7 +691,7 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
 });
 
 app.get(
-  "/api/create-donation/:id/:userId", authenticateToken,
+  "/api/create-donation/:id/:userId",
   async (req, res) => {
     try {
       
