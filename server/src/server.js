@@ -91,11 +91,7 @@ app.use(
     store: MongoStore.create({
       mongoUrl: `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,
       collection: "sessions",
-    }), // Set the session store
-    cookie: {
-      secure: true,
-      sameSite: 'none',
-    },
+    }),
   })
 );
 // app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
