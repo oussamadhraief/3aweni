@@ -71,12 +71,12 @@ const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(
   cors({
-    origin: BASE_URL,
+    origin: '*',
     credentials: true,
   })
 );
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', BASE_URL);
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   next();
 });
