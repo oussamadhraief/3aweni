@@ -76,7 +76,7 @@ app.use(
   })
 );
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://yourclientdomain.com');
+  res.setHeader('Access-Control-Allow-Origin', BASE_URL);
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   next();
 });
