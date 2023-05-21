@@ -2,11 +2,10 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const express = require("express");
+const session = require("express-session");
 const cors = require("cors");
-const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
-const bodyParser = require("body-parser");
 require("dotenv/config");
 const cloudinary = require("cloudinary").v2;
 const compression = require("compression");
@@ -38,8 +37,6 @@ const {
   promisify
 } = require("util");
 const axios = require("axios");
-const session = require("express-session");
-const MongoDBStore = require('connect-mongo')(session);
 const port = process.env.PORT || 5000;
 const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
 const storage = multer.memoryStorage();
@@ -58,7 +55,7 @@ const {
   MONGO_PASSWORD,
   MONGO_PATH
 } = process.env;
-const connection = mongoose.createConnection(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`, {
+mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`, {
   // useCreateIndex: true,
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -71,41 +68,27 @@ app.use(express.json({
   limit: "50mb"
 }));
 app.use(cors({
-  origin: BASE_URL,
+  origin: true,
   credentials: true
 }));
 app.use(express.urlencoded({
   limit: "50mb",
   extended: true
 }));
-const sessionStore = new MongoDBStore({
-  // MongoDB connection URL
-  mongooseConnection: connection,
-  collection: "sessions"
-  // Additional options (optional)
-  // ...
-});
-
-sessionStore.on('error', function (error) {
-  console.log(error);
-});
 app.use(cookieParser());
 app.use(session({
-  secret: 'my-secret-key',
+  secret: "my-secret-key",
   resave: false,
   saveUninitialized: true,
-  store: sessionStore,
-  // Set the session store
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24
+    httpOnly: true,
+    sameSite: "none",
+    secure: true
   }
 }));
 // app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use(passport.initialize());
 // app.use(compression());
 // app.use(helmet());
-
-require("./passport");
 
 //Routes
 
@@ -115,7 +98,163 @@ app.get("/hello", (_, res) => {
 
 //auth
 
-app.use("/api/user", require("./routes/auth"));
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) {
+    return res.sendStatus(401);
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+    req.user = user;
+    next();
+  });
+}
+app.post("/register", async (req, res) => {
+  try {
+    const {
+      email,
+      password,
+      name
+    } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({
+      email
+    });
+
+    // If user exists, return error
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "User already exists"
+      });
+    }
+
+    // Create a new user
+    const newUser = new User({
+      email,
+      password,
+      name
+    });
+
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    newUser.password = await bcrypt.hash(password, salt);
+
+    // Save the user to the database
+    await newUser.save();
+
+    // Return success response
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully"
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+});
+app.post("/login", async (req, res) => {
+  try {
+    const {
+      email,
+      password
+    } = req.body;
+
+    // Find user by email
+    const user = await User.findOne({
+      email
+    });
+
+    // If user not found, return error
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    // If passwords don't match, return error
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials"
+      });
+    }
+
+    // User authenticated successfully
+    // Generate a JWT token
+    const token = jwt.sign({
+      userId: user._id
+    }, process.env.JWT_SECRET, {
+      expiresIn: "1h"
+    });
+
+    // Set the token as a cookie
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none"
+    });
+
+    // Return success response
+    res.json({
+      success: true,
+      message: "Login successful"
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+});
+app.get("/logout", (req, res) => {
+  // Perform logout logic
+  // For example, clear the token from the client-side
+
+  // Delete the token from the client-side by setting an expired token
+  res.cookie("jwt", "", {
+    expires: new Date(0)
+  });
+
+  // Return success response
+  res.json({
+    success: true,
+    message: "Logout successful"
+  });
+});
+app.get('/user', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found'
+      });
+    }
+    res.json({
+      user
+    });
+  } catch (error) {
+    console.error('Error retrieving user information:', error);
+    res.status(500).json({
+      message: 'An error occurred while retrieving user information'
+    });
+  }
+});
 app.patch("/api/user/image", async (req, res) => {
   try {
     const {
@@ -134,42 +273,6 @@ app.patch("/api/user/image", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({
-      success: false
-    });
-  }
-});
-app.get("/api/user/logout", async (req, res, done) => {
-  try {
-    req.logout(done);
-    res.status(204).json({
-      success: true
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false
-    });
-  }
-});
-app.get("/api/user", async (req, res) => {
-  try {
-    if (req.session.passport && req.session.passport.user) {
-      const userId = req.session.passport.user;
-      const user = await User.findOne({
-        _id: userId
-      });
-      if (user) {
-        return res.json({
-          success: true,
-          user: user
-        });
-      }
-    }
-    return res.json({
-      success: false
-    });
-  } catch (error) {
-    console.log(error);
-    return res.json({
       success: false
     });
   }

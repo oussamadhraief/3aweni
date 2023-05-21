@@ -2,11 +2,10 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const express = require("express");
+const session = require("express-session");
 const cors = require("cors");
-const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
-const bodyParser = require("body-parser");
 require("dotenv/config");
 const cloudinary = require("cloudinary").v2;
 const compression = require("compression");
@@ -36,8 +35,6 @@ const fs = require("fs");
 const helmet = require("helmet");
 const { promisify } = require("util");
 const axios = require("axios");
-const session = require("express-session");
-const MongoStore = require("connect-mongo");
 
 const port = process.env.PORT || 5000;
 const BASE_URL = process.env.CORS_ORIGIN_URL || "http://localhost:3000/";
@@ -84,10 +81,6 @@ app.use(
     secret: "my-secret-key",
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({
-      mongoUrl: `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,
-      collection: "sessions",
-    }),
     cookie: {
       httpOnly: true,
       sameSite: "none",
@@ -96,12 +89,8 @@ app.use(
   })
 );
 // app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 // app.use(compression());
 // app.use(helmet());
-
-require("./passport");
 
 //Routes
 
@@ -111,7 +100,123 @@ app.get("/hello", (_, res) => {
 
 //auth
 
-app.use("/api/user", require("./routes/auth"));
+function authenticateToken(req, res, next) {
+  const token = req.cookies.jwt;
+
+  if (!token) {
+    return res.sendStatus(401);
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+
+    req.user = user;
+    next();
+  });
+}
+
+app.post("/api/user/register", async (req, res) => {
+  try {
+    const { email, password, name } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+
+    // If user exists, return error
+    if (existingUser) {
+      return res.status(409).json({ success: false, message: "User already exists" });
+    }
+
+    // Create a new user
+    const newUser = new User({ email, password, name });
+
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    newUser.password = await bcrypt.hash(password, salt);
+
+    // Save the user to the database
+    await newUser.save();
+
+    // Return success response
+    res.status(201).json({ success: true, message: "User registered successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.post("/api/user/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    // If user not found, return error
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    // If passwords don't match, return error
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    // User authenticated successfully
+    // Generate a JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    // Set the token as a cookie
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    // Return success response
+    res.json({ success: true, message: "Login successful" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+
+app.get("/api/user/logout", (req, res) => {
+  // Perform logout logic
+  // For example, clear the token from the client-side
+
+  // Delete the token from the client-side by setting an expired token
+  res.cookie("jwt", "", { expires: new Date(0) });
+
+  // Return success response
+  res.json({ success: true, message: "Logout successful" });
+});
+
+
+app.post('/api/user', authenticateToken, async (req, res) => {
+  try {
+    console.log(req.user);
+    const userId = req.user.userId;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    console.error('Error retrieving user information:', error);
+    res.status(500).json({ message: 'An error occurred while retrieving user information' });
+  }
+});
 
 app.patch("/api/user/image", async (req, res) => {
   try {
@@ -127,44 +232,6 @@ app.patch("/api/user/image", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({ success: false });
-  }
-});
-
-app.get("/api/user/logout", async (req, res, done) => {
-  try {
-    req.logout(done);
-
-    res.status(204).json({ success: true });
-  } catch (error) {
-    res.status(400).json({ success: false });
-  }
-});
-
-app.get("/set-cookie", (req, res) => {
-  res.cookie("cookieName", "cookieValue", {
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  });
-  res.send("Cookie set");
-});
-
-app.post("/api/user", async (req, res) => {
-  try {
-    console.log(req.user);
-    if (req.session.passport && req.session.passport.user) {
-      const userId = req.session.passport.user;
-      const user = await User.findOne({ _id: userId });
-
-      if (user) {
-        return res.json({ success: true, user: user });
-      }
-    }
-
-    return res.json({ success: false });
-  } catch (error) {
-    console.log(error);
-    return res.json({ success: false });
   }
 });
 
@@ -672,16 +739,7 @@ app.post("/api/konnect-gateway/:id", async (req, res) => {
 });
 
 app.get(
-  "/api/waaaaaaaaaaaaaaaaaa",
-  passport.authenticate("local"),
-  async (req, res) => {
-    console.log(req.user);
-  }
-);
-
-app.get(
   "/api/create-donation/:id",
-  passport.authenticate("local"),
   async (req, res) => {
     try {
       console.log(1);
