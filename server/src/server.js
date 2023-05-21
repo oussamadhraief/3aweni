@@ -189,16 +189,17 @@ app.post("/api/user/login", async (req, res) => {
 });
 
 
-app.get("/api/user/logout", (req, res) => {
+app.get("/api/user/logout", authenticateToken, (req, res) => {
   // Perform logout logic
   // For example, clear the token from the client-side
 
   // Delete the token from the client-side by setting an expired token
-  res.cookie("jwt", "", { expires: new Date(0) });
+  res.cookie("jwt", "", { expires: new Date(0), secure: true, sameSite: "none" });
 
   // Return success response
   res.json({ success: true, message: "Logout successful" });
 });
+
 
 
 app.get('/api/user', authenticateToken, async (req, res) => {
