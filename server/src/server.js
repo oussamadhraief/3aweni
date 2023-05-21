@@ -154,7 +154,7 @@ app.post("/api/user", async (req, res) => {
     console.log(req);
     console.log(req.session);
     console.log(req.user);
-    console.log(req.cookies);
+    console.log(req.cookies.session.id);
     console.log(req.session.passport);
     console.log(req.session._passport);
     console.log(req.session.passport.user);
