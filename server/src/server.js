@@ -151,13 +151,7 @@ app.get("/set-cookie", (req, res) => {
 
 app.post("/api/user", async (req, res) => {
   try {
-    console.log(req);
-    console.log(req.session);
     console.log(req.user);
-    console.log(req.cookies.session.id);
-    console.log(req.session.passport);
-    console.log(req.session._passport);
-    console.log(req.session.passport.user);
     if (req.session.passport && req.session.passport.user) {
       const userId = req.session.passport.user;
       const user = await User.findOne({ _id: userId });
