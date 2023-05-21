@@ -93,14 +93,17 @@ app.use(
       collection: "sessions",
     }), // Set the session store
     cookie: {
+      httpOnly: true,
       sameSite: 'none',
       secure: true,
       maxAge: 1000 * 60 * 60 * 24,
+      domain: '.onrender.com'
     },
   })
 );
 // app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(passport.initialize());
+app.use(passport.session());
 // app.use(compression());
 // app.use(helmet());
 
@@ -148,6 +151,8 @@ app.get('/set-cookie', (req, res) => {
     httpOnly: true,
     sameSite: 'none',
     secure: true,
+    maxAge: 1000 * 60 * 60 * 24,
+    domain: '.onrender.com'
   });
   res.send('Cookie set');
 });
