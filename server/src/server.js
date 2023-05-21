@@ -149,7 +149,7 @@ app.get("/set-cookie", (req, res) => {
   res.send("Cookie set");
 });
 
-app.get("/api/user", async (req, res) => {
+app.post("/api/user", async (req, res) => {
   try {
     console.log(req);
     console.log(req.session);
