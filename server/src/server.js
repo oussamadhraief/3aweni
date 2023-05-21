@@ -88,6 +88,11 @@ app.use(
       mongoUrl: `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,
       collection: "sessions",
     }),
+    cookie: {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    },
   })
 );
 // app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -135,15 +140,13 @@ app.get("/api/user/logout", async (req, res, done) => {
   }
 });
 
-app.get('/set-cookie', (req, res) => {
-  res.cookie('cookieName', 'cookieValue', {
+app.get("/set-cookie", (req, res) => {
+  res.cookie("cookieName", "cookieValue", {
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: "none",
     secure: true,
-    maxAge: 1000 * 60 * 60 * 24,
-    domain: '.onrender.com'
   });
-  res.send('Cookie set');
+  res.send("Cookie set");
 });
 
 app.get("/api/user", async (req, res) => {
