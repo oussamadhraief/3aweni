@@ -75,6 +75,11 @@ app.use(
     credentials: true,
   })
 );
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://yourclientdomain.com');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use(cookieParser());
