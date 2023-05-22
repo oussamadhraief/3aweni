@@ -65,7 +65,7 @@ export default function Donate() {
       const res = await axios.post(`/api/konnect-gateway/${id}`, {
         ...Donation,
         amount: parseFloat(Donation.amount),
-        tip: parseFloat(Donation.tip),
+        tip: Show ? parseFloat(Donation.tip) :  0,
       });
 
       const {
