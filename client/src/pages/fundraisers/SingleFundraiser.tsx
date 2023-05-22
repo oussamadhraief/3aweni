@@ -16,7 +16,6 @@ export default function SingleFundraiser() {
   const { id } = useParams();
   const { user } = useAuthContext();
 
-  
   const [Fundraiser, setFundraiser] = useState<fundraiserInt>({
     _id: "",
     category: "",
@@ -36,85 +35,75 @@ export default function SingleFundraiser() {
   const [WarningOpen, setWarningOpen] = useState<boolean>(true);
   const [Open, setOpen] = useState<boolean>(false);
   const [ShowMain, setShowMain] = useState({ type: "image", index: 0 });
-  const [CollectedAmount, setCollectedAmount] =
-  useState<number>(0);
-  const [TotalDonations, setTotalDonations] =
-  useState<string>('0');
+  const [CollectedAmount, setCollectedAmount] = useState<number>(0);
+  const [TotalDonations, setTotalDonations] = useState<string>("0");
   const [TopDonation, setTopDonation] = useState<donation>({
     user: null,
     fundraiser: null,
     amount: 0,
     tip: 0,
     incognito: false,
-    message: '',
+    message: "",
     createdAt: null,
     updatedAt: null,
   });
-  const [MostRecentDonation, setMostRecentDonation] =
-  useState<donation>({
+  const [MostRecentDonation, setMostRecentDonation] = useState<donation>({
     user: null,
     fundraiser: null,
     amount: 0,
     tip: 0,
     incognito: false,
-    message: '',
+    message: "",
     createdAt: null,
     updatedAt: null,
   });
-  const [FirstDonation, setFirstDonation] =
-  useState<donation>({
+  const [FirstDonation, setFirstDonation] = useState<donation>({
     user: null,
     fundraiser: null,
     amount: 0,
     tip: 0,
     incognito: false,
-    message: '',
+    message: "",
     createdAt: null,
     updatedAt: null,
-  })
-  
-  
+  });
+
   useEffect(() => {
     if (id) {
-      axios
-      .get(`/api/single-fundraiser/${id}`, {
-        
-      })
-        .then((response) => {
-          const {
-            data: {
-              fundraiser,
-              collectedAmount,
-              totalDonations,
-              topDonation,
-              mostRecentDonation,
-              firstDonation,
-            },
-          } = response;
-          
-          
-          
-          setCollectedAmount(collectedAmount);
-          const formattedTotalDonation = formatNumber(totalDonations)
-          setTotalDonations(formattedTotalDonation)
-          setTopDonation(topDonation);
-          setMostRecentDonation(mostRecentDonation);
-          setFirstDonation(firstDonation);
-          setFundraiser(fundraiser);
-        });
-      }
-    }, []);
-    
-    
-    const formatNumber = (num: number) => {
-      const suffixes = ["", "k", "M", "B", "T"];
-      const suffixNum = Math.floor(("" + num).length / 3);
-      let shortValue: any = parseFloat((suffixNum !== 0 ? (num / Math.pow(1000, suffixNum)) : num).toPrecision(2));
-      if (shortValue % 1 !== 0) {
+      axios.get(`/api/single-fundraiser/${id}`, {}).then((response) => {
+        const {
+          data: {
+            fundraiser,
+            collectedAmount,
+            totalDonations,
+            topDonation,
+            mostRecentDonation,
+            firstDonation,
+          },
+        } = response;
+
+        setCollectedAmount(collectedAmount);
+        const formattedTotalDonation = formatNumber(totalDonations);
+        setTotalDonations(formattedTotalDonation);
+        setTopDonation(topDonation);
+        setMostRecentDonation(mostRecentDonation);
+        setFirstDonation(firstDonation);
+        setFundraiser(fundraiser);
+      });
+    }
+  }, []);
+
+  const formatNumber = (num: number) => {
+    const suffixes = ["", "k", "M", "B", "T"];
+    const suffixNum = Math.floor(("" + num).length / 3);
+    let shortValue: any = parseFloat(
+      (suffixNum !== 0 ? num / Math.pow(1000, suffixNum) : num).toPrecision(2)
+    );
+    if (shortValue % 1 !== 0) {
       shortValue = shortValue.toFixed(1);
     }
     return shortValue + suffixes[suffixNum];
-  }
+  };
 
   const handleScrollLeftCarousel = () => {
     carousel.current?.scroll(
@@ -225,14 +214,13 @@ export default function SingleFundraiser() {
             <video
               className="relative w-full rounded-md overflow-hidden"
               src={`https://res.cloudinary.com/dhwfr0ywo/video/upload/${
-                  Fundraiser.secondaryVideos[ShowMain.index]
-                }`}
+                Fundraiser.secondaryVideos[ShowMain.index]
+              }`}
               controls
               autoPlay
               muted
               disablePictureInPicture
-            >
-            </video>
+            ></video>
           )}
         </div>
 
@@ -342,7 +330,9 @@ export default function SingleFundraiser() {
         </div>
 
         <p className="my-5 text-sm grid-fundraiser-description">
-          {Fundraiser.description ? Fundraiser.description : "Pas de description"}
+          {Fundraiser.description
+            ? Fundraiser.description
+            : "Pas de description"}
         </p>
 
         <div className="flex gap-3 items-center grid-fundraiser-buttons">
@@ -364,18 +354,24 @@ export default function SingleFundraiser() {
           <div className="sticky card w-fit bg-base-100 shadow-modern rounded-lg px-4 top-24 self-end">
             <div className="w-72 py-8 flex flex-col">
               <p className="text-zinc-700 font-thin text-xs">
-                
                 <strong className="text-black font-semibold text-lg">
                   {CollectedAmount.toFixed(2)} DT
                 </strong>
-                &nbsp;collectés men asl {parseFloat(Fundraiser.goal).toFixed(2)} DT
+                &nbsp;collectés men asl {parseFloat(Fundraiser.goal).toFixed(2)}{" "}
+                DT
               </p>
               <progress
                 max="100"
-                value={Fundraiser.goal ?  (CollectedAmount / parseFloat(Fundraiser.goal)) * 100 : 0}
+                value={
+                  Fundraiser.goal
+                    ? (CollectedAmount / parseFloat(Fundraiser.goal)) * 100
+                    : 0
+                }
                 className="w-full h-2 my-1 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
               />
-              <p className="text-zinc-500 font-thin text-xs">{TotalDonations} dons</p>
+              <p className="text-zinc-500 font-thin text-xs">
+                {TotalDonations} dons
+              </p>
 
               <div className="rounded-2xl bg-white p-4">
                 <div className="flex-row gap-4 flex justify-start items-center">
@@ -383,7 +379,11 @@ export default function SingleFundraiser() {
                     <a href="#" className="relative block">
                       <img
                         alt="profil"
-                        src={TopDonation?.user?.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${TopDonation?.user?.image}` : "/profile.png"}
+                        src={
+                          TopDonation?.user?.image
+                            ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${TopDonation?.user?.image}`
+                            : "/profile.png"
+                        }
                         className="mx-auto object-cover rounded-full h-9 w-9 "
                       />
                     </a>
@@ -393,7 +393,10 @@ export default function SingleFundraiser() {
                       {TopDonation?.user?.name}
                     </span>
                     <div className="text-xs flex flex-nowrap items-center">
-                      <p className=" font-bold">{TopDonation?.amount.toFixed(2)}  TND &nbsp;</p> - &nbsp;
+                      <p className=" font-bold">
+                        {TopDonation?.amount.toFixed(2)} TND &nbsp;
+                      </p>{" "}
+                      - &nbsp;
                       <button className="hover:underline text-black">
                         plus gros don
                       </button>
@@ -409,7 +412,11 @@ export default function SingleFundraiser() {
                     <a href="#" className="relative block">
                       <img
                         alt="profil"
-                        src={MostRecentDonation?.user?.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${MostRecentDonation?.user?.image}` : "/profile.png"}
+                        src={
+                          MostRecentDonation?.user?.image
+                            ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${MostRecentDonation?.user?.image}`
+                            : "/profile.png"
+                        }
                         className="mx-auto object-cover rounded-full h-9 w-9 "
                       />
                     </a>
@@ -419,7 +426,10 @@ export default function SingleFundraiser() {
                       {MostRecentDonation?.user?.name}
                     </span>
                     <div className="text-xs flex flex-nowrap items-center">
-                      <p className=" font-bold">{MostRecentDonation?.amount.toFixed(2)} TND &nbsp;</p> - &nbsp;
+                      <p className=" font-bold">
+                        {MostRecentDonation?.amount.toFixed(2)} TND &nbsp;
+                      </p>{" "}
+                      - &nbsp;
                       <button className="hover:underline text-black">
                         dernier don
                       </button>
@@ -436,19 +446,26 @@ export default function SingleFundraiser() {
                     <a href="#" className="relative block">
                       <img
                         alt="profil"
-                        src={FirstDonation?.user?.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${FirstDonation?.user?.image}` : "/profile.png"}
+                        src={
+                          FirstDonation?.user?.image
+                            ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${FirstDonation?.user?.image}`
+                            : "/profile.png"
+                        }
                         className="mx-auto object-cover rounded-full h-9 w-9 "
                       />
                     </a>
                   </div>
                   <div className=" flex flex-col">
                     <span className="text-sm font-medium text-gray-700">
-                    {FirstDonation?.user?.name}
+                      {FirstDonation?.user?.name}
                     </span>
                     <div className="text-xs flex flex-nowrap items-center">
-                      <p className=" font-bold">{FirstDonation?.amount.toFixed(2)}  TND &nbsp;</p> - &nbsp;
+                      <p className=" font-bold">
+                        {FirstDonation?.amount.toFixed(2)} TND &nbsp;
+                      </p>{" "}
+                      - &nbsp;
                       <button className="hover:underline text-black">
-                      plus ancien don
+                        plus ancien don
                       </button>
                     </div>
                   </div>

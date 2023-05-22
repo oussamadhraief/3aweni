@@ -8,11 +8,9 @@ export default function DashboardMessages() {
   useEffect(() => {
     const token = localStorage.getItem("jwt");
 
-    axios
-      .get("/api/received-messages/0",)
-      .then((res) => {
-        setMessages(res.data.messages);
-      });
+    axios.get("/api/received-messages/0").then((res) => {
+      setMessages(res.data.messages);
+    });
   }, []);
 
   return (

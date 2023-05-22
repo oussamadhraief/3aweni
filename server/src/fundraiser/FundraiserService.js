@@ -106,7 +106,7 @@ const fetchFundraisersCreatedCountByDate = async (startDate, endDate) => {
     },
   }).count();
 
-  return count
+  return count;
 };
 
 exports.createFundraiser = createFundraiser;

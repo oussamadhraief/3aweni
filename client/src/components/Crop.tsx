@@ -3,7 +3,7 @@ export const createImage = (url: any) =>
     const image = new Image();
     image.addEventListener("load", () => resolve(image));
     image.addEventListener("error", (error) => reject(error));
-    image.setAttribute("crossOrigin", "anonymous"); 
+    image.setAttribute("crossOrigin", "anonymous");
     image.src = url;
   });
 
@@ -62,25 +62,11 @@ export default async function getCroppedImg(
     pixelCrop.height
   );
 
-
   canvas.width = pixelCrop.width;
   canvas.height = pixelCrop.height;
 
   ctx.putImageData(data, 0, 0);
-  
-  return canvas
-  // canvas.toBlob((file) => {
-    
-  //   // resolve(URL.createObjectURL(file!));
-  //     const reader = new FileReader();
-  //     reader.onload = async function () {
-  //       imageUrl = reader.result
-            
-  //     }
-  //     if(file)
-  //         reader.readAsDataURL(file)
-  // }, "image/jpeg");
 
-    
-  // return imageUrl
+  return canvas;
+  
 }

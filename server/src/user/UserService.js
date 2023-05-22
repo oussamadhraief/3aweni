@@ -53,46 +53,46 @@ const fetchUserTotalMoneySent = async (id) => {
       },
     },
   ]);
-  
+
   return totalMoneySent.length > 0 ? totalMoneySent[0].totalAmount : 0;
 };
 
 const fetchUserTotalMoneyReceived = async (id) => {
-    const totalMoneyReceived = await Fundraiser.aggregate([
-        {
-          $match: {
-            user: mongoose.Types.ObjectId(id),
-          },
-        },
-        {
-          $lookup: {
-            from: "donations",
-            let: { fundraiserId: "$_id" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ["$fundraiser", "$$fundraiserId"],
-                  },
-                },
+  const totalMoneyReceived = await Fundraiser.aggregate([
+    {
+      $match: {
+        user: mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $lookup: {
+        from: "donations",
+        let: { fundraiserId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$fundraiser", "$$fundraiserId"],
               },
-              {
-                $group: {
-                  _id: null,
-                  totalAmount: { $sum: "$amount" },
-                },
-              },
-            ],
-            as: "donations",
+            },
           },
-        },
-        {
-          $project: {
-            totalAmount: { $arrayElemAt: ["$donations.totalAmount", 0] },
+          {
+            $group: {
+              _id: null,
+              totalAmount: { $sum: "$amount" },
+            },
           },
-        },
-      ]);
-  
+        ],
+        as: "donations",
+      },
+    },
+    {
+      $project: {
+        totalAmount: { $arrayElemAt: ["$donations.totalAmount", 0] },
+      },
+    },
+  ]);
+
   return totalMoneyReceived.length > 0 ? totalMoneyReceived[0].totalAmount : 0;
 };
 

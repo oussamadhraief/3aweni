@@ -8,22 +8,22 @@ const user = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
-    maxlength: 8
+    maxlength: 8,
   },
   email: {
     type: String,
     required: true,
-    minlength: 5
+    minlength: 5,
   },
   password: {
     type: String,
     required: true,
   },
   image: {
-    type: String
+    type: String,
   },
   socketId: {
-    type: String
+    type: String,
   },
 });
 

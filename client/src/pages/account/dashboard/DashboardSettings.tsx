@@ -11,8 +11,15 @@ import { FiCheck, FiEdit2 } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
 import { userInfo } from "os";
 
-interface userInfoInt { name: string, phone: string }
-interface userPasswordInt { currentPassowrd: string, newPassword: string, newPasswordConfirmation: string }
+interface userInfoInt {
+  name: string;
+  phone: string;
+}
+interface userPasswordInt {
+  currentPassowrd: string;
+  newPassword: string;
+  newPasswordConfirmation: string;
+}
 
 export default function DashboardSettings() {
   const { login } = useAuthContext();
@@ -31,9 +38,16 @@ export default function DashboardSettings() {
   });
   const [UserImage, setUserImage] = useState<string | null>(null);
   const [CurrentUserImage, setCurrentUserImage] = useState<string | null>(null);
-  const [UserEmail, setUserEmail] = useState<string>('');
-  const [UserInfo, setUserInfo] = useState<userInfoInt>({ name: '', phone: '' });
-  const [UserPassword, setUserPassword] = useState<userPasswordInt>({ currentPassowrd: '', newPassword: '', newPasswordConfirmation: '' })
+  const [UserEmail, setUserEmail] = useState<string>("");
+  const [UserInfo, setUserInfo] = useState<userInfoInt>({
+    name: "",
+    phone: "",
+  });
+  const [UserPassword, setUserPassword] = useState<userPasswordInt>({
+    currentPassowrd: "",
+    newPassword: "",
+    newPasswordConfirmation: "",
+  });
   const [EditingImage, setEditingImage] = useState<boolean>(false);
   const [EditingEmail, setEditingEmail] = useState<boolean>(false);
   const [EditingInfo, setEditingInfo] = useState<boolean>(false);
@@ -41,11 +55,11 @@ export default function DashboardSettings() {
   const [Show, setShow] = useState<boolean>(false);
 
   useEffect(() => {
-    if (user){
-      setCurrentUserImage(user.image)
-      setUserEmail(user.email)
-      setUserInfo({ name: user.name, phone: user.phone })
-    } 
+    if (user) {
+      setCurrentUserImage(user.image);
+      setUserEmail(user.email);
+      setUserInfo({ name: user.name, phone: user.phone });
+    }
   }, [Loading]);
 
   const handleEditingImage = () => {
@@ -71,11 +85,9 @@ export default function DashboardSettings() {
 
   const handleUpdateUserImage = async (publicId: string) => {
     try {
-      await axios.patch(
-        "/api/user/image",
-        {
-          image: publicId,
-        });
+      await axios.patch("/api/user/image", {
+        image: publicId,
+      });
     } catch (error) {}
   };
 
@@ -110,39 +122,39 @@ export default function DashboardSettings() {
         image: res.data.imagePublicId,
       });
 
-      setCurrentUserImage(res.data.imagePublicId,);
-
+      setCurrentUserImage(res.data.imagePublicId);
     } catch (error) {}
   };
 
   const handleSetEditingEmail = () => {
-    if (user)
-      {
-        setUserEmail(user?.email)
-      }
+    if (user) {
+      setUserEmail(user?.email);
+    }
     setEditingEmail(true);
     setEditingInfo(false);
     setEditingPassword(false);
   };
 
   const handleSetEditingInfo = () => {
-    if (user)
-      {
-        setUserInfo({
-          name: user.name,
-          phone: user.phone
-        })
-      }
+    if (user) {
+      setUserInfo({
+        name: user.name,
+        phone: user.phone,
+      });
+    }
     setEditingEmail(false);
     setEditingInfo(true);
     setEditingPassword(false);
   };
 
   const handleSetEditingPassword = () => {
-    if (user)
-      {
-        setUserPassword({ currentPassowrd: '', newPassword: '', newPasswordConfirmation: ''})
-      }
+    if (user) {
+      setUserPassword({
+        currentPassowrd: "",
+        newPassword: "",
+        newPasswordConfirmation: "",
+      });
+    }
     setEditingEmail(false);
     setEditingInfo(false);
     setEditingPassword(true);
@@ -210,7 +222,7 @@ export default function DashboardSettings() {
                   placeholder="Email"
                   name="email"
                   value={UserEmail}
-                  onChange={e => setUserEmail(e.target.value)}
+                  onChange={(e) => setUserEmail(e.target.value)}
                 />
                 <button className="w-fit h-fit p-1 rounded-full bg-lighter_blue">
                   <IconContext.Provider
@@ -254,10 +266,12 @@ export default function DashboardSettings() {
                     placeholder="Nom et prénom"
                     name="name"
                     value={UserInfo.name}
-                    onChange={e => setUserInfo({
-                      ...UserInfo,
-                      name: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setUserInfo({
+                        ...UserInfo,
+                        name: e.target.value,
+                      })
+                    }
                   />
                   <input
                     type="text"
@@ -266,10 +280,12 @@ export default function DashboardSettings() {
                     placeholder="Num. de tél"
                     name="phone"
                     value={UserInfo.phone}
-                    onChange={e => setUserInfo({
-                      ...UserInfo,
-                      phone: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setUserInfo({
+                        ...UserInfo,
+                        phone: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <button className="w-fit h-fit p-1 rounded-full bg-lighter_blue">
@@ -301,9 +317,7 @@ export default function DashboardSettings() {
           </div>
           <hr />
           <div className="items-start justify-between w-full px-6 py-4 space-y-4 text-gray-500 md:flex md:space-y-0 pb-10">
-            <h2 className="w-fit h-fit whitespace-nowrap">
-              Mot de passe
-            </h2>
+            <h2 className="w-fit h-fit whitespace-nowrap">Mot de passe</h2>
             {EditingPassword ? (
               <div className="flex gap-2 items-center max-w-sm md:w-full">
                 <div className="flex flex-col gap-5 w-full">
@@ -314,10 +328,12 @@ export default function DashboardSettings() {
                     placeholder="Ancien mot de passe"
                     name="currentPassowrd"
                     value={UserPassword.currentPassowrd}
-                    onChange={e => setUserPassword({
-                      ...UserPassword,
-                      currentPassowrd: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setUserPassword({
+                        ...UserPassword,
+                        currentPassowrd: e.target.value,
+                      })
+                    }
                   />
                   <input
                     type="text"
@@ -326,10 +342,12 @@ export default function DashboardSettings() {
                     placeholder="Nouveau mot de passe"
                     name="newPassword"
                     value={UserPassword.newPassword}
-                    onChange={e => setUserPassword({
-                      ...UserPassword,
-                      newPassword: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setUserPassword({
+                        ...UserPassword,
+                        newPassword: e.target.value,
+                      })
+                    }
                   />
                   <input
                     type="text"
@@ -338,10 +356,12 @@ export default function DashboardSettings() {
                     placeholder="Confirmez le nouveau mot de passe"
                     name="newPasswordConfirmation"
                     value={UserPassword.newPasswordConfirmation}
-                    onChange={e => setUserPassword({
-                      ...UserPassword,
-                      newPasswordConfirmation: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setUserPassword({
+                        ...UserPassword,
+                        newPasswordConfirmation: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <button className="w-fit h-fit p-1 rounded-full bg-lighter_blue">

@@ -728,13 +728,12 @@ app.get(
           ...donation,
           tip,
         };
-        if (incognito == '1')
+      if (incognito == "1")
         donation = {
           ...donation,
           incognito: true,
         };
-        
-        console.log(incognito);
+
       if (message)
         donation = {
           ...donation,

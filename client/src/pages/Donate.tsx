@@ -6,7 +6,7 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { fundraiserInt } from "../utils/interfaces";
 
-interface donation { 
+interface donation {
   amount: string;
   tip: string;
   incognito: boolean;
@@ -33,11 +33,11 @@ export default function Donate() {
     updatedAt: null,
   });
   const [Loading, setLoading] = useState<boolean>(true);
-  const [Donation, setDonation] = useState<donation>({ 
-    amount: '',
-    tip: '',
+  const [Donation, setDonation] = useState<donation>({
+    amount: "",
+    tip: "",
     incognito: false,
-    message: "" 
+    message: "",
   });
   const [Show, setShow] = useState(false);
 
@@ -60,13 +60,13 @@ export default function Donate() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     try {
       const res = await axios.post(`/api/konnect-gateway/${id}`, {
         ...Donation,
         amount: parseFloat(Donation.amount),
-        tip: Show ? parseFloat(Donation.tip) :  0,
-        incognito: Donation.incognito ? '1' : '0'
+        tip: Show ? parseFloat(Donation.tip) : 0,
+        incognito: Donation.incognito ? "1" : "0",
       });
 
       const {
@@ -82,7 +82,10 @@ export default function Donate() {
 
   return (
     <main className="mt-[94px] flex justify-center items-center px-3 py-14 md:p-14 bg-beige">
-      <form className="w-full h-full sm:w-[500px] flex flex-col items-start bg-white text-sm p-8 rounded-xl" onSubmit={handleSubmit}>
+      <form
+        className="w-full h-full sm:w-[500px] flex flex-col items-start bg-white text-sm p-8 rounded-xl"
+        onSubmit={handleSubmit}
+      >
         <Link
           to={`/fundraisers/${id}`}
           className="p-1.5 rounded-md border border-zinc-400 mb-8 hover:bg-zinc-100"
@@ -127,7 +130,7 @@ export default function Donate() {
 
                 setDonation({
                   ...Donation,
-                  amount: newValue
+                  amount: newValue,
                 });
               }}
               className="w-full outline-none border h-10 px-1 border-secondary placeholder:text-sm placeholder:text-zinc-400"
@@ -174,7 +177,7 @@ export default function Donate() {
 
                 setDonation({
                   ...Donation,
-                  tip: newValue
+                  tip: newValue,
                 });
               }}
               className="w-full outline-none border h-10 px-1 border-secondary placeholder:text-sm placeholder:text-zinc-400"
@@ -198,13 +201,22 @@ export default function Donate() {
             cols={50}
             rows={5}
             value={Donation.message}
-            onChange={(e) => setDonation({ ...Donation, message: e.target.value })}
+            onChange={(e) =>
+              setDonation({ ...Donation, message: e.target.value })
+            }
             className="w-full h-32 outline-none border border-[#ccc] rounded-md"
           ></textarea>
         </label>
         <div className="w-full flex items-center justify-start gap-1 my-5">
           <label className="w-fit flex gap-1 items-center text-sm">
-            <input type="checkbox" name="incognito" checked={Donation.incognito} onChange={(e) => setDonation({...Donation, incognito: e.target.checked }) } />
+            <input
+              type="checkbox"
+              name="incognito"
+              checked={Donation.incognito}
+              onChange={(e) =>
+                setDonation({ ...Donation, incognito: e.target.checked })
+              }
+            />
             Ne pas afficher mon nom
           </label>
           <span>
@@ -219,15 +231,36 @@ export default function Donate() {
           <h3 className="font-bold">Votre don</h3>
           <div className="w-full flex justify-between items-center mt-3">
             <p>Votre don</p>
-            {Donation.amount ? <p>{parseFloat(Donation.amount).toFixed(2)} TND</p> :  <p>{(0).toFixed(2)} TND</p> }
+            {Donation.amount ? (
+              <p>{parseFloat(Donation.amount).toFixed(2)} TND</p>
+            ) : (
+              <p>{(0).toFixed(2)} TND</p>
+            )}
           </div>
           <div className="w-full flex justify-between items-center mt-3">
             <p>Don pour l'équipe 3aweni</p>
-            {Donation.tip ? <p>{parseFloat(Donation.tip).toFixed(2)} TND</p> :  <p>{(0).toFixed(2)} TND</p> }
+            {Donation.tip ? (
+              <p>{parseFloat(Donation.tip).toFixed(2)} TND</p>
+            ) : (
+              <p>{(0).toFixed(2)} TND</p>
+            )}
           </div>
           <div className="w-full flex justify-between items-center mt-3 pt-3 border-t border-zinc-400">
             <p>Total à payer</p>
-            {Donation.amount ? Donation.tip ? <p className="text-base">{(parseFloat(Donation.amount) + parseFloat(Donation.tip)).toFixed(2)} TND</p> : <p>{parseFloat(Donation.amount).toFixed(2)} TND</p> :  <p>{(0).toFixed(2)} TND</p> }
+            {Donation.amount ? (
+              Donation.tip ? (
+                <p className="text-base">
+                  {(
+                    parseFloat(Donation.amount) + parseFloat(Donation.tip)
+                  ).toFixed(2)}{" "}
+                  TND
+                </p>
+              ) : (
+                <p>{parseFloat(Donation.amount).toFixed(2)} TND</p>
+              )
+            ) : (
+              <p>{(0).toFixed(2)} TND</p>
+            )}
           </div>
         </div>
         <button
@@ -236,8 +269,20 @@ export default function Donate() {
         >
           Payer
         </button>
-        <p className="text-zinc-600 mt-5">En cliquant sur payer, vous acceptez <Link to='/' className="underline">les conditions</Link>  de 3aweni.</p>
-        <p className="text-zinc-600">En savoir plus sur <Link to='/' className="underline">les prix et les frais</Link>.</p>
+        <p className="text-zinc-600 mt-5">
+          En cliquant sur payer, vous acceptez{" "}
+          <Link to="/" className="underline">
+            les conditions
+          </Link>{" "}
+          de 3aweni.
+        </p>
+        <p className="text-zinc-600">
+          En savoir plus sur{" "}
+          <Link to="/" className="underline">
+            les prix et les frais
+          </Link>
+          .
+        </p>
       </form>
     </main>
   );

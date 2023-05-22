@@ -47,7 +47,6 @@ export default function EditUserFundraiser() {
   });
 
   useEffect(() => {
-
     if (id) {
       axios
         .get(`/api/fundraiser/${id}`, {
@@ -62,7 +61,6 @@ export default function EditUserFundraiser() {
           setLoading(false);
         });
     }
-
   }, []);
 
   const handleChange = (event: FormEvent) => {
@@ -84,7 +82,7 @@ export default function EditUserFundraiser() {
       {
         headers: {
           "Content-Type": "application/json",
-        }
+        },
       }
     );
   };
@@ -234,8 +232,8 @@ export default function EditUserFundraiser() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const goal = parseFloat(Fundraiser.goal)
-    
+    const goal = parseFloat(Fundraiser.goal);
+
     axios.patch(`/api/fundraiser/${Fundraiser._id}`, {
       title: Fundraiser.title,
       goal: goal,

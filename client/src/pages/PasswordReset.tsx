@@ -30,14 +30,10 @@ export default function PasswordReset() {
       const token = localStorage.getItem("jwt");
 
       axios
-        .post(
-          "/api/user/PasswordReset",
-          {
-            password: PasswordResetForm.password,
-            passwordConfirmation: PasswordResetForm.passwordConfirmation,
-          },
-          
-        )
+        .post("/api/user/PasswordReset", {
+          password: PasswordResetForm.password,
+          passwordConfirmation: PasswordResetForm.passwordConfirmation,
+        })
         .then((response) => {});
     } catch (error) {}
   };
