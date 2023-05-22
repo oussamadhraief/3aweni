@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-export default function SectionSix() {
+export default function GuideSection() {
   return (
     <section className="learning">
       <div className="learning__container g-container">

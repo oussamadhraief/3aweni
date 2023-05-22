@@ -745,7 +745,7 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
       amount: donation * 1000,
       type: "immediate",
       description: "donation for " + fund.title,
-      lifespan: 10,
+      lifespan: 20,
       feesIncluded: true,
       firstName: req.user._id,
       lastName: "",

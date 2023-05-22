@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-export default function SectionFive() {
+export default function HowToCreate3aweniSection() {
   return (
     <section className="works">
       <div className="works__container g-container">

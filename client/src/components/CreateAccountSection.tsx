@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function SectionEight() {
+export default function CreateAccountSection() {
   return (
     <section className="started">
       <div className="started__container g-container">

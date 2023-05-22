@@ -44,6 +44,9 @@ export default function SingleFundraiser() {
     user: null,
     fundraiser: null,
     amount: 0,
+    tip: 0,
+    incognito: false,
+    message: '',
     createdAt: null,
     updatedAt: null,
   });
@@ -52,6 +55,9 @@ export default function SingleFundraiser() {
     user: null,
     fundraiser: null,
     amount: 0,
+    tip: 0,
+    incognito: false,
+    message: '',
     createdAt: null,
     updatedAt: null,
   });
@@ -60,6 +66,9 @@ export default function SingleFundraiser() {
     user: null,
     fundraiser: null,
     amount: 0,
+    tip: 0,
+    incognito: false,
+    message: '',
     createdAt: null,
     updatedAt: null,
   })
@@ -363,7 +372,7 @@ export default function SingleFundraiser() {
               </p>
               <progress
                 max="100"
-                value={Fundraiser.goal ?  (CollectedAmount / parseFloat(String(Fundraiser.goal).replace(/,/g, ''))) * 100 : 0}
+                value={Fundraiser.goal ?  (CollectedAmount / parseFloat(Fundraiser.goal)) * 100 : 0}
                 className="w-full h-2 my-1 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
               />
               <p className="text-zinc-500 font-thin text-xs">{TotalDonations} dons</p>

@@ -85,11 +85,11 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.sendStatus(401);
   }
 
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.split(" ")[1];
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
@@ -101,7 +101,6 @@ function authenticateToken(req, res, next) {
   });
 }
 
-
 app.post("/api/user/register", async (req, res) => {
   try {
     const { email, password, name } = req.body;
@@ -111,7 +110,9 @@ app.post("/api/user/register", async (req, res) => {
 
     // If user exists, return error
     if (existingUser) {
-      return res.status(409).json({ success: false, message: "User already exists" });
+      return res
+        .status(409)
+        .json({ success: false, message: "User already exists" });
     }
 
     // Create a new user
@@ -125,7 +126,9 @@ app.post("/api/user/register", async (req, res) => {
     await newUser.save();
 
     // Return success response
-    res.status(201).json({ success: true, message: "User registered successfully" });
+    res
+      .status(201)
+      .json({ success: true, message: "User registered successfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -141,7 +144,9 @@ app.post("/api/user/login", async (req, res) => {
 
     // If user not found, return error
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     // Compare passwords
@@ -149,19 +154,23 @@ app.post("/api/user/login", async (req, res) => {
 
     // If passwords don't match, return error
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
     }
 
     // User authenticated successfully
     // Generate a JWT token
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    const resUser= {
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    const resUser = {
       _id: user._id,
       name: user.name,
       phone: user.phone,
       email: user.email,
-      image: user.image
-    }
+      image: user.image,
+    };
     // Return the token in the response
     res.json({ success: true, token, user: resUser });
   } catch (error) {
@@ -170,25 +179,25 @@ app.post("/api/user/login", async (req, res) => {
   }
 });
 
-app.get('/api/user', authenticateToken, async (req, res) => {
+app.get("/api/user", authenticateToken, async (req, res) => {
   try {
-    
     const userId = req.user._id;
 
     // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.json({ user });
   } catch (error) {
-    console.error('Error retrieving user information:', error);
-    res.status(500).json({ message: 'An error occurred while retrieving user information' });
+    console.error("Error retrieving user information:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while retrieving user information" });
   }
 });
-
 
 app.patch("/api/user/image", authenticateToken, async (req, res) => {
   try {
@@ -645,7 +654,7 @@ app.patch("/api/fundraiser/:id", async (req, res) => {
 
 app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
   try {
-    const { donation } = req.body;
+    const { amount, tip, incognito, message } = req.body;
     const { id } = req.params;
 
     const fund = await Fundraiser.findOne({ _id: id });
@@ -653,7 +662,7 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
     const paymentInfo = {
       receiverWalletId: "6466799e1874253b580aac46",
       token: "TND",
-      amount: donation * 1000,
+      amount: amount * 1000,
       type: "immediate",
       description: "donation for " + fund.title,
       lifespan: 20,
@@ -663,7 +672,7 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
       phoneNumber: req.user.phone,
       email: req.user.email,
       orderId: id,
-      webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}/${req.user._id}`,
+      webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}/${req.user._id}/${tip}/${incognito}/${message}`,
       silentWebhook: true,
       successUrl: `${BASE_URL}/fundraisers/${id}`,
       failUrl: `${BASE_URL}/donate/${id}`,
@@ -691,17 +700,16 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
 });
 
 app.get(
-  "/api/create-donation/:id/:userId",
+  "/api/create-donation/:id/:userId/:tip/:incognito/:message",
   async (req, res) => {
     try {
-      
-      const { id, userId } = req.params;
-
+      const { id, userId, tip, incognito, message } = req.params;
+      console.log(tip, incognito, message);
       const { payment_ref } = req.query;
 
       const response = await axios.get(
         `https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`
-      )
+      );
 
       const {
         data: {
@@ -709,11 +717,31 @@ app.get(
         },
       } = response;
 
-      await Donation.create({
+      let donation = {
         user: userId,
         fundraiser: id,
         amount: amount / 1000,
-      });
+      };
+
+      if (tip)
+        donation = {
+          ...donation,
+          tip,
+        };
+
+      if (typeof incognito == "boolean")
+        donation = {
+          ...donation,
+          incognito,
+        };
+
+      if (message)
+        donation = {
+          ...donation,
+          message,
+        };
+
+      await Donation.create(donation);
 
       res.status(201).json({ success: true });
     } catch (error) {

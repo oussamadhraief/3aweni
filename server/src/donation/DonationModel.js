@@ -17,6 +17,23 @@ amount: {
   minlength: 1000000,
   maxlength: 50
 },
+tip: {
+  type: Number,
+  required: false,
+  default: 0,
+  minlength: 1000000,
+  maxlength: 50
+},
+incognito: {
+  type: Boolean,
+  required: true,
+  default: false,
+},
+  message: {
+    type: String,
+    required: false,
+    maxlength: 150
+  }
 },
 { timestamps: true });
 

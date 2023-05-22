@@ -38,6 +38,9 @@ export interface donation {
     user: userInt | null;
     fundraiser: fundraiserInt | null;
     amount: number;
+    tip: number;
+    incognito: boolean;
+    message: string;
     createdAt: Date | null;
     updatedAt: Date | null;
 }

@@ -1,6 +1,6 @@
 
 
-export default function SectionFour() {
+export default function WhyUse3aweniSection() {
   return (
     <section className="hands bg-white">
       <div className="hands__container g-container">

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-export default function SectionSeven() {
+export default function ExploreSection() {
   return (
     <section className="cards">
       <div className="card__swiper swiper-container">

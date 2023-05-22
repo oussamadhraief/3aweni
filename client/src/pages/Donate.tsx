@@ -6,9 +6,15 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { fundraiserInt } from "../utils/interfaces";
 
+interface donation { 
+  amount: string;
+  tip: string;
+  incognito: boolean;
+  message: string;
+}
+
 export default function Donate() {
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const [Fundraiser, setFundraiser] = useState<fundraiserInt>({
     _id: "",
@@ -27,7 +33,12 @@ export default function Donate() {
     updatedAt: null,
   });
   const [Loading, setLoading] = useState<boolean>(true);
-  const [Donation, setDonation] = useState<string>("");
+  const [Donation, setDonation] = useState<donation>({ 
+    amount: '',
+    tip: '',
+    incognito: false,
+    message: "" 
+  });
   const [Show, setShow] = useState(false);
 
   useEffect(() => {
@@ -49,9 +60,12 @@ export default function Donate() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    
     try {
       const res = await axios.post(`/api/konnect-gateway/${id}`, {
-        donation: parseFloat(Donation.replace(/,/g, "")),
+        ...Donation,
+        amount: parseFloat(Donation.amount),
+        tip: parseFloat(Donation.tip),
       });
 
       const {
@@ -66,11 +80,11 @@ export default function Donate() {
   };
 
   return (
-    <main className="mt-[94px] flex justify-center items-center p-14">
-      <form className="w-full h-full min-w-[400px] max-w-[460px] flex flex-col items-start bg-white text-sm">
+    <main className="mt-[94px] flex justify-center items-center px-3 py-14 md:p-14 bg-beige">
+      <form className="w-full h-full sm:w-[500px] flex flex-col items-start bg-white text-sm p-8 rounded-xl" onSubmit={handleSubmit}>
         <Link
           to={`/fundraisers/${id}`}
-          className="p-1.5 rounded-md border border-zinc-400 mb-8"
+          className="p-1.5 rounded-md border border-zinc-400 mb-8 hover:bg-zinc-100"
         >
           &#10094; Retourner vers le 3aweni
         </Link>
@@ -106,15 +120,18 @@ export default function Donate() {
               decimalsLimit={2}
               maxLength={7}
               allowNegativeValue={false}
-              value={Donation}
+              value={Donation.amount}
               onValueChange={(value) => {
                 const newValue = value as string;
 
-                setDonation(newValue);
+                setDonation({
+                  ...Donation,
+                  amount: newValue
+                });
               }}
-              className="w-full outline-none border h-10 px-1 border-[#ccc] placeholder:text-sm placeholder:text-zinc-400"
+              className="w-full outline-none border h-10 px-1 border-secondary placeholder:text-sm placeholder:text-zinc-400"
             />
-            <span> TND</span>
+            <span className="bg-secondary text-white"> TND</span>
           </label>
         </div>
 
@@ -150,15 +167,18 @@ export default function Donate() {
               decimalsLimit={2}
               maxLength={7}
               allowNegativeValue={false}
-              value={Donation}
+              value={Donation.tip}
               onValueChange={(value) => {
                 const newValue = value as string;
 
-                setDonation(newValue);
+                setDonation({
+                  ...Donation,
+                  tip: newValue
+                });
               }}
-              className="w-full outline-none border h-10 px-1 border-[#ccc] placeholder:text-sm placeholder:text-zinc-400"
+              className="w-full outline-none border h-10 px-1 border-secondary placeholder:text-sm placeholder:text-zinc-400"
             />
-            <span> TND</span>
+            <span className="bg-secondary text-white"> TND</span>
           </label>
         </div>
         {Show && (
@@ -176,12 +196,14 @@ export default function Donate() {
             name="message"
             cols={50}
             rows={5}
+            value={Donation.message}
+            onChange={(e) => setDonation({ ...Donation, message: e.target.value })}
             className="w-full h-32 outline-none border border-[#ccc] rounded-md"
           ></textarea>
         </label>
         <div className="w-full flex items-center justify-start gap-1 my-5">
           <label className="w-fit flex gap-1 items-center text-sm">
-            <input type="checkbox" name="privacy" value="private" />
+            <input type="checkbox" name="incognito" checked={Donation.incognito} onChange={(e) => setDonation({...Donation, incognito: e.target.checked }) } />
             Ne pas afficher mon nom
           </label>
           <span>
@@ -196,15 +218,15 @@ export default function Donate() {
           <h3 className="font-bold">Votre don</h3>
           <div className="w-full flex justify-between items-center mt-3">
             <p>Votre don</p>
-            <p>11.00 TND</p>
+            {Donation.amount ? <p>{parseFloat(Donation.amount).toFixed(2)} TND</p> :  <p>{(0).toFixed(2)} TND</p> }
           </div>
           <div className="w-full flex justify-between items-center mt-3">
             <p>Don pour l'équipe 3aweni</p>
-            <p>1.00 TND</p>
+            {Donation.tip ? <p>{parseFloat(Donation.tip).toFixed(2)} TND</p> :  <p>{(0).toFixed(2)} TND</p> }
           </div>
           <div className="w-full flex justify-between items-center mt-3 pt-3 border-t border-zinc-400">
             <p>Total à payer</p>
-            <p className="text-base">12.00 TND</p>
+            {Donation.amount ? Donation.tip ? <p className="text-base">{(parseFloat(Donation.amount) + parseFloat(Donation.tip)).toFixed(2)} TND</p> : <p>{parseFloat(Donation.amount).toFixed(2)} TND</p> :  <p>{(0).toFixed(2)} TND</p> }
           </div>
         </div>
         <button

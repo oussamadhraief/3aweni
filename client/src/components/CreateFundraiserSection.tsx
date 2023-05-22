@@ -5,7 +5,7 @@ export default function SectionTwo() {
   return (
     <section className="price">
       <div className="price__container g-container">
-      <lottie-player className="price__video" src="https://assets9.lottiefiles.com/packages/lf20_ocBLovFChM.json" background="transparent"  speed="1"  style={{ width: "500px", aspectRatio: '1'}}  loop  autoplay></lottie-player>
+      <lottie-player className="price__video" src="https://assets9.lottiefiles.com/packages/lf20_ocBLovFChM.json" background="transparent"  speed="1"  style={{ width: "100%", maxWidth: '500px', aspectRatio: '1'}}  loop  autoplay></lottie-player>
         <div className="price__info to-top"><span className="price__subtitle">Suivez quelques étapes</span>
           <h2 className="price__title">Collectez des dons facilement</h2>
           <p className="price__description">Suivez quelques simples étapes et lancez une collecte de dons pour vous ou pour quelqu'un que vous connaissez.</p><Link className="price__button" to="#">Comment lancer un 3aweni

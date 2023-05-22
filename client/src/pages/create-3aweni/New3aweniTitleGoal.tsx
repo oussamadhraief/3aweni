@@ -48,7 +48,7 @@ export default function New3aweniTitleGoal() {
       
       if(user){
         
-          const goal = parseFloat(Form.goal.replace(/,/g, ''))
+          const goal = parseFloat(Form.goal)
           axios.post('/api/create-fundraiser',{
             ...Form,
             goal
