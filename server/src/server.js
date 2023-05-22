@@ -729,12 +729,12 @@ app.get(
           tip,
         };
 
-      if (typeof incognito == "boolean")
+      if (incognito == '1')
         donation = {
           ...donation,
-          incognito,
+          incognito: true,
         };
-
+        
       if (message)
         donation = {
           ...donation,

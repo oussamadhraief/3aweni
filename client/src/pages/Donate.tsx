@@ -66,6 +66,7 @@ export default function Donate() {
         ...Donation,
         amount: parseFloat(Donation.amount),
         tip: Show ? parseFloat(Donation.tip) :  0,
+        incognito: Donation.incognito ? '1' : '0'
       });
 
       const {
