@@ -19,7 +19,7 @@ export default function CategoryFundraisers() {
       <div className="w-full max-w-6xl grid grid-cols-4 gap-5 px-5">
         {Fundraisers.length ? Fundraisers.map((item) => (
           <Link to={`/fundraisers/${item._id}`} className="shadow-form pb-2 rounded bg-white col-span-2 md:col-span-1 mb-10">
-            <img src={item.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.image}` : "/3aweni_placeholder.png"} alt="" className="rounded-t" />
+            <img src={item.image ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.image}` : "/3aweni_placeholder.png"} alt="" className="rounded-t w-full" />
             <p className="text-primary text-xs my-1 px-4">
               {item.state}, Tunisia
             </p>

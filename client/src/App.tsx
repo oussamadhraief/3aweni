@@ -7,7 +7,6 @@ import New3aweniRegister from './pages/create-3aweni/New3aweniRegister';
 import New3aweniLogin from './pages/create-3aweni/New3aweniLogin';
 import New3aweniType from './pages/create-3aweni/New3aweniType';
 import Home from './pages/Home';
-import Donate from './pages/Donate';
 import Login from './pages/Login';
 import PasswordReset from './pages/PasswordReset';
 import Register from './pages/Register';
@@ -25,6 +24,7 @@ import SingleFundraiser from './pages/fundraisers/SingleFundraiser';
 import EditUserFundraiser from './pages/account/dashboard/edit-fundraiser/EditUserFundraiser';
 import DashboardStats from './pages/account/dashboard/DashboardStats';
 import CategoryFundraisers from './pages/fundraisers/CategoryFundraisers';
+import Donate from './pages/Donate';
 import("@lottiefiles/lottie-player");
 // const { io } = require("socket.io-client");
 

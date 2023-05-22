@@ -455,26 +455,13 @@ select::-ms-expand {
   }
   
   .header__container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    width: 100%;
-    max-width: 1480px;
     padding: 20px var(--gap-h);
   }
-  .header__left {
-    display: flex;
-  }
+  
   .header__img {
     width: 95px;
     height: 35px;
     object-fit: contain;
-  }
-  .header__right {
-    display: flex;
-    align-items: center;
   }
   .header__logo {
     margin-right: 35px;
@@ -488,20 +475,9 @@ select::-ms-expand {
     letter-spacing: 0.5px;
     margin-right: 35px;
   }
-  @media (max-width: 768px) {
-    .header__link {
-      display: none;
-    }
-  }
   .header__trigger {
-    display: none;
     margin-left: var(--gap-sh);
     z-index: 101;
-  }
-  @media (max-width: 768px) {
-    .header__trigger {
-      display: inherit;
-    }
   }
   
   .main-menu {
@@ -520,29 +496,14 @@ select::-ms-expand {
       background-color: #ffffff;
     }
   }
-  .main-menu__list {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: nowrap;
-  }
+ 
   @media (max-width: 768px) {
     .main-menu__list {
-      flex-direction: column;
-      align-items: flex-start;
-      width: 100%;
       padding: var(--gap-sh);
     }
   }
   .main-menu__item {
     position: relative;
-  }
-  @media (max-width: 768px) {
-    .main-menu__link {
-      font-size: 32px;
-      line-height: 1.6;
-    }
   }
   
   @media (min-width: 1200px) {
@@ -1572,7 +1533,7 @@ select::-ms-expand {
   .footer__container {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     flex-direction: row;
     flex-wrap: nowrap;
   }
@@ -1688,7 +1649,7 @@ select::-ms-expand {
   @media (max-width: 1200px) {
     .footer__right {
       max-width: 100%;
-      width: 100%;
+      width: 90%;
       padding-left: 0;
     }
   }
@@ -1699,7 +1660,6 @@ select::-ms-expand {
   }
   @media (max-width: 640px) {
     .footer__links {
-      flex-direction: column;
     }
   }
   .footer__links-list {

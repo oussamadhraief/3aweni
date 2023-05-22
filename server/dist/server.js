@@ -777,7 +777,7 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
     });
   }
 });
-app.get("/api/create-donation/:id/:userId", authenticateToken, async (req, res) => {
+app.get("/api/create-donation/:id/:userId", async (req, res) => {
   try {
     const {
       id,
@@ -786,9 +786,7 @@ app.get("/api/create-donation/:id/:userId", authenticateToken, async (req, res) 
     const {
       payment_ref
     } = req.query;
-    const [response, user] = Promise.all([await axios.get(`https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`), await User.findOne({
-      _id: userId
-    })]);
+    const response = await axios.get(`https://api.preprod.konnect.network/api/v2/payments/${payment_ref}`);
     const {
       data: {
         payment: {
@@ -797,9 +795,9 @@ app.get("/api/create-donation/:id/:userId", authenticateToken, async (req, res) 
       }
     } = response;
     await Donation.create({
-      user: user._id,
+      user: userId,
       fundraiser: id,
-      amount
+      amount: amount / 1000
     });
     res.status(201).json({
       success: true

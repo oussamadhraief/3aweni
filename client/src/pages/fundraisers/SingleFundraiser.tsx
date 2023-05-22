@@ -159,7 +159,7 @@ export default function SingleFundraiser() {
     <main className="relative mt-[94px] py-24  flex flex-col items-center justify-center">
       <section className="w-full h-fit min-h-fit max-w-7xl mx-auto text-gray-600 px-5 fundraiser-container">
         {user?._id === Fundraiser.user?._id && WarningOpen && (
-          <div className="fixed bottom-0 left-0 bg-lighter_primary/80 w-full flex justify-between items-center py-3 px-10 text-primary z-50">
+          <div className="fixed bottom-0 left-0 bg-lighter_blue/80 w-full flex justify-between items-center py-3 px-10 text-secondary z-50">
             <button
               className="absolute top-0 right-3 text-lg"
               onClick={() => setWarningOpen(false)}
@@ -172,7 +172,7 @@ export default function SingleFundraiser() {
               </IconContext.Provider>
               <div>
                 <p className="text-sm">
-                  Vous êtes le propriétaire de ce 3aweni{" "}
+                  Vous êtes le propriétaire de ce 3aweni
                 </p>
                 <p className="text-xs text-gray-600 flex flex-nowrap items-center gap-2">
                   Vous devez ajouter une image principale pour rendre votre
@@ -182,7 +182,7 @@ export default function SingleFundraiser() {
             </div>
             <Link
               to={`/dashboard/fundraisers/${Fundraiser._id}`}
-              className="text-sm text-primary border border-primary px-2 py-1 rounded"
+              className="text-sm text-secondary border border-secondary px-2 py-1 rounded"
             >
               Vous pouvez le modifier <span className="underline">ici</span>
             </Link>
@@ -333,7 +333,7 @@ export default function SingleFundraiser() {
         </div>
 
         <p className="my-5 text-sm grid-fundraiser-description">
-          {Fundraiser.description}
+          {Fundraiser.description ? Fundraiser.description : "Pas de description"}
         </p>
 
         <div className="flex gap-3 items-center grid-fundraiser-buttons">
@@ -355,11 +355,11 @@ export default function SingleFundraiser() {
           <div className="sticky card w-fit bg-base-100 shadow-modern rounded-lg px-4 top-24 self-end">
             <div className="w-72 py-8 flex flex-col">
               <p className="text-zinc-700 font-thin text-xs">
-                {" "}
+                
                 <strong className="text-black font-semibold text-lg">
-                  {CollectedAmount}.00DT{" "}
-                </strong>{" "}
-                collectés men asl {Fundraiser.goal}.00DT
+                  {CollectedAmount.toFixed(2)} DT
+                </strong>
+                &nbsp;collectés men asl {parseFloat(Fundraiser.goal).toFixed(2)} DT
               </p>
               <progress
                 max="100"
@@ -384,7 +384,7 @@ export default function SingleFundraiser() {
                       {TopDonation?.user?.name}
                     </span>
                     <div className="text-xs flex flex-nowrap items-center">
-                      <p className=" font-bold">{TopDonation?.amount}  TND &nbsp;</p> - &nbsp;
+                      <p className=" font-bold">{TopDonation?.amount.toFixed(2)}  TND &nbsp;</p> - &nbsp;
                       <button className="hover:underline text-black">
                         plus gros don
                       </button>
@@ -410,7 +410,7 @@ export default function SingleFundraiser() {
                       {MostRecentDonation?.user?.name}
                     </span>
                     <div className="text-xs flex flex-nowrap items-center">
-                      <p className=" font-bold">{MostRecentDonation?.amount} TND &nbsp;</p> - &nbsp;
+                      <p className=" font-bold">{MostRecentDonation?.amount.toFixed(2)} TND &nbsp;</p> - &nbsp;
                       <button className="hover:underline text-black">
                         dernier don
                       </button>
@@ -437,7 +437,7 @@ export default function SingleFundraiser() {
                     {FirstDonation?.user?.name}
                     </span>
                     <div className="text-xs flex flex-nowrap items-center">
-                      <p className=" font-bold">{FirstDonation?.amount}  TND &nbsp;</p> - &nbsp;
+                      <p className=" font-bold">{FirstDonation?.amount.toFixed(2)}  TND &nbsp;</p> - &nbsp;
                       <button className="hover:underline text-black">
                       plus ancien don
                       </button>

@@ -48,9 +48,9 @@ export default function
 
   return (
 
-<main className="mt-[94px] flex justify-center items-center pt-32 pb-52">
+<main className="mt-[94px] flex justify-center items-center py-14">
       
-<div className="flex flex-col w-full min-w-[400px] max-w-[460px] px-4 py-8 bg-white rounded-lg shadow sm:px-6 md:px-8 lg:px-10">
+<div className="flex flex-col w-11/12 sm:w-full min-w-fit sm:min-w-[400px] max-w-[460px] px-4 py-8 bg-white rounded-lg sm:px-6 md:px-8 lg:px-10">
     <div className="self-center mb-6 text-xl font-light text-gray-600 sm:text-[21px]">
       Créez un nouveau compte
     </div>
@@ -98,7 +98,7 @@ export default function
                     </div>
                 
                     <div className="flex w-full">
-                        <button type="submit" className="py-2 px-4  bg-primary hover:bg-secondary text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md rounded-lg ">
+                        <button type="submit" className="py-2 px-4  bg-primary hover:bg-secondary text-white w-full transition ease-in duration-200 text-center text-sm uppercase shadow-md rounded-lg ">
                             S'inscrire
                         </button>
                     </div>

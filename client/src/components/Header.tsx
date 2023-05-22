@@ -4,19 +4,24 @@ import useAuthContext from '../hooks/useAuthContext'
 
 import useLoadingAuthContext from '../hooks/useLoadingAuthContext'
 import UserDropdownMenu from './UserDropdownMenu'
+import { useState } from 'react'
+import { IoMdClose } from 'react-icons/io'
+import { IconContext } from 'react-icons'
 
 export default function Header() {
 
   const { user } = useAuthContext()
   const { Loading } = useLoadingAuthContext()
 
+  const [Show, setShow] = useState(false)
+
   return (
     <header className="header" id="header">
-    <div className="header__container">
-      <div className="header__left"><Link className="header__logo" to="/"><img className="header__icon" src="/secondary_logo.png" alt="logo"/></Link>
-        <Navbar />
+    <div className="relative header__container w-full max-w-[1480px] flex justify-between items-center flex-nowrap ">
+      <div className="flex"><Link className="header__logo" to="/"><img className="header__icon" src="/secondary_logo.png" alt="logo"/></Link>
+        <Navbar Show={Show} setShow={setShow} />
       </div>
-      <div className="header__right">
+      <div className="flex items-center">
         {Loading ? 
         
       <div className="mx-auto rounded-md w-fit">
@@ -35,11 +40,15 @@ export default function Header() {
         <UserDropdownMenu main={true} />
         :
         <>
-        <Link className="header__link" to="/login">Se connecter</Link>
+        <Link className={`header__link hidden md:block`} to="/login">Se connecter</Link>
         <Link className="header__button g-button" to="/register">S'inscrire</Link>
         </> )
         } 
-        <Link className="header__trigger" id="header-trigger" to="#"><img className="header__icon" src="https://raw.githubusercontent.com/ricardoolivaalonso/GetBello/main/public/img/menu.svg" alt="menu"/></Link>
+        <button className="header__trigger inherit md:hidden" id="header-trigger" onClick={() => setShow(prev => !prev)}>
+          {Show ? <IconContext.Provider value={{ className: 'h-6 w-6 text-black'}}>
+                <IoMdClose />
+            </IconContext.Provider> : <img className="header__icon" src="https://raw.githubusercontent.com/ricardoolivaalonso/GetBello/main/public/img/menu.svg" alt="menu"/>}
+          </button>
       </div>
     </div>
   </header>

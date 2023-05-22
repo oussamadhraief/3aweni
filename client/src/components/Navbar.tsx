@@ -2,59 +2,50 @@ import { Link } from 'react-router-dom'
 import { IconContext } from "react-icons";
 import { AiOutlineSearch } from "react-icons/ai";
 import { IoIosArrowDown } from 'react-icons/io';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { categories } from '../utils/categoriesData';
+import useClickOutside from './useClickOutside'
 
-export default function Navbar() {
+export default function Navbar({ Show, setShow }: { Show: boolean, setShow: (value: boolean) => void }) {
 
   const discover = useRef<HTMLLIElement>(null)
 
-  return (
-    <nav className="main-menu" id="main-menu">
-      <ul className="main-menu__list">
 
-        <li ref={discover} className="dropdown dropdown-bottom dropdown-end flex items-center gap-3 relative group main-menu__item">
-          <label tabIndex={0} className="flex items-center gap-3 cursor-pointer font-medium normal-case main-menu__link g-link">
+  const [Open, setOpen] = useState(false)
+
+  useClickOutside(discover,() => setOpen(false));
+
+    const handleClick = () => {
+        setOpen(prev => !prev)
+    }
+
+
+  return (
+    <nav className="flex flex-col items-center" id="main-menu">
+      <ul className={`${Show ? 'absolute top-full left-0 flex flex-col py-10 gap-8 w-full shadow-md' : 'hidden'} main-menu__list md:relative md:shadow-none md:gap-0 py-4 bg-white md:flex justify-center items-center flex-col md:flex-row`}>
+
+        <li className="dropdown dropdown-bottom dropdown-end flex items-center gap-3 relative group main-menu__item"><Link className={`header__link ${Show ? 'block' : 'hidden'} md:hidden`} to="/login" onClick={() => setShow(false)}>Se connecter</Link>
+        </li>
+        <li ref={discover} className="flex items-center gap-3 relative group main-menu__item">
+          <button className="flex items-center gap-3 cursor-pointer font-medium normal-case main-menu__link g-link text-[#5a6482]" onClick={handleClick}>
+            
               Découvrir
-              <IconContext.Provider value={{ className: 'text-zinc-700 group-hover:text-secondary'}}>
+              <IconContext.Provider value={{ className: ' group-hover:text-secondary'}}>
                   <IoIosArrowDown />
               </IconContext.Provider>
-          </label>
-          <ul tabIndex={0} className="dropdown-content menu shadow-form rounded-lg w-52 px-3 py-1 bg-white text-sm">
-
-              <li><h3 className='font-semibold w-full text-xs'>Catégories</h3></li>
-              {categories.map(item => <li><Link to={`/discover/${item.value}`} className='w-36 whitespace-nowrap text-[15px] hover:underline'>{item.label}</Link></li>)}
-          </ul>
+          </button>
+          {Open && <ul className="absolute top-8 left-1/2 -translate-x-1/2 menu shadow-form rounded-lg h-[320px] flex flex-col items-center w-[340px] flex-wrap px-3 py-1 bg-white text-sm">
+              {categories.map(item => <li><Link to={`/discover/${item.value}`} className='w-36 whitespace-nowrap text-[15px]' onClick={() => setOpen(false)}>{item.label}</Link></li>)}
+          </ul>}
         </li>
-        <li className="main-menu__item"><Link to="/search" className='flex items-center gap-1 main-menu__link g-link group'>
+        <li className="main-menu__item"><Link to="/search" onClick={() => setShow(false)} className='flex items-center gap-1 main-menu__link g-link group'>
            Recherche
-           <IconContext.Provider value={{ className: "text-zinc-700 text-lg group-hover:text-secondary" }}>
+           <IconContext.Provider value={{ className: "text-lg group-hover:text-secondary" }}>
              <AiOutlineSearch />
            </IconContext.Provider>
         </Link></li>
-        <li className="main-menu__item"><Link className="main-menu__link g-link" to="#">Aide</Link></li>
+        <li className="main-menu__item"><Link className="main-menu__link g-link" to="#" onClick={() => setShow(false)}>Aide</Link></li>
       </ul>
     </nav>
     )
   }
-  
-  // <nav className='fixed top-0 left-0 w-full h-20 flex justify-around items-center bg-white'>
-  //   <div className='w-1/4 flex justify-center'>
-
-  //     <img src="/secondary_logo.png" alt="" className='w-32' />
-  //   </div>
-  //     <div className='w-1/4 h-fit flex gap-7 justify-center'>
-  //       <Link to="" className='px-2 py-1 rounded hover:bg-primary_hover hover:text-primary'>Découvrir</Link>
-  //       <Link to="" className='flex items-center gap-2 px-2 py-1 rounded hover:bg-primary_hover hover:text-primary'>
-  //         Recherche
-  //         <IconContext.Provider value={{ className: "text-zinc-700 text-xl" }}>
-  //           <AiOutlineSearch />
-  //         </IconContext.Provider>
-  //      </Link>
-  //       <Link to="" className='px-2 py-1 rounded hover:bg-primary_hover hover:text-primary'>Aide</Link>
-  //     </div>
-  //     <div className='w-1/4 flex items-center gap-10 justify-center'>
-  //         <Link to="" className='relative w-fit h-fit rounded hover:text-primary nav-link'>Se connecter</Link>
-  //         <Link to="" className='w-fit h-fit bg-primary border rounded text-white py-2 px-5 hover:bg-white border-primary hover:border hover:text-primary button-hover-animation'>S'inscrire</Link>
-  //     </div>
-  // </nav>

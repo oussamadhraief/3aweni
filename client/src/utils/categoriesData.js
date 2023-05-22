@@ -4,7 +4,7 @@ export const categories = [
     {value: 'environment', label: 'Environnement'},
     {value: 'event', label: 'Événements'},
     {value: 'family', label: 'Famille'},
-    {value: 'funerals', label: 'Obsèques et commémorations'},
+    {value: 'funerals', label: 'funérailles'},
     {value: 'religion', label: 'Religion'},
     {value: 'health', label: 'Santé'},
     {value: 'sports', label: 'Sports'},
