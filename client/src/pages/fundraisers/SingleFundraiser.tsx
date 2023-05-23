@@ -10,6 +10,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { categories } from "../../utils/categoriesData";
 import { HiOutlineTag } from "react-icons/hi";
 import ContactModal from "../../components/ContactModal";
+import { calculateTimeAgo } from "../../utils/convertTimeToRelative";
 
 export default function SingleFundraiser() {
   const carousel = useRef<HTMLDivElement>(null);
@@ -67,6 +68,7 @@ export default function SingleFundraiser() {
     createdAt: null,
     updatedAt: null,
   });
+  const [WordsOfSupport, setWordsOfSupport] = useState<donation[]>();
 
   useEffect(() => {
     if (id) {
@@ -79,6 +81,7 @@ export default function SingleFundraiser() {
             topDonation,
             mostRecentDonation,
             firstDonation,
+            wordsOfSupport,
           },
         } = response;
 
@@ -89,6 +92,7 @@ export default function SingleFundraiser() {
         setMostRecentDonation(mostRecentDonation);
         setFirstDonation(firstDonation);
         setFundraiser(fundraiser);
+        setWordsOfSupport(wordsOfSupport);
       });
     }
   }, []);
@@ -119,42 +123,8 @@ export default function SingleFundraiser() {
     );
   };
 
-  function calculateTimeAgo(dateStr: Date | null) {
-    const dateString = dateStr as Date;
-    const dateCreated = new Date(dateString);
-    const dateNow = new Date();
-    const timeDiff = dateNow.getTime() - dateCreated.getTime();
-
-    const millisecondsInMinute = 60000;
-    const millisecondsInHour = millisecondsInMinute * 60;
-    const millisecondsInDay = millisecondsInHour * 24;
-    const millisecondsInWeek = millisecondsInDay * 7;
-    const millisecondsInMonth = millisecondsInDay * 30;
-    const millisecondsInYear = millisecondsInDay * 365;
-
-    if (timeDiff < millisecondsInHour) {
-      const diffInMinutes = Math.floor(timeDiff / millisecondsInMinute);
-      return `${diffInMinutes} minute${diffInMinutes === 1 ? "" : "s"}`;
-    } else if (timeDiff < millisecondsInDay) {
-      const diffInHours = Math.floor(timeDiff / millisecondsInHour);
-      return `${diffInHours} heure${diffInHours === 1 ? "" : "s"}`;
-    } else if (timeDiff < millisecondsInWeek) {
-      const diffInDays = Math.floor(timeDiff / millisecondsInDay);
-      return `${diffInDays} jour${diffInDays === 1 ? "" : "s"}`;
-    } else if (timeDiff < millisecondsInMonth) {
-      const diffInWeeks = Math.floor(timeDiff / millisecondsInWeek);
-      return `${diffInWeeks} semaine${diffInWeeks === 1 ? "" : "s"}`;
-    } else if (timeDiff < millisecondsInYear) {
-      const diffInMonths = Math.floor(timeDiff / millisecondsInMonth);
-      return `${diffInMonths} mois${diffInMonths === 1 ? "" : "s"}`;
-    } else {
-      const diffInYears = Math.floor(timeDiff / millisecondsInYear);
-      return `${diffInYears} années${diffInYears === 1 ? "" : "s"}`;
-    }
-  }
-
   return (
-    <main className="relative mt-[94px] py-24  flex flex-col items-center justify-center">
+    <main className="relative mt-[94px] py-10  flex flex-col items-center justify-center">
       <section className="w-full h-fit min-h-fit max-w-7xl mx-auto text-gray-600 px-5 fundraiser-container">
         {user?._id === Fundraiser.user?._id && WarningOpen && (
           <div className="fixed bottom-0 left-0 bg-lighter_blue/80 w-full flex justify-between items-center py-3 px-10 text-secondary z-50">
@@ -350,8 +320,36 @@ export default function SingleFundraiser() {
           </button>
         </div>
 
+        <div className="grid-fundraiser-donations flex flex-col gap-12">
+          <h3 className="text-lg font-bold mt-5">Des mots du cœur</h3>
+          {WordsOfSupport?.map((item) => (
+            <div className="flex items-start gap-3 text-sm">
+              <a href="#" className="relative block">
+                <img
+                  alt="profil"
+                  src={
+                    item?.user?.image
+                      ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item?.user?.image}`
+                      : "/profile.png"
+                  }
+                  className="mx-auto object-cover rounded-full h-12 w-12 "
+                />
+              </a>
+              <div className="flex flex-col">
+                <strong>{item.user?.name}</strong>
+                <div className="flex items-center gap-2 flex-nowrap text-xs">
+                  <p>{item.amount.toFixed(2)} TND</p>
+                  -
+                  <p>{calculateTimeAgo(item.createdAt)}</p>
+                </div>
+                <p className="mt-1">{item.message}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className="relative grid-fundraiser-sidebar">
-          <div className="sticky card w-fit bg-base-100 shadow-modern rounded-lg px-4 top-24 self-end">
+          <div className="sticky card w-fit bg-base-100 shadow-form rounded-lg px-4 top-24 self-end">
             <div className="w-72 py-8 flex flex-col">
               <p className="text-zinc-700 font-thin text-xs">
                 <strong className="text-black font-semibold text-lg">

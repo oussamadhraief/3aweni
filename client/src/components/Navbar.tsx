@@ -57,12 +57,12 @@ export default function Navbar({
             </IconContext.Provider>
           </button>
           {Open && (
-            <ul className="absolute top-8 left-1/2 -translate-x-1/2 menu shadow-form rounded-lg h-[320px] flex flex-col items-center w-[340px] flex-wrap px-3 py-1 bg-white text-sm">
+            <ul className="absolute top-8 left-0 menu shadow-form rounded-lg h-[320px] flex flex-col items-center w-[340px] flex-wrap py-1 bg-white text-sm">
               {categories.map((item) => (
                 <li>
                   <Link
                     to={`/discover/${item.value}`}
-                    className="w-36 whitespace-nowrap text-[15px]"
+                    className="w-36 whitespace-nowrap text-[15px] rounded-xl"
                     onClick={() => setOpen(false)}
                   >
                     {item.label}

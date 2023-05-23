@@ -1903,7 +1903,8 @@ input[type="number"] {
     "date date . sidebar"
     "organizer organizer . sidebar"
     "description description . sidebar"
-    "buttons buttons . sidebar";
+    "buttons buttons . sidebar"
+    "donations donations . sidebar";
 }
 
 .grid-fundraiser-title {
@@ -1936,4 +1937,8 @@ input[type="number"] {
 
 .grid-fundraiser-description {
   grid-area: description;
+}
+
+.grid-fundraiser-donations {
+  grid-area: donations;
 }

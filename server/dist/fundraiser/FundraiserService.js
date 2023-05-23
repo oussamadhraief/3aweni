@@ -93,6 +93,18 @@ const fetchFundraisersCreatedCountByDate = async (startDate, endDate) => {
   }).count();
   return count;
 };
+const fetchFundraiserWordsOfSupport = async id => {
+  const donations = await Donation.find({
+    fundraiser: id,
+    message: {
+      $ne: ""
+    },
+    incognito: false
+  }).sort({
+    amount: -1
+  }).limit(10).populate("user");
+  return donations;
+};
 exports.createFundraiser = createFundraiser;
 exports.fetchFundraiser = fetchFundraiser;
 exports.fetchFundraiserCollectedAmount = fetchFundraiserCollectedAmount;
@@ -101,3 +113,4 @@ exports.fetchFundraiserTopDonation = fetchFundraiserTopDonation;
 exports.fetchFundraiserMostRecentDonation = fetchFundraiserMostRecentDonation;
 exports.fetchFundraiserFirstDonation = fetchFundraiserFirstDonation;
 exports.fetchFundraisersCreatedCountByDate = fetchFundraisersCreatedCountByDate;
+exports.fetchFundraiserWordsOfSupport = fetchFundraiserWordsOfSupport;

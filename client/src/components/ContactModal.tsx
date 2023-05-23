@@ -37,13 +37,7 @@ export default function ContactModal({ open, onClose, name, id }: Props) {
       {
         id,
         ...Form,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+      });
   };
 
   const handleChange = (event: React.FormEvent) => {

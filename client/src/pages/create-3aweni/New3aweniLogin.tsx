@@ -71,7 +71,7 @@ export default function New3aweniRegister() {
         <div className="w-2/3 h-screen bg-white z-10 rounded-tl-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-center flex-col justify-between">
           <div className="w-3/6 min-w-[300px] flex flex-col items-center justify-center mt-20">
             <label htmlFor="email" className="text-gray-700 w-fit self-start">
-              Adresse Email:{" "}
+              Adresse Email:
             </label>
 
             <input
@@ -87,7 +87,7 @@ export default function New3aweniRegister() {
 
             <div className="relative w-full flex justify-between items-center mt-8">
               <label htmlFor="password" className="text-gray-700">
-                Mot de passe:{" "}
+                Mot de passe:
               </label>
               <Link
                 to="/password-reset"

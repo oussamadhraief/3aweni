@@ -1,13 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const ContactUser = new mongoose.Schema({
   senderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: false
   },
   recipientId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true
   },
   name: {
@@ -21,6 +21,11 @@ const ContactUser = new mongoose.Schema({
   message: {
     type: String,
     required: true
+  },
+  seen: {
+    type: Boolean,
+    required: true,
+    default: false
   }
 }, {
   timestamps: true

@@ -3,11 +3,11 @@ const Fundraiser = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['animals', 'education', 'environment', 'event', 'family', 'funerals', 'religion', 'health', 'sports', 'emergencies', 'other']
+    enum: ["animals", "education", "environment", "event", "family", "funerals", "religion", "health", "sports", "emergencies", "other"]
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true
   },
   state: {

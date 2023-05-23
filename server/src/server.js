@@ -22,6 +22,7 @@ const {
   fetchFundraiserFirstDonation,
   fetchFundraiserTotalDonations,
   fetchFundraisersCreatedCountByDate,
+  fetchFundraiserWordsOfSupport,
 } = require("./fundraiser/FundraiserService");
 const {
   register,
@@ -223,7 +224,7 @@ app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
     const messages = await ContactUser.find({ recipientId: req.user._id })
       .skip(page)
       .limit(page * 10)
-      .populate("senderId recipientId");
+      .populate("senderId recipientId").sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, messages: messages });
   } catch (error) {
@@ -231,6 +232,20 @@ app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
     res.status(401).json({ success: false });
   }
 });
+
+app.patch('/api/user-message/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    await ContactUser.findOneAndUpdate({ _id: id }, { seen: true },{ new: true })
+
+    res.status(200).json({ success: true })
+
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ success: false });
+  }
+})
 
 app.post("/api/user/password-reset", authenticateToken, async (req, res) => {
   const { email } = req.body;
@@ -468,10 +483,10 @@ app.post("/api/create-fundraiser/register", async (req, res) => {
   }
 });
 
-app.post("/api/create-fundraiser", async (req, res) => {
+app.post("/api/create-fundraiser", authenticateToken, async (req, res) => {
   try {
     const { category, state, zipCode, type, title, goal } = req?.body;
-
+    
     const newFundraiser = await createFundraiser(
       req.user._id,
       category,
@@ -511,6 +526,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
       topDonation,
       mostRecentDonation,
       firstDonation,
+      wordsOfSupport
     ] = await Promise.all([
       fetchFundraiser(id),
       fetchFundraiserCollectedAmount(id),
@@ -518,6 +534,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
       fetchFundraiserTopDonation(id),
       fetchFundraiserMostRecentDonation(id),
       fetchFundraiserFirstDonation(id),
+      fetchFundraiserWordsOfSupport(id)
     ]);
 
     res.status(200).json({
@@ -528,6 +545,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
       topDonation,
       mostRecentDonation,
       firstDonation,
+      wordsOfSupport
     });
   } catch (error) {
     console.log(error);
@@ -555,11 +573,21 @@ app.get("/api/fundraisers/category/:id", async (req, res) => {
 
     const fundraisers = await Fundraiser.find({ category: id });
 
-    res.status(200).json({ success: true, fundraisers: fundraisers });
+    const fundraisersWithAmount = await Promise.all(
+      fundraisers.map(async (fundraiser) => {
+        const collectedAmount = await fetchFundraiserCollectedAmount(fundraiser._id);
+        const mostRecentDonation = await Donation.findOne({ fundraiser: fundraiser._id }).sort({ createdAt: -1 }).select('createdAt');
+        const lastDonationCreatedAt = mostRecentDonation ? mostRecentDonation.createdAt : null;
+        return { ...fundraiser._doc, collectedAmount, lastDonationCreatedAt };
+      })
+    );
+
+    res.status(200).json({ success: true, fundraisers: fundraisersWithAmount });
   } catch (error) {
     res.status(404).json({ success: false });
   }
 });
+
 
 app.patch("/api/fundraiser/image/:id", async (req, res) => {
   try {
@@ -809,12 +837,15 @@ app.post("/api/contact-user", authenticateToken, async (req, res) => {
   try {
     let contact;
     const { message, id } = req.body;
-    if (req.user) {
+
+    const user = await User.findOne({ _id: req.user._id })
+
+    if (user) {
       contact = {
-        senderId: req.user._id,
+        senderId: user._id,
         recipientId: id,
-        name: req.user.name,
-        email: req.user.email,
+        name: user.name,
+        email: user.email,
         message,
       };
     } else {
@@ -826,7 +857,7 @@ app.post("/api/contact-user", authenticateToken, async (req, res) => {
         message,
       };
     }
-
+    console.log(contact);
     await ContactUser.create(contact);
 
     res.status(201).json({ success: true });

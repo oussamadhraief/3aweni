@@ -53,6 +53,8 @@ export default function DashboardStats() {
   const [TotalMoneySent, setTotalMoneySent] = useState<number>(0);
   const [TotalMoneyReceived, setTotalMoneyReceived] = useState<number>(0);
   const [Messages, setMessages] = useState<message[]>();
+  const [Loading, setLoading] = useState<boolean>(true);
+
 
   const data = {
     labels: [
@@ -91,8 +93,11 @@ export default function DashboardStats() {
       setTotalMoneyReceived(totalMoneyReceived);
       setMessages(messages);
       setChartData(data);
+      setLoading(false)
     });
   }, []);
+
+  if(Loading) return null
 
   return (
     <main className="text-gray-600 bg-gray-50 dashboard-main-section flex justify-center items-start overflow-auto">
@@ -139,7 +144,7 @@ export default function DashboardStats() {
         <div className="col-span-full flex justify-center">
           <div className="w-full stats shadow h-fit">
             <div className="stats shadow">
-              <div className="stat">
+              <div className="stat pb-5">
                 <div className="stat-figure text-secondary">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -156,13 +161,12 @@ export default function DashboardStats() {
                   </svg>
                 </div>
                 <div className="stat-title">Total money received</div>
-                <div className="stat-value text-2xl text-zinc-700">
+                <div className="stat-value mt-2 text-2xl text-zinc-700">
                   {TotalMoneyReceived}
                 </div>
-                <div className="stat-desc">Jan 1st - Feb 1st</div>
               </div>
 
-              <div className="stat">
+              <div className="stat pb-5">
                 <div className="stat-figure text-yellow-500">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -179,13 +183,12 @@ export default function DashboardStats() {
                   </svg>
                 </div>
                 <div className="stat-title">Total fundraisers created</div>
-                <div className="stat-value text-2xl text-zinc-700">
+                <div className="stat-value mt-2 text-2xl text-zinc-700">
                   {TotalFundraisers}
                 </div>
-                <div className="stat-desc">Jan 1st - Feb 1st</div>
               </div>
 
-              <div className="stat">
+              <div className="stat pb-5">
                 <div className="stat-figure text-pink-500">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -202,13 +205,12 @@ export default function DashboardStats() {
                   </svg>
                 </div>
                 <div className="stat-title">Total donations received</div>
-                <div className="stat-value text-2xl text-zinc-700">
+                <div className="stat-value mt-2 text-2xl text-zinc-700">
                   {TotalDonations}
                 </div>
-                <div className="stat-desc">↗︎ 400 (22%)</div>
               </div>
 
-              <div className="stat">
+              <div className="stat pb-5">
                 <div className="stat-figure text-violet-500">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -225,10 +227,9 @@ export default function DashboardStats() {
                   </svg>
                 </div>
                 <div className="stat-title">Total money spent</div>
-                <div className="stat-value text-2xl text-zinc-700">
+                <div className="stat-value mt-2 text-2xl text-zinc-700">
                   {TotalMoneySent}
                 </div>
-                <div className="stat-desc">↘︎ 90 (14%)</div>
               </div>
             </div>
           </div>

@@ -51,11 +51,7 @@ export default function New3aweniTitleGoal() {
           {
             ...Form,
             goal,
-          },
-          {
-            withCredentials: true,
-          }
-        )
+          })
         .then((response) => {
           // localStorage.removeItem('create3aweni')
 

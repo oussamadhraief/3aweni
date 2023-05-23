@@ -25,11 +25,15 @@ export interface fundraiserInt {
 }
 
 export interface message {
+  _id: string;
   senderId: userInt | null;
   recipientId: userInt;
   name: string;
   email: string;
   message: string;
+  seen: boolean;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 }
 
 export interface donation {

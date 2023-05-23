@@ -30,7 +30,7 @@ export default function DashboardFundraisers() {
   if (Loading) return null;
 
   return (
-    <main className="text-gray-600 bg-gray-50 dashboard-main-section">
+    <main className="text-gray-600 bg-gray-50 dashboard-main-section overflow-y-auto">
       {Fundraisers.length ? (
         <div className="container px-5 py-24 mx-auto bg-transparent">
           <div className="flex flex-wrap gap-0 md:gap-[7.5%] xl:gap-[2.5%] -m-4 bg-transparent px-3">

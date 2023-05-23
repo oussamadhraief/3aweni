@@ -21,7 +21,8 @@ const {
   fetchFundraiserMostRecentDonation,
   fetchFundraiserFirstDonation,
   fetchFundraiserTotalDonations,
-  fetchFundraisersCreatedCountByDate
+  fetchFundraisersCreatedCountByDate,
+  fetchFundraiserWordsOfSupport
 } = require("./fundraiser/FundraiserService");
 const {
   register,
@@ -85,10 +86,10 @@ app.use(express.urlencoded({
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.sendStatus(401);
   }
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.split(" ")[1];
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       return res.sendStatus(403);
@@ -204,7 +205,7 @@ app.post("/api/user/login", async (req, res) => {
     });
   }
 });
-app.get('/api/user', authenticateToken, async (req, res) => {
+app.get("/api/user", authenticateToken, async (req, res) => {
   try {
     const userId = req.user._id;
 
@@ -212,16 +213,16 @@ app.get('/api/user', authenticateToken, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
-        message: 'User not found'
+        message: "User not found"
       });
     }
     res.json({
       user
     });
   } catch (error) {
-    console.error('Error retrieving user information:', error);
+    console.error("Error retrieving user information:", error);
     res.status(500).json({
-      message: 'An error occurred while retrieving user information'
+      message: "An error occurred while retrieving user information"
     });
   }
 });
@@ -254,7 +255,9 @@ app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
     } = req.params;
     const messages = await ContactUser.find({
       recipientId: req.user._id
-    }).skip(page).limit(page * 10).populate("senderId recipientId");
+    }).skip(page).limit(page * 10).populate("senderId recipientId").sort({
+      createdAt: -1
+    });
     res.status(200).json({
       success: true,
       messages: messages
@@ -521,7 +524,7 @@ app.post("/api/create-fundraiser/register", async (req, res) => {
     });
   }
 });
-app.post("/api/create-fundraiser", async (req, res) => {
+app.post("/api/create-fundraiser", authenticateToken, async (req, res) => {
   try {
     const {
       category,
@@ -563,7 +566,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
     const {
       id
     } = req.params;
-    const [fundraiser, collectedAmount, totalDonations, topDonation, mostRecentDonation, firstDonation] = await Promise.all([fetchFundraiser(id), fetchFundraiserCollectedAmount(id), fetchFundraiserTotalDonations(id), fetchFundraiserTopDonation(id), fetchFundraiserMostRecentDonation(id), fetchFundraiserFirstDonation(id)]);
+    const [fundraiser, collectedAmount, totalDonations, topDonation, mostRecentDonation, firstDonation, wordsOfSupport] = await Promise.all([fetchFundraiser(id), fetchFundraiserCollectedAmount(id), fetchFundraiserTotalDonations(id), fetchFundraiserTopDonation(id), fetchFundraiserMostRecentDonation(id), fetchFundraiserFirstDonation(id), fetchFundraiserWordsOfSupport(id)]);
     res.status(200).json({
       success: true,
       fundraiser,
@@ -571,7 +574,8 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
       totalDonations,
       topDonation,
       mostRecentDonation,
-      firstDonation
+      firstDonation,
+      wordsOfSupport
     });
   } catch (error) {
     console.log(error);
@@ -606,9 +610,23 @@ app.get("/api/fundraisers/category/:id", async (req, res) => {
     const fundraisers = await Fundraiser.find({
       category: id
     });
+    const fundraisersWithAmount = await Promise.all(fundraisers.map(async fundraiser => {
+      const collectedAmount = await fetchFundraiserCollectedAmount(fundraiser._id);
+      const mostRecentDonation = await Donation.findOne({
+        fundraiser: fundraiser._id
+      }).sort({
+        createdAt: -1
+      }).select('createdAt');
+      const lastDonationCreatedAt = mostRecentDonation ? mostRecentDonation.createdAt : null;
+      return {
+        ...fundraiser._doc,
+        collectedAmount,
+        lastDonationCreatedAt
+      };
+    }));
     res.status(200).json({
       success: true,
-      fundraisers: fundraisers
+      fundraisers: fundraisersWithAmount
     });
   } catch (error) {
     res.status(404).json({
@@ -731,7 +749,10 @@ app.patch("/api/fundraiser/:id", async (req, res) => {
 app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
   try {
     const {
-      donation
+      amount,
+      tip,
+      incognito,
+      message
     } = req.body;
     const {
       id
@@ -742,7 +763,7 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
     const paymentInfo = {
       receiverWalletId: "6466799e1874253b580aac46",
       token: "TND",
-      amount: donation * 1000,
+      amount: amount * 1000,
       type: "immediate",
       description: "donation for " + fund.title,
       lifespan: 20,
@@ -752,7 +773,7 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
       phoneNumber: req.user.phone,
       email: req.user.email,
       orderId: id,
-      webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}/${req.user._id}`,
+      webhook: `${process.env.API_BASE_URL}/api/create-donation/${id}/${req.user._id}/${tip}/${incognito}/${message}`,
       silentWebhook: true,
       successUrl: `${BASE_URL}/fundraisers/${id}`,
       failUrl: `${BASE_URL}/donate/${id}`,
@@ -777,12 +798,16 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
     });
   }
 });
-app.get("/api/create-donation/:id/:userId", async (req, res) => {
+app.get("/api/create-donation/:id/:userId/:tip/:incognito/:message", async (req, res) => {
   try {
     const {
       id,
-      userId
+      userId,
+      tip,
+      incognito,
+      message
     } = req.params;
+    console.log(tip, incognito, message);
     const {
       payment_ref
     } = req.query;
@@ -794,11 +819,24 @@ app.get("/api/create-donation/:id/:userId", async (req, res) => {
         }
       }
     } = response;
-    await Donation.create({
+    let donation = {
       user: userId,
       fundraiser: id,
       amount: amount / 1000
-    });
+    };
+    if (tip) donation = {
+      ...donation,
+      tip
+    };
+    if (incognito == "1") donation = {
+      ...donation,
+      incognito: true
+    };
+    if (message) donation = {
+      ...donation,
+      message
+    };
+    await Donation.create(donation);
     res.status(201).json({
       success: true
     });
@@ -850,12 +888,15 @@ app.post("/api/contact-user", authenticateToken, async (req, res) => {
       message,
       id
     } = req.body;
-    if (req.user) {
+    const user = await User.findOne({
+      _id: req.user._id
+    });
+    if (user) {
       contact = {
-        senderId: req.user._id,
+        senderId: user._id,
         recipientId: id,
-        name: req.user.name,
-        email: req.user.email,
+        name: user.name,
+        email: user.email,
         message
       };
     } else {
@@ -867,6 +908,7 @@ app.post("/api/contact-user", authenticateToken, async (req, res) => {
         message
       };
     }
+    console.log(contact);
     await ContactUser.create(contact);
     res.status(201).json({
       success: true
