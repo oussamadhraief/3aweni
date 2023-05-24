@@ -54,6 +54,15 @@ export default function UserDropdownMenu({ main }: { main: Boolean }) {
             <Link to="/dashboard/fundraisers">Mes 3aweni</Link>
           </li>
           <li className="py-1 flex bg-white">
+            <Link to="/dashboard/fundraisers">Dons reçus</Link>
+          </li>
+          <li className="py-1 flex bg-white">
+            <Link to="/dashboard/fundraisers">Mes dons</Link>
+          </li>
+          <li className="py-1 flex bg-white">
+            <Link to="/dashboard/fundraisers">Messages reçus</Link>
+          </li>
+          <li className="py-1 flex bg-white">
             <Link to="/dashboard/settings">Paramètres</Link>
           </li>
           <li className="py-1 flex bg-white text-red-500">

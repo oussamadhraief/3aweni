@@ -13,7 +13,7 @@ const Fundraiser = new mongoose.Schema({
   state: {
     type: String,
     required: true,
-    enum: ["Ariana", "Beja", "BenArous", "Bizerte", "Gabes", "Gafsa", "Jendouba", "Kairouan", "Kasserine", "Kebili", "LeKef", "Mahdia", "Manouba", "Medenine", "Monastir", "Nabeul", "Sfax", "SidiBouzid", "Siliana", "Sousse", "Tataouine", "Tozeur", "Tunis", "Zaghouan"]
+    enum: ["Ariana", "Béja", "Ben Arous", "Bizerte", "Gabès", "Gafsa", "Jendouba", "Kairouan", "Kasserine", "Kébili", "Le Kef", "Mahdia", "Manouba", "Médenine", "Monastir", "Nabeul", "Sfax", "Sidi Bouzid", "Siliana", "Sousse", "Tataouine", "Tozeur", "Tunis", "Zaghouan"]
   },
   zipCode: {
     type: Number,

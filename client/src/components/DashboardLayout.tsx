@@ -12,15 +12,21 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { RiUserHeartLine } from "react-icons/ri";
 import UserDropdownMenu from "./UserDropdownMenu";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
+import axios from "../utils/axiosConfig";
 
 export default function UserDashboard() {
   const location = useLocation();
   const { login, logout } = useAuthContext();
   const { setLoading } = useLoadingAuthContext();
   const [ShowSidebar, setShowSidebar] = useState<boolean>(true);
+  const [NumberOfUnreadMessages, setNumberOfUnreadMessages] = useState(0)
 
   useEffect(() => {
     getUser({ login, logout, setLoading });
+    axios.get('/api/unread-messages').then((res) => {
+      const { data: { number }} = res
+      setNumberOfUnreadMessages(number)
+    })
   }, [location]);
 
   return (
@@ -53,8 +59,8 @@ export default function UserDashboard() {
               >
                 <MdOutlineSpaceDashboard />
               </IconContext.Provider>
-              <span className="mx-4 font-normal">Dashboard</span>
-              <span className="flex-grow text-right"></span>
+              <span className="mx-4 font-normal">Tableau de bord</span>
+              
             </NavLink>
             <NavLink
               className={({ isActive }) =>
@@ -70,7 +76,7 @@ export default function UserDashboard() {
                 <BiIdCard />
               </IconContext.Provider>
               <span className="mx-4 font-normal">Mes 3awenis</span>
-              <span className="flex-grow text-right"></span>
+              
             </NavLink>
             <NavLink
               className={({ isActive }) =>
@@ -78,15 +84,14 @@ export default function UserDashboard() {
                   ? "hover:text-primary flex items-center p-2 my-4 transition-colors duration-200  text-primary rounded-l-lg border-r-2 border-primary bg-primary/10 text-[15px]"
                   : "hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-4 transition-colors  duration-200  text-gray-600 rounded-lg text-[15px]"
               }
-              to="/dashboard/donations"
+              to="/dashboard/received-donations"
             >
               <IconContext.Provider
                 value={{ className: "w-5 h-5 text-gray-700" }}
               >
                 <RiUserHeartLine />
               </IconContext.Provider>
-              <span className="mx-4 font-normal">Mes dons</span>
-              <span className="flex-grow text-right"></span>
+              <span className="mx-4 font-normal">Dons reçus</span>
             </NavLink>
             <NavLink
               className={({ isActive }) =>
@@ -94,15 +99,14 @@ export default function UserDashboard() {
                   ? "hover:text-primary flex items-center p-2 my-4 transition-colors duration-200  text-primary rounded-l-lg border-r-2 border-primary bg-primary/10 text-[15px]"
                   : "hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-4 transition-colors  duration-200  text-gray-600 rounded-lg text-[15px]"
               }
-              to="/dashboard/donations"
+              to="/dashboard/my-donations"
             >
               <IconContext.Provider
                 value={{ className: "w-5 h-5 text-gray-700" }}
               >
                 <BiDonateHeart />
               </IconContext.Provider>
-              <span className="mx-4 font-normal">Dons reçus</span>
-              <span className="flex-grow text-right"></span>
+              <span className="mx-4 font-normal">Mes dons</span>
             </NavLink>
             <NavLink
               className={({ isActive }) =>
@@ -117,15 +121,15 @@ export default function UserDashboard() {
               >
                 <TiMessage />
               </IconContext.Provider>
-              <span className="mx-4 font-normal">Mes disscussions</span>
-              <span className="flex-grow text-right">
+              <span className="mx-4 font-normal">Messages reçus</span>
+              {NumberOfUnreadMessages > 0 && <span className="flex-grow text-right">
                 <button
                   type="button"
                   className="w-5 h-5 text-[10px]  rounded-full text-white bg-red-500"
                 >
-                  <span className="p-1">7</span>
+                  <span className="p-1">{NumberOfUnreadMessages}</span>
                 </button>
-              </span>
+              </span>}
             </NavLink>
             <NavLink
               className={({ isActive }) =>
@@ -141,7 +145,7 @@ export default function UserDashboard() {
                 <FiSettings />
               </IconContext.Provider>
               <span className="mx-4 font-normal">Paramètres</span>
-              <span className="flex-grow text-right"></span>
+              
             </NavLink>
           </nav>
         </div>

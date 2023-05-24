@@ -2,23 +2,21 @@ import axios from "../../../utils/axiosConfig";
 import { useEffect, useState } from "react";
 import { fundraiserInt } from "../../../utils/interfaces";
 import { Link } from "react-router-dom";
-import { IconContext } from "react-icons";
-import { BiDotsVerticalRounded } from "react-icons/bi";
 import UserFundraiser from "../../../components/UserFundraiser";
 
-export default function DashboardFundraisers() {
-  const [Fundraisers, setFundraisers] = useState<fundraiserInt[]>([]);
+interface fundraisersFullInt extends fundraiserInt {
+  collectedAmount: number;
+  lastDonationCreatedAt: Date;
+}
+
+  export default function DashboardFundraisers() {
+
+  const [Fundraisers, setFundraisers] = useState<fundraisersFullInt[]>([]);
   const [Loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    axios
-      .get("/api/user/fundraisers")
-      .then((response) => {
-        const {
-          data: { fundraisers },
-        } = response;
-
-        setFundraisers(fundraisers);
+    axios.get(`/api/user/fundraisers`).then((res) => {
+        setFundraisers(res.data.fundraisers);
         setLoading(false);
       })
       .catch((error) => {
@@ -32,7 +30,7 @@ export default function DashboardFundraisers() {
   return (
     <main className="text-gray-600 bg-gray-50 dashboard-main-section overflow-y-auto">
       {Fundraisers.length ? (
-        <div className="container px-5 py-24 mx-auto bg-transparent">
+        <div className="container px-5 py-14 mx-auto bg-transparent">
           <div className="flex flex-wrap gap-0 md:gap-[7.5%] xl:gap-[2.5%] -m-4 bg-transparent px-3">
             {Fundraisers.map((item) => (
               //component ???
@@ -41,6 +39,8 @@ export default function DashboardFundraisers() {
                 image={item.image}
                 title={item.title}
                 goal={item.goal}
+                collectedAmount={item.collectedAmount}
+                lastDonationCreatedAt={item.lastDonationCreatedAt}
               />
             ))}
           </div>

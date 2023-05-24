@@ -6,6 +6,7 @@ import { IoMdClose } from "react-icons/io";
 import SearchPageSuggestions from "../../components/SearchPageSuggestions";
 import { useSearchParams } from "react-router-dom";
 import { categories } from "../../utils/categoriesData";
+import axios from "../../utils/axiosConfig";
 
 interface FiltersInterface {
   nearby: boolean;
@@ -24,6 +25,62 @@ export default function SearchField() {
     category: [],
   });
   const [FiltersCount, setFiltersCount] = useState<number>(0);
+  const [City, setCity] = useState<string | null>(null);
+  const [LocationPermission, setLocationPermission] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkLocationPermission = async () => {
+      try {
+        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+        
+          requestLocation()
+          
+          setLocationPermission(permissionStatus.state === 'granted');
+      } catch (error) {
+        console.error('Error checking location permission:', error);
+      }
+    };
+  
+    checkLocationPermission();
+   
+  }, []);
+
+  const getCityFromCoordinates = async (latitude: number, longitude: number): Promise<string | null> => {
+    try {
+      const response = await axios.get(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+      );
+        
+      const address = response.data.address;
+      if (address && address.city) {
+        return address.city;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error retrieving city:', error);
+      return null;
+    }
+  };
+
+  const requestLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocationPermission(true);
+        getCityFromCoordinates(position.coords.latitude, position.coords.longitude)
+            .then((city) => {
+              setCity(city)
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        setLocationPermission(false);
+      }
+    );
+  };
+
 
   const handleChange = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -243,7 +300,7 @@ export default function SearchField() {
       </div>
 
       <div className="w-full  flex flex-col items-center justify-center">
-        <SearchPageSuggestions />
+        <SearchPageSuggestions locationPermission={LocationPermission} city={City} />
       </div>
     </main>
   );

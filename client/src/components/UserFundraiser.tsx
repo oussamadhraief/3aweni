@@ -9,11 +9,15 @@ export default function UserFundraiser({
   image,
   title,
   goal,
+  collectedAmount,
+  lastDonationCreatedAt
 }: {
   id: string;
   image: string | null;
   title: string;
   goal: string;
+  collectedAmount: number;
+  lastDonationCreatedAt: Date;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -29,7 +33,7 @@ export default function UserFundraiser({
     <div
       ref={ref}
       onClick={(e) => e.stopPropagation}
-      className="relative xl:w-[18%] md:w-[45%] pb-4 w-full bg-white rounded mb-10 shadow-form"
+      className="relative xl:w-[18%] md:w-[45%] pb-4 w-full bg-white rounded my-5 shadow-form"
     >
       <div className="absolute top-1 right-1 text-zinc-700 bg-white z-10 rounded-md w-6 h-6">
         <button className="w-full h-full p-0.5" onClick={handleClick}>
@@ -80,14 +84,14 @@ export default function UserFundraiser({
         </h2>
         <progress
           max="100"
-          value="25"
+          value={(collectedAmount / parseFloat(goal) * 100)}
           className="w-full h-1.5 mt-1 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
         />
         <div>
-          <span className="mt-1">00.00 TND</span>
+          <span className="mt-1">{collectedAmount.toFixed(2)} TND</span>
           <span className="text-gray-500 text-xs tracking-widest title-font mb-1">
             {" "}
-            de {goal}.00 TND collectés
+            de {parseFloat(goal).toFixed(2)} TND collectés
           </span>
         </div>
       </div>

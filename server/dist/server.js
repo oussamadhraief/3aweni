@@ -269,6 +269,28 @@ app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
     });
   }
 });
+app.patch("/api/user-message/:id", async (req, res) => {
+  try {
+    const {
+      id
+    } = req.params;
+    await ContactUser.findOneAndUpdate({
+      _id: id
+    }, {
+      seen: true
+    }, {
+      new: true
+    });
+    res.status(200).json({
+      success: true
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      success: false
+    });
+  }
+});
 app.post("/api/user/password-reset", authenticateToken, async (req, res) => {
   const {
     email
@@ -374,20 +396,73 @@ app.post("/password-reset/:id/:token", authenticateToken, async (req, res) => {
 });
 app.get("/api/user/fundraisers", authenticateToken, async (req, res) => {
   try {
-    const fundraiser = await Fundraiser.find({
+    const fundraisers = await Fundraiser.find({
       user: req.user._id
     });
+    const fundraisersWithAmount = await Promise.all(fundraisers.map(async fundraiser => {
+      const collectedAmount = await fetchFundraiserCollectedAmount(fundraiser._id);
+      const mostRecentDonation = await Donation.findOne({
+        fundraiser: fundraiser._id
+      }).sort({
+        createdAt: -1
+      }).select("createdAt");
+      const lastDonationCreatedAt = mostRecentDonation ? mostRecentDonation.createdAt : null;
+      return {
+        ...fundraiser._doc,
+        collectedAmount,
+        lastDonationCreatedAt
+      };
+    }));
     res.status(200).json({
       success: true,
-      fundraisers: fundraiser
+      fundraisers: fundraisersWithAmount
     });
   } catch (error) {}
 });
-app.get("/api/trending-fundraisers", authenticateToken, async (req, res) => {
+app.post("/api/search-page-fundraisers", authenticateToken, async (req, res) => {
   try {
+    const {
+      city
+    } = req.body;
     const lastWeekStartDate = new Date();
     lastWeekStartDate.setDate(lastWeekStartDate.getDate() - 7);
-    const trendingFundraisers = await Donation.aggregate([{
+    let promises = [];
+    console.log(city);
+    if (city) promises.push(Donation.aggregate([{
+      $match: {
+        state: city
+      }
+    }, {
+      $group: {
+        _id: "$fundraiser",
+        totalDonations: {
+          $sum: 1
+        }
+      }
+    }, {
+      $lookup: {
+        from: "fundraisers",
+        localField: "_id",
+        foreignField: "_id",
+        as: "fundraiserData"
+      }
+    }, {
+      $unwind: "$fundraiserData"
+    }, {
+      $sort: {
+        totalDonations: -1
+      }
+    }, {
+      $limit: 5
+    }, {
+      $project: {
+        _id: "$fundraiserData._id",
+        name: "$fundraiserData.name",
+        image: "$fundraiserData.image",
+        title: "$fundraiserData.title"
+      }
+    }]));
+    promises.push(Donation.aggregate([{
       $match: {
         createdAt: {
           $gte: lastWeekStartDate
@@ -422,13 +497,13 @@ app.get("/api/trending-fundraisers", authenticateToken, async (req, res) => {
         image: "$fundraiserData.image",
         state: "$fundraiserData.state",
         title: "$fundraiserData.title"
-        // Add other fields you want to include
       }
-    }]);
-
+    }]));
+    const [close, trending] = await Promise.all(promises);
     res.status(200).json({
       success: true,
-      fundraisers: trendingFundraisers
+      trending,
+      close
     });
   } catch (error) {
     console.error(error);
@@ -616,7 +691,7 @@ app.get("/api/fundraisers/category/:id", async (req, res) => {
         fundraiser: fundraiser._id
       }).sort({
         createdAt: -1
-      }).select('createdAt');
+      }).select("createdAt");
       const lastDonationCreatedAt = mostRecentDonation ? mostRecentDonation.createdAt : null;
       return {
         ...fundraiser._doc,
@@ -870,6 +945,23 @@ app.get("/api/user-stats", authenticateToken, async (req, res) => {
       totalMoneySent,
       totalMoneyReceived,
       messages
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      success: false
+    });
+  }
+});
+app.get("/api/unread-messages", authenticateToken, async (req, res) => {
+  try {
+    const number = await ContactUser.find({
+      recipientId: req.user._id,
+      seen: false
+    }).count();
+    res.status(200).json({
+      success: true,
+      number
     });
   } catch (error) {
     console.log(error);
