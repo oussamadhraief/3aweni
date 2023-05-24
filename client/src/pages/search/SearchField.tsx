@@ -4,9 +4,10 @@ import { GoSettings } from "react-icons/go";
 import { AiOutlineSearch } from "react-icons/ai";
 import { IoMdClose } from "react-icons/io";
 import SearchPageSuggestions from "../../components/SearchPageSuggestions";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { categories } from "../../utils/categoriesData";
 import axios from "../../utils/axiosConfig";
+import { fundraiserInt } from "../../utils/interfaces";
 
 interface FiltersInterface {
   nearby: boolean;
@@ -14,8 +15,13 @@ interface FiltersInterface {
   category: string[];
 }
 
+interface fundraisersFullInt extends fundraiserInt {
+  collectedAmount: number;
+  lastDonationCreatedAt: Date | null;
+}
+
 export default function SearchField() {
-  let [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [Search, setSearch] = useState<string>("");
   const [Open, setOpen] = useState<boolean>(false);
@@ -26,38 +32,41 @@ export default function SearchField() {
   });
   const [FiltersCount, setFiltersCount] = useState<number>(0);
   const [City, setCity] = useState<string | null>(null);
-  const [LocationPermission, setLocationPermission] = useState<boolean | null>(null);
+  const [LocationPermission, setLocationPermission] = useState<boolean | null>(
+    null
+  );
 
   useEffect(() => {
     const checkLocationPermission = async () => {
       try {
-        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
-        
-          requestLocation()
-          
-          setLocationPermission(permissionStatus.state === 'granted');
+        const permissionStatus = await navigator.permissions.query({
+          name: "geolocation",
+        });
+
+        requestLocation();
+
+        setLocationPermission(permissionStatus.state === "granted");
       } catch (error) {
-        console.error('Error checking location permission:', error);
+        console.error("Error checking location permission:", error);
       }
     };
-  
+
     checkLocationPermission();
-   
   }, []);
 
-  const getCityFromCoordinates = async (latitude: number, longitude: number): Promise<string | null> => {
+  const getCityFromCoordinates = async (
+    latitude: number,
+    longitude: number
+  ): Promise<string | null> => {
     try {
       const response = await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+        `https://api.opencagedata.com/geocode/v1/json?q=${latitude},${longitude}&key=0c0f56f93cd4481e8b1a3c98e7b14fd7`
       );
-        
-      const address = response.data.address;
-      if (address && address.city) {
-        return address.city;
-      }
-      return null;
+
+      const state = response.data.results[0].components.state;
+      return state;
     } catch (error) {
-      console.error('Error retrieving city:', error);
+      console.error("Error retrieving city:", error);
       return null;
     }
   };
@@ -66,21 +75,23 @@ export default function SearchField() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLocationPermission(true);
-        getCityFromCoordinates(position.coords.latitude, position.coords.longitude)
-            .then((city) => {
-              setCity(city)
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
+        getCityFromCoordinates(
+          position.coords.latitude,
+          position.coords.longitude
+        )
+          .then((state) => {
+            setCity(state);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
       },
       (error) => {
-        console.error('Error getting location:', error);
+        console.error("Error getting location:", error);
         setLocationPermission(false);
       }
     );
   };
-
 
   const handleChange = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -131,20 +142,25 @@ export default function SearchField() {
     setFiltersCount(0);
   };
 
-  const handleSearchSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setSearchParams({
-      s: Search,
-      c: Filters.category,
-      n: Filters.nearby ? "1" : "0",
-      g: Filters.closeToGoal ? "1" : "0",
-    });
+  const handleSearchSubmit = () => {
+    const queryParams = new URLSearchParams();
+
+    queryParams.set("s", Search);
+    queryParams.set("c", Filters.category.join(","));
+    queryParams.set("n", Filters.nearby ? "1" : "0");
+    queryParams.set("g", Filters.closeToGoal ? "1" : "0");
+
+    navigate(`/search/r?${queryParams.toString()}`);
   };
 
   return (
-    <main className="mt-[94px] py-24  flex flex-col items-center justify-center">
+    <main className="mt-[94px] pt-24 flex flex-col items-center justify-center">
       <form
-        onSubmit={handleSearchSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+
+          handleSearchSubmit();
+        }}
         className="relative w-1/3 rounded-full border border-gray-400 flex items-center pr-3 overflow-hidden mb-14"
       >
         <button className="px-2 h-10 flex justify-center items-center outline-none">
@@ -171,8 +187,8 @@ export default function SearchField() {
         >
           <span
             className={`${
-              FiltersCount !== 0 ? "w-3" : "w-0"
-            } transition-all overflow-hidden`}
+              FiltersCount !== 0 ? "w-4" : "w-0"
+            } transition-all overflow-hidden text-sm`}
           >
             {FiltersCount}
           </span>
@@ -188,7 +204,10 @@ export default function SearchField() {
       {Open && (
         <div
           className="fixed inset-0 bg-gray-600/40 z-[100]"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false);
+            handleFiltersReset();
+          }}
         ></div>
       )}
 
@@ -204,7 +223,10 @@ export default function SearchField() {
 
           <button
             className="p-1.5 rounded-full hover:bg-gray-200"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              handleFiltersReset();
+            }}
           >
             <IconContext.Provider value={{ className: "h-5 w-5" }}>
               <IoMdClose />
@@ -212,9 +234,14 @@ export default function SearchField() {
           </button>
         </div>
         <div className="h-full overflow-auto py-5 px-3 flex flex-col items-start gap-5">
-          <div className="flex items-center justify-start gap-5">
+          <div className="relative flex items-center justify-start gap-5 overflow-visible group">
             <p>Près de vous</p>
 
+            {City === null && (
+              <div className="absolute bottom-6 left-0 hidden group-hover:block w-fit h-fit bg-red-200 text-red-400 text-xs rounded-md px-2 py-0.5 z-50">
+                L'accès à la localisation est requis
+              </div>
+            )}
             <label
               htmlFor="NearbyToggle"
               className="inline-flex items-center space-x-4 cursor-pointer"
@@ -224,6 +251,7 @@ export default function SearchField() {
                   id="NearbyToggle"
                   type="checkbox"
                   name="nearby"
+                  disabled={City === null}
                   checked={Filters.nearby}
                   onChange={handleFiltersChange}
                   className="hidden peer"
@@ -259,6 +287,7 @@ export default function SearchField() {
             <div className="flex flex-wrap justify-start gap-3 mt-1">
               {categories.map((item) => (
                 <label
+                key={item.value}
                   className={`relative px-4 py-2 text-sm border ${
                     Filters.category.some((element) => element === item.value)
                       ? "bg-lighter_primary border-primary"
@@ -275,6 +304,9 @@ export default function SearchField() {
                     onChange={handleFiltersCategoriesChange}
                     required
                     value={item.value}
+                    checked={Filters.category.some(
+                      (element) => element === item.value
+                    )}
                   />{" "}
                   {item.label}{" "}
                 </label>
@@ -285,22 +317,30 @@ export default function SearchField() {
         <div className="w-full flex flex-nowrap items-center justify-around shrink-0 pt-3 px-3">
           <button
             className="border rounded-2xl border-gray-500 px-4 py-2"
-            onClick={handleFiltersReset}
+            onClick={() => {
+              setOpen(false);
+              handleFiltersReset();
+            }}
           >
             Restaurer
           </button>
 
           <button
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+            }}
             className="border rounded-2xl border-primary px-4 py-2 bg-primary text-white"
           >
-            Voir résultats
+            Appliquer
           </button>
         </div>
       </div>
 
       <div className="w-full  flex flex-col items-center justify-center">
-        <SearchPageSuggestions locationPermission={LocationPermission} city={City} />
+        <SearchPageSuggestions
+          locationPermission={LocationPermission}
+          city={City}
+        />
       </div>
     </main>
   );

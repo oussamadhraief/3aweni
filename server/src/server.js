@@ -365,7 +365,7 @@ app.get("/api/user/fundraisers", authenticateToken, async (req, res) => {
   } catch (error) {}
 });
 
-app.get("/api/trending-fundraisers", authenticateToken, async (req, res) => {
+app.get("/api/trending-fundraisers", async (req, res) => {
   try {
     const lastWeekStartDate = new Date();
     lastWeekStartDate.setDate(lastWeekStartDate.getDate() - 7);
@@ -417,7 +417,7 @@ app.get("/api/trending-fundraisers", authenticateToken, async (req, res) => {
   }
 });
 
-app.post("/api/close-fundraisers", authenticateToken, async (req, res) => {
+app.post("/api/close-fundraisers", async (req, res) => {
   try {
     const { city } = req.body;
 
@@ -425,8 +425,8 @@ app.post("/api/close-fundraisers", authenticateToken, async (req, res) => {
       const fundraisers = await Fundraiser.aggregate([
         {
           $match: {
-            state: city
-          }
+            state: city,
+          },
         },
         {
           $lookup: {
@@ -434,35 +434,30 @@ app.post("/api/close-fundraisers", authenticateToken, async (req, res) => {
             localField: "_id",
             foreignField: "fundraiser",
             as: "donations",
-          }
-        },
-        {
-          $unwind: { path: "$fundraiserData", preserveNullAndEmptyArrays: true }
+          },
         },
         {
           $addFields: {
-            totalDonations: { $size: "$donations" }
-          }
+            totalDonations: { $size: "$donations" },
+          },
         },
         {
           $sort: {
-            totalDonations: -1
-          }
+            totalDonations: -1,
+          },
         },
         {
-          $limit: 5
+          $limit: 5,
         },
         {
           $project: {
             _id: 1,
-            name: 1,
             image: 1,
-            title: 1
-          }
-        }
+            title: 1,
+            state: 1,
+          },
+        },
       ]);
-      
-      
 
       res.status(200).json({ success: true, fundraisers });
     } else {
@@ -471,6 +466,94 @@ app.post("/api/close-fundraisers", authenticateToken, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(404).json({ success: false, error });
+  }
+});
+
+app.post("/api/search", async (req, res) => {
+  const { s, c, n, g, state } = req.body;
+
+  try {
+    const query = {};
+
+    if (s) {
+      query.title = { $regex: s, $options: "i" };
+    }
+
+    if (c) {
+      if (Array.isArray(c) && c.length > 0) {
+        query.category = { $in: c };
+      } else if (typeof c === "string") {
+        query.category = c;
+      }
+    }
+
+    if (n) {
+      if (n === "1") {
+        query.state = state;
+      }
+    }
+
+    const fundraisers = await Fundraiser.aggregate([
+      { $match: query },
+      {
+        $lookup: {
+          from: "donations",
+          localField: "_id",
+          foreignField: "fundraiser",
+          as: "donations",
+        },
+      },
+      {
+        $unwind: "$donations",
+      },
+      {
+        $group: {
+          _id: "$_id",
+          title: { $first: "$title" },
+          image: { $first: "$image" },
+          state: { $first: "$state" },
+          goal: { $first: "$goal" },
+          description: { $first: "$description" },
+          collectedAmount: { $sum: "$donations.amount" },
+          lastDonationCreatedAt: { $max: "$donations.createdAt" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          _id: "$_id",
+          title: 1,
+          image: 1,
+          state: 1,
+          description: 1,
+          goal: 1,
+          collectedAmount: 1,
+          lastDonationCreatedAt: 1,
+          isCloseToGoal: {
+            $lte: [{ $subtract: ["$goal", 50] }, "$collectedAmount"],
+          },
+        },
+      },
+    ]);
+
+    if (g && g === "1") {
+      let filteredFundraisers = fundraisers.filter(
+        (fundraiser) => fundraiser.isCloseToGoal === true
+      );
+
+      filteredFundraisers.forEach(
+        (fundraiser) => delete fundraiser.isCloseToGoal
+      );
+
+      res.json({ success: true, fundraisers: filteredFundraisers });
+    } else {
+      res.json({ success: true, fundraisers });
+    }
+  } catch (error) {
+    console.error("Error performing search:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while performing the search" });
   }
 });
 
@@ -816,7 +899,7 @@ app.get(
   async (req, res) => {
     try {
       const { id, userId, tip, incognito, message } = req.params;
-      console.log(tip, incognito, message);
+
       const { payment_ref } = req.query;
 
       const response = await axios.get(
@@ -955,7 +1038,7 @@ app.post("/api/contact-user", authenticateToken, async (req, res) => {
         message,
       };
     }
-    console.log(contact);
+
     await ContactUser.create(contact);
 
     res.status(201).json({ success: true });

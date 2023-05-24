@@ -34,8 +34,7 @@ const getUser = ({
       setLoading(false);
     })
     .catch((error) => {
-      console.log(error);
-
+      
       logout();
       setLoading(false);
     });

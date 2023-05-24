@@ -25,6 +25,7 @@ import EditUserFundraiser from "./pages/account/dashboard/edit-fundraiser/EditUs
 import DashboardStats from "./pages/account/dashboard/DashboardStats";
 import CategoryFundraisers from "./pages/fundraisers/CategoryFundraisers";
 import Donate from "./pages/Donate";
+import SearchResults from "./pages/search/SearchResults";
 import("@lottiefiles/lottie-player");
 // const { io } = require("socket.io-client");
 
@@ -64,6 +65,7 @@ function App() {
             }
           />
           <Route path="search" element={<SearchField />} />
+          <Route path="search/r" element={<SearchResults />} />
           <Route path="fundraisers/:id" element={<SingleFundraiser />} />
           <Route path="donate/:id" element={<Donate />} />
           <Route

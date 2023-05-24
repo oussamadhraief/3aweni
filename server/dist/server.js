@@ -419,50 +419,11 @@ app.get("/api/user/fundraisers", authenticateToken, async (req, res) => {
     });
   } catch (error) {}
 });
-app.post("/api/search-page-fundraisers", authenticateToken, async (req, res) => {
+app.get("/api/trending-fundraisers", async (req, res) => {
   try {
-    const {
-      city
-    } = req.body;
     const lastWeekStartDate = new Date();
     lastWeekStartDate.setDate(lastWeekStartDate.getDate() - 7);
-    let promises = [];
-    console.log(city);
-    if (city) promises.push(Donation.aggregate([{
-      $match: {
-        state: city
-      }
-    }, {
-      $group: {
-        _id: "$fundraiser",
-        totalDonations: {
-          $sum: 1
-        }
-      }
-    }, {
-      $lookup: {
-        from: "fundraisers",
-        localField: "_id",
-        foreignField: "_id",
-        as: "fundraiserData"
-      }
-    }, {
-      $unwind: "$fundraiserData"
-    }, {
-      $sort: {
-        totalDonations: -1
-      }
-    }, {
-      $limit: 5
-    }, {
-      $project: {
-        _id: "$fundraiserData._id",
-        name: "$fundraiserData.name",
-        image: "$fundraiserData.image",
-        title: "$fundraiserData.title"
-      }
-    }]));
-    promises.push(Donation.aggregate([{
+    const trendingFundraisers = await Donation.aggregate([{
       $match: {
         createdAt: {
           $gte: lastWeekStartDate
@@ -497,14 +458,73 @@ app.post("/api/search-page-fundraisers", authenticateToken, async (req, res) => 
         image: "$fundraiserData.image",
         state: "$fundraiserData.state",
         title: "$fundraiserData.title"
+        // Add other fields you want to include
       }
-    }]));
-    const [close, trending] = await Promise.all(promises);
+    }]);
+
     res.status(200).json({
       success: true,
-      trending,
-      close
+      fundraisers: trendingFundraisers
     });
+  } catch (error) {
+    console.error(error);
+    res.status(404).json({
+      success: false,
+      error
+    });
+  }
+});
+app.post("/api/close-fundraisers", async (req, res) => {
+  try {
+    const {
+      city
+    } = req.body;
+    if (city) {
+      const fundraisers = await Fundraiser.aggregate([{
+        $match: {
+          state: city
+        }
+      }, {
+        $lookup: {
+          from: "donations",
+          localField: "_id",
+          foreignField: "fundraiser",
+          as: "donations"
+        }
+      }, {
+        $unwind: {
+          path: "$fundraiserData",
+          preserveNullAndEmptyArrays: true
+        }
+      }, {
+        $addFields: {
+          totalDonations: {
+            $size: "$donations"
+          }
+        }
+      }, {
+        $sort: {
+          totalDonations: -1
+        }
+      }, {
+        $limit: 5
+      }, {
+        $project: {
+          _id: 1,
+          name: 1,
+          image: 1,
+          title: 1
+        }
+      }]);
+      res.status(200).json({
+        success: true,
+        fundraisers
+      });
+    } else {
+      res.status(404).json({
+        success: false
+      });
+    }
   } catch (error) {
     console.error(error);
     res.status(404).json({

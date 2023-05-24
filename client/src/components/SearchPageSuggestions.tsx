@@ -14,9 +14,7 @@ export default function SearchPageSuggestions({
   const [TrendingFundraisers, setTrendingFundraisers] = useState<
     fundraiserInt[]
   >([]);
-  const [CloseFundraisers, setCloseFundraisers] = useState<
-    fundraiserInt[]
-  >([]);
+  const [CloseFundraisers, setCloseFundraisers] = useState<fundraiserInt[]>([]);
 
   useEffect(() => {
     axios.get("/api/trending-fundraisers").then((res) => {
@@ -30,20 +28,20 @@ export default function SearchPageSuggestions({
 
   useEffect(() => {
     console.log(city);
-    
-    if(city)
-    axios.post("/api/close-fundraisers",{ city }).then((res) => {
-      const {
-        data: { fundraisers },
-      } = res;
-      console.log(fundraisers);
-      
-      setCloseFundraisers(fundraisers)
-    });
+
+    if (city)
+      axios.post("/api/close-fundraisers", { city }).then((res) => {
+        const {
+          data: { fundraisers },
+        } = res;
+        console.log(fundraisers);
+
+        setCloseFundraisers(fundraisers);
+      });
   }, [city]);
 
   return (
-    <div className="min-h-[500px] mb-24 mt-12 flex flex-col items-start w-full max-w-[1150px] z-10">
+    <div className="min-h-[500px] mb-7 mt-11 flex flex-col items-start w-full max-w-[1150px] z-10">
       <div
         className={
           TabSelection
@@ -80,6 +78,7 @@ export default function SearchPageSuggestions({
               if (index == 0)
                 return (
                   <Link
+                    key={item._id}
                     to={`/fundraisers/${item._id}`}
                     className="flex flex-col items-start rounded-xl bg-white col-span-full md:col-span-2 row-span-2"
                   >
@@ -103,6 +102,7 @@ export default function SearchPageSuggestions({
 
               return (
                 <Link
+                  key={item._id}
                   to={`/fundraisers/${item._id}`}
                   className="flex flex-col items-start rounded-xl bg-white row-span-1"
                 >
@@ -135,42 +135,18 @@ export default function SearchPageSuggestions({
       {!TabSelection && (
         <div className="w-full grid grid-cols-4 gap-5 overflow-visible fade-in-bottom">
           {locationPermission === false ? (
-              <div className="col-span-full">
-                L'autorisation de localisation est refusée. Veuillez activer
-                l'accès à la localisation dans paramètres de votre navigateur.
-              </div>
-          ) : (
-            
-            CloseFundraisers.length ? (
-              CloseFundraisers.map((item, index) => {
-                if (index == 0)
-                  return (
-                    <Link
-                      to={`/fundraisers/${item._id}`}
-                      className="flex flex-col items-start rounded-xl bg-white col-span-full md:col-span-2 row-span-2"
-                    >
-                      <img
-                        src={
-                          item.image
-                            ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.image}`
-                            : "/3aweni_placeholder.png"
-                        }
-                        alt=""
-                        className="h-full rounded-xl object-cover"
-                      />
-                      <p className="text-primary text-xs my-1 px-2">
-                        {city}, Tunisia
-                      </p>
-                      <p className="font-semibold text-black text-sm px-2 leading-6 line-clamp-1">
-                        {item.title}
-                      </p>
-                    </Link>
-                  );
-  
+            <div className="col-span-full">
+              L'autorisation de localisation est refusée. Veuillez activer
+              l'accès à la localisation dans paramètres de votre navigateur.
+            </div>
+          ) : CloseFundraisers.length ? (
+            CloseFundraisers.map((item, index) => {
+              if (index == 0)
                 return (
                   <Link
+                    key={item._id}
                     to={`/fundraisers/${item._id}`}
-                    className="flex flex-col items-start rounded-xl bg-white row-span-1"
+                    className="flex flex-col items-start rounded-xl bg-white col-span-full md:col-span-2 row-span-2"
                   >
                     <img
                       src={
@@ -189,13 +165,35 @@ export default function SearchPageSuggestions({
                     </p>
                   </Link>
                 );
-              })
-            ) : (
-              <p className="col-span-full text-center">
-                Pas de 3awenis dans cette catégorie
-              </p>
-            )
-            
+
+              return (
+                <Link
+                  key={item._id}
+                  to={`/fundraisers/${item._id}`}
+                  className="flex flex-col items-start rounded-xl bg-white row-span-1"
+                >
+                  <img
+                    src={
+                      item.image
+                        ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.image}`
+                        : "/3aweni_placeholder.png"
+                    }
+                    alt=""
+                    className="h-full rounded-xl object-cover"
+                  />
+                  <p className="text-primary text-xs my-1 px-2">
+                    {city}, Tunisia
+                  </p>
+                  <p className="font-semibold text-black text-sm px-2 leading-6 line-clamp-1">
+                    {item.title}
+                  </p>
+                </Link>
+              );
+            })
+          ) : (
+            <p className="col-span-full text-center">
+              Pas de 3awenis dans cette catégorie
+            </p>
           )}
         </div>
       )}
