@@ -43,15 +43,12 @@ export default function SearchResults() {
             c: searchParams.get("c"),
             state: 'Tunis'
           };
-
-          console.log(queryData);
           
 
           const response = await axios.post("/api/search", queryData);
           const {
             data: { fundraisers },
           } = response;
-          console.log(fundraisers);
 
           setFundraisers(fundraisers);
         } catch (error) {

@@ -27,14 +27,12 @@ export default function SearchPageSuggestions({
   }, []);
 
   useEffect(() => {
-    console.log(city);
 
     if (city)
       axios.post("/api/close-fundraisers", { city }).then((res) => {
         const {
           data: { fundraisers },
         } = res;
-        console.log(fundraisers);
 
         setCloseFundraisers(fundraisers);
       });
