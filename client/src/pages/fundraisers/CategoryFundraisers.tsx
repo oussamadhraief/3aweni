@@ -29,17 +29,20 @@ export default function CategoryFundraisers() {
               to={`/fundraisers/${item._id}`}
               className="shadow-form pb-2 rounded bg-white col-span-2 md:col-span-1 mb-10"
             >
+              <div className="w-full overflow-hidden">
+
               <img
                 src={
                   item.image
-                    ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.image}`
-                    : "/3aweni_placeholder.png"
+                  ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.image}`
+                  : "/3aweni_placeholder.png"
                 }
                 alt=""
-                className="rounded-t w-full"
-              />
+                className="rounded-t w-full hover:scale-110 transition-all"
+                />
+                </div>
               <p className="text-primary text-xs my-1 px-4 h-4">
-                {item.state}, Tunisia
+                {item.state}, Tunisie
               </p>
               <p className="font-semibold text-black text-sm px-2 leading-6 line-clamp-1 h-6">
                 {item.title}
@@ -55,7 +58,7 @@ export default function CategoryFundraisers() {
                 value={item.goal
                   ? (item.collectedAmount / parseFloat(item.goal)) * 100
                   : 0}
-                className="w-[96%] ml-[2%] h-2 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
+                className="w-[96%] ml-[2%] h-1.5 overflow-hidden rounded bg-emerald-500/10 [&::-webkit-progress-bar]:bg-emerald-500/10 [&::-webkit-progress-value]:bg-emerald-500 [&::-moz-progress-bar]:bg-emerald-500"
               />
               <p className="text-zinc-500 font-thin text-xs mt-2 px-2 h-4">
                 {" "}

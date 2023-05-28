@@ -37,6 +37,7 @@ export interface message {
 }
 
 export interface donation {
+  _id: string;
   user: userInt | null;
   fundraiser: fundraiserInt | null;
   amount: number;

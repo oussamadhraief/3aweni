@@ -21,8 +21,7 @@ const {
   fetchFundraiserMostRecentDonation,
   fetchFundraiserFirstDonation,
   fetchFundraiserTotalDonations,
-  fetchFundraisersCreatedCountByDate,
-  fetchFundraiserWordsOfSupport
+  fetchFundraisersCreatedCountByDate
 } = require("./fundraiser/FundraiserService");
 const {
   register,
@@ -248,19 +247,107 @@ app.patch("/api/user/image", authenticateToken, async (req, res) => {
     });
   }
 });
-app.get("/api/received-messages/:page", authenticateToken, async (req, res) => {
+app.patch("/api/user/email", authenticateToken, async (req, res) => {
+  try {
+    const {
+      email
+    } = req?.body;
+    await User.findOneAndUpdate({
+      _id: req.user._id
+    }, {
+      email
+    }, {
+      new: true
+    });
+    res.status(200).json({
+      success: true
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      success: false
+    });
+  }
+});
+app.patch("/api/user/info", authenticateToken, async (req, res) => {
+  try {
+    const {
+      name,
+      phone
+    } = req?.body;
+    await User.findOneAndUpdate({
+      _id: req.user._id
+    }, {
+      name,
+      phone
+    }, {
+      new: true
+    });
+    res.status(200).json({
+      success: true
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      success: false
+    });
+  }
+});
+app.patch("/api/user/password", authenticateToken, async (req, res) => {
+  try {
+    const {
+      currentPassword,
+      newPassword,
+      newPasswordConfirmation
+    } = req?.body;
+    const user = await User.findOne({
+      _id: req.user._id
+    });
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch || newPassword != newPasswordConfirmation) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials"
+      });
+    }
+    const salt = await bcrypt.genSalt(10);
+    hashedPassword = await bcrypt.hash(newPassword, salt);
+    await User.findOneAndUpdate({
+      _id: req.user._id
+    }, {
+      password: hashedPassword
+    }, {
+      new: true
+    });
+    res.status(200).json({
+      success: true
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      success: false
+    });
+  }
+});
+app.get("/api/received-messages", authenticateToken, async (req, res) => {
   try {
     const {
       page
-    } = req.params;
-    const messages = await ContactUser.find({
+    } = req.query;
+    const pageNumber = parseInt(page);
+    const [messages, count] = await Promise.all([ContactUser.find({
       recipientId: req.user._id
-    }).skip(page).limit(page * 10).populate("senderId recipientId").sort({
-      createdAt: -1
-    });
+    }).skip((pageNumber - 1) * 10).limit(12).populate("senderId recipientId").sort({
+      createdAt: -1,
+      _id: -1
+    }), ContactUser.find({
+      recipientId: req.user._id
+    }).count()]);
+    console.log(count);
     res.status(200).json({
       success: true,
-      messages: messages
+      messages,
+      count: count
     });
   } catch (error) {
     console.log(error);
@@ -404,7 +491,8 @@ app.get("/api/user/fundraisers", authenticateToken, async (req, res) => {
       const mostRecentDonation = await Donation.findOne({
         fundraiser: fundraiser._id
       }).sort({
-        createdAt: -1
+        createdAt: -1,
+        _id: -1
       }).select("createdAt");
       const lastDonationCreatedAt = mostRecentDonation ? mostRecentDonation.createdAt : null;
       return {
@@ -447,7 +535,8 @@ app.get("/api/trending-fundraisers", async (req, res) => {
       $unwind: "$fundraiserData"
     }, {
       $sort: {
-        totalDonations: -1
+        totalDonations: -1,
+        _id: -1
       }
     }, {
       $limit: 5
@@ -492,11 +581,6 @@ app.post("/api/close-fundraisers", async (req, res) => {
           as: "donations"
         }
       }, {
-        $unwind: {
-          path: "$fundraiserData",
-          preserveNullAndEmptyArrays: true
-        }
-      }, {
         $addFields: {
           totalDonations: {
             $size: "$donations"
@@ -504,16 +588,17 @@ app.post("/api/close-fundraisers", async (req, res) => {
         }
       }, {
         $sort: {
-          totalDonations: -1
+          totalDonations: -1,
+          _id: -1
         }
       }, {
         $limit: 5
       }, {
         $project: {
           _id: 1,
-          name: 1,
           image: 1,
-          title: 1
+          title: 1,
+          state: 1
         }
       }]);
       res.status(200).json({
@@ -530,6 +615,118 @@ app.post("/api/close-fundraisers", async (req, res) => {
     res.status(404).json({
       success: false,
       error
+    });
+  }
+});
+app.post("/api/search", async (req, res) => {
+  const {
+    s,
+    c,
+    n,
+    g,
+    state
+  } = req.body;
+  try {
+    const query = {};
+    if (s) {
+      const regex = new RegExp(s, "i");
+      query.$or = [{
+        title: regex
+      }, {
+        description: regex
+      }, {
+        _id: regex
+      }, {
+        category: regex
+      }, {
+        state: regex
+      }];
+    }
+    if (c) {
+      if (Array.isArray(c) && c.length > 0) {
+        query.category = {
+          $in: c
+        };
+      } else if (typeof c === "string") {
+        query.category = c;
+      }
+    }
+    if (n) {
+      if (n === "1") {
+        query.state = state;
+      }
+    }
+    const fundraisers = await Fundraiser.aggregate([{
+      $match: query
+    }, {
+      $lookup: {
+        from: "donations",
+        localField: "_id",
+        foreignField: "fundraiser",
+        as: "donations"
+      }
+    }, {
+      $unwind: "$donations"
+    }, {
+      $group: {
+        _id: "$_id",
+        title: {
+          $first: "$title"
+        },
+        image: {
+          $first: "$image"
+        },
+        state: {
+          $first: "$state"
+        },
+        goal: {
+          $first: "$goal"
+        },
+        description: {
+          $first: "$description"
+        },
+        collectedAmount: {
+          $sum: "$donations.amount"
+        },
+        lastDonationCreatedAt: {
+          $max: "$donations.createdAt"
+        }
+      }
+    }, {
+      $project: {
+        _id: 0,
+        _id: "$_id",
+        title: 1,
+        image: 1,
+        state: 1,
+        description: 1,
+        goal: 1,
+        collectedAmount: 1,
+        lastDonationCreatedAt: 1,
+        isCloseToGoal: {
+          $lte: [{
+            $subtract: ["$goal", 50]
+          }, "$collectedAmount"]
+        }
+      }
+    }]);
+    if (g && g === "1") {
+      let filteredFundraisers = fundraisers.filter(fundraiser => fundraiser.isCloseToGoal === true);
+      filteredFundraisers.forEach(fundraiser => delete fundraiser.isCloseToGoal);
+      res.json({
+        success: true,
+        fundraisers: filteredFundraisers
+      });
+    } else {
+      res.json({
+        success: true,
+        fundraisers
+      });
+    }
+  } catch (error) {
+    console.error("Error performing search:", error);
+    res.status(500).json({
+      error: "An error occurred while performing the search"
     });
   }
 });
@@ -661,7 +858,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
     const {
       id
     } = req.params;
-    const [fundraiser, collectedAmount, totalDonations, topDonation, mostRecentDonation, firstDonation, wordsOfSupport] = await Promise.all([fetchFundraiser(id), fetchFundraiserCollectedAmount(id), fetchFundraiserTotalDonations(id), fetchFundraiserTopDonation(id), fetchFundraiserMostRecentDonation(id), fetchFundraiserFirstDonation(id), fetchFundraiserWordsOfSupport(id)]);
+    const [fundraiser, collectedAmount, totalDonations, topDonation, mostRecentDonation, firstDonation] = await Promise.all([fetchFundraiser(id), fetchFundraiserCollectedAmount(id), fetchFundraiserTotalDonations(id), fetchFundraiserTopDonation(id), fetchFundraiserMostRecentDonation(id), fetchFundraiserFirstDonation(id)]);
     res.status(200).json({
       success: true,
       fundraiser,
@@ -669,8 +866,7 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
       totalDonations,
       topDonation,
       mostRecentDonation,
-      firstDonation,
-      wordsOfSupport
+      firstDonation
     });
   } catch (error) {
     console.log(error);
@@ -679,11 +875,20 @@ app.get("/api/single-fundraiser/:id", async (req, res) => {
     });
   }
 });
-app.get("/api/user-donations", authenticateToken, async (req, res) => {
+app.get("/api/fundraiser-donations/:id", async (req, res) => {
   try {
+    const {
+      id
+    } = req.params;
+    const {
+      page
+    } = req.query;
     const donations = await Donation.find({
-      user: req.user._id
-    }).limit(10).populate("fundraiser user");
+      fundraiser: id
+    }).skip(page * 10).limit(10).populate("user").sort({
+      createdAt: -1,
+      _id: -1
+    });
     res.status(200).json({
       success: true,
       donations: donations
@@ -691,6 +896,145 @@ app.get("/api/user-donations", authenticateToken, async (req, res) => {
   } catch (error) {
     res.status(404).json({
       success: false
+    });
+  }
+});
+app.get("/api/fundraiser-support/:id", async (req, res) => {
+  try {
+    const {
+      id
+    } = req.params;
+    const {
+      page
+    } = req.query;
+    const donations = await Donation.find({
+      fundraiser: id,
+      message: {
+        $ne: ""
+      },
+      incognito: false
+    }).skip(page * 10).limit(10).populate("user");
+    res.status(200).json({
+      success: true,
+      donations: donations
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false
+    });
+  }
+});
+app.get("/api/sent-donations", authenticateToken, async (req, res) => {
+  try {
+    const {
+      page
+    } = req.query;
+    const pageNumber = parseInt(page);
+    const [donations, totalDocuments] = await Promise.all([Donation.find({
+      user: req.user._id
+    }).skip((pageNumber - 1) * 10).limit(10).populate({
+      path: "fundraiser",
+      populate: {
+        path: "user",
+        model: "User"
+      }
+    }).populate("user").sort({
+      createdAt: -1,
+      _id: -1
+    }), Donation.find({
+      user: req.user._id
+    }).count()]);
+    console.log(donations);
+    res.status(200).json({
+      success: true,
+      donations,
+      count: totalDocuments
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false
+    });
+  }
+});
+app.get("/api/received-donations", authenticateToken, async (req, res) => {
+  try {
+    const {
+      page
+    } = req.query;
+    const pageNumber = parseInt(page);
+    const fundraisers = await Fundraiser.find({
+      user: req.user._id
+    }, "_id");
+    const [donations, totalDocuments] = await Promise.all([Donation.aggregate([{
+      $match: {
+        fundraiser: {
+          $in: fundraisers.map(fundraiser => fundraiser._id)
+        }
+      }
+    }, {
+      $lookup: {
+        from: "fundraisers",
+        localField: "fundraiser",
+        foreignField: "_id",
+        as: "fundraiser"
+      }
+    }, {
+      $unwind: "$fundraiser"
+    }, {
+      $lookup: {
+        from: "users",
+        localField: "fundraiser.user",
+        foreignField: "_id",
+        as: "fundraiser.user"
+      }
+    }, {
+      $unwind: "$fundraiser.user"
+    }, {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user"
+      }
+    }, {
+      $unwind: "$user"
+    }, {
+      $sort: {
+        createdAt: -1,
+        _id: -1
+      }
+    }, {
+      $skip: (pageNumber - 1) * 10
+    }, {
+      $limit: 10
+    }]), Donation.aggregate([{
+      $match: {
+        fundraiser: {
+          $in: fundraisers.map(fundraiser => fundraiser._id)
+        }
+      }
+    }, {
+      $lookup: {
+        from: "fundraisers",
+        localField: "fundraiser",
+        foreignField: "_id",
+        as: "fundraiser"
+      }
+    }, {
+      $unwind: "$fundraiser"
+    }, {
+      $count: "totalDocuments"
+    }])]);
+    res.status(200).json({
+      success: true,
+      donations,
+      count: totalDocuments[0].totalDocuments
+    });
+  } catch (error) {
+    console.error("Error fetching donations:", error);
+    res.status(500).json({
+      success: false,
+      error: "Internal server error"
     });
   }
 });
@@ -710,7 +1054,8 @@ app.get("/api/fundraisers/category/:id", async (req, res) => {
       const mostRecentDonation = await Donation.findOne({
         fundraiser: fundraiser._id
       }).sort({
-        createdAt: -1
+        createdAt: -1,
+        _id: -1
       }).select("createdAt");
       const lastDonationCreatedAt = mostRecentDonation ? mostRecentDonation.createdAt : null;
       return {
@@ -902,7 +1247,6 @@ app.get("/api/create-donation/:id/:userId/:tip/:incognito/:message", async (req,
       incognito,
       message
     } = req.params;
-    console.log(tip, incognito, message);
     const {
       payment_ref
     } = req.query;
@@ -950,13 +1294,56 @@ app.get("/api/user-stats", authenticateToken, async (req, res) => {
     const WeekTwo = new Date(WeekThree - 7 * 24 * 60 * 60 * 1000);
     const WeekOne = new Date(WeekTwo - 7 * 24 * 60 * 60 * 1000);
     const WeekZero = new Date(WeekOne - 7 * 24 * 60 * 60 * 1000);
-    const [last7, third7, second7, first7, before7, totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived, messages] = await Promise.all([Fundraiser.find({
+    const fundraisers = await Fundraiser.find({
+      user: req.user._id
+    }, "_id");
+    const [last7, third7, second7, first7, before7, totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived, messages, lastFiveDonationsReceived] = await Promise.all([Fundraiser.find({
       createdAt: {
         $gte: thisWeek
       }
     }).count(), fetchFundraisersCreatedCountByDate(WeekThree, thisWeek), fetchFundraisersCreatedCountByDate(WeekTwo, WeekThree), fetchFundraisersCreatedCountByDate(WeekOne, WeekTwo), fetchFundraisersCreatedCountByDate(WeekZero, WeekOne), fetchUserTotalDonations(req.user._id), fetchUserTotalFundraisers(req.user._id), fetchUserTotalMoneySent(req.user._id), fetchUserTotalMoneyReceived(req.user._id), ContactUser.find({
       recipientId: req.user._id
-    }).limit(5).populate("senderId recipientId")]);
+    }).limit(5).populate("senderId recipientId"), Donation.aggregate([{
+      $match: {
+        fundraiser: {
+          $in: fundraisers.map(fundraiser => fundraiser._id)
+        }
+      }
+    }, {
+      $lookup: {
+        from: "fundraisers",
+        localField: "fundraiser",
+        foreignField: "_id",
+        as: "fundraiser"
+      }
+    }, {
+      $unwind: "$fundraiser"
+    }, {
+      $lookup: {
+        from: "users",
+        localField: "fundraiser.user",
+        foreignField: "_id",
+        as: "fundraiser.user"
+      }
+    }, {
+      $unwind: "$fundraiser.user"
+    }, {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user"
+      }
+    }, {
+      $unwind: "$user"
+    }, {
+      $sort: {
+        createdAt: -1,
+        _id: -1
+      }
+    }, {
+      $limit: 5
+    }])]);
     res.status(200).json({
       success: true,
       data: [before7, first7, second7, third7, last7],
@@ -964,7 +1351,8 @@ app.get("/api/user-stats", authenticateToken, async (req, res) => {
       totalFundraisers,
       totalMoneySent,
       totalMoneyReceived,
-      messages
+      messages,
+      lastFiveDonationsReceived
     });
   } catch (error) {
     console.log(error);
@@ -1020,7 +1408,6 @@ app.post("/api/contact-user", authenticateToken, async (req, res) => {
         message
       };
     }
-    console.log(contact);
     await ContactUser.create(contact);
     res.status(201).json({
       success: true

@@ -17,8 +17,8 @@ export default function WhyUse3aweniSection() {
             simple et optimisée pour les personnes qui souhaitent faire un don.
           </p>
         </div>
-        <div className="hands-cards flex flex-wrap">
-          <div className="max-w-[340px] lg:max-w-sm hands-card__item to-right">
+        <div className="hands-cards flex flex-wrap justify-center items-center gap-5 lg:gap-[2.5%] px-5">
+          <div className="w-8/12 sm:w-1/2 lg:w-[30%] max-h-[430px] max-w-[340px] lg:max-w-sm hands-card__item to-right">
             <lottie-player
               className="hands-card__video"
               src="https://assets2.lottiefiles.com/private_files/lf30_7mp95dwr.json"
@@ -35,7 +35,7 @@ export default function WhyUse3aweniSection() {
               </p>
             </div>
           </div>
-          <div className="max-w-[340px] lg:max-w-sm hands-card__item to-right2">
+          <div className="w-8/12 sm:w-1/2 lg:w-[30%] max-h-[430px] max-w-[340px] lg:max-w-sm hands-card__item to-right2">
             <lottie-player
               className="hands-card__video"
               src="https://assets8.lottiefiles.com/packages/lf20_fT3BtogoiM.json"
@@ -52,7 +52,7 @@ export default function WhyUse3aweniSection() {
               </p>
             </div>
           </div>
-          <div className="max-w-[340px] lg:max-w-sm hands-card__item to-right3">
+          <div className="w-8/12 sm:w-1/2 lg:w-[30%] max-h-[430px] max-w-[340px] lg:max-w-sm hands-card__item to-right3">
             <lottie-player
               className="hands-card__video"
               src="https://assets7.lottiefiles.com/packages/lf20_msdmfngy.json"
@@ -65,7 +65,7 @@ export default function WhyUse3aweniSection() {
             <div className="hands-card__info">
               <h4 className="hands-card__title">Paiement sécurisés</h4>
               <p className="hands-card__description">
-                Nous avons assuré la sécurité des paiements et des comptes.
+                Vos paiement sont 100% sécurisés.
               </p>
             </div>
           </div>

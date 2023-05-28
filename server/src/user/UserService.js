@@ -91,9 +91,16 @@ const fetchUserTotalMoneyReceived = async (id) => {
         totalAmount: { $arrayElemAt: ["$donations.totalAmount", 0] },
       },
     },
+    {
+      $match: {
+        totalAmount: { $ne: null, $ne: undefined },
+      },
+    },
   ]);
 
-  return totalMoneyReceived.length > 0 ? totalMoneyReceived[0].totalAmount : 0;
+  return totalMoneyReceived.length > 0 ? totalMoneyReceived
+  .map((donation) => donation.totalAmount) // Extract the amount attribute
+  .reduce((sum, amount) => sum + amount, 0) : 0;
 };
 
 exports.register = register;

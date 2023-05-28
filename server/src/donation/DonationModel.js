@@ -15,15 +15,15 @@ const donation = new mongoose.Schema(
     amount: {
       type: Number,
       required: true,
-      minlength: 1000000,
-      maxlength: 50,
+      min: 1000000,
+      max: 50,
     },
     tip: {
       type: Number,
       required: false,
       default: 0,
-      minlength: 1000000,
-      maxlength: 50,
+      min: 1000000,
+      max: 50,
     },
     incognito: {
       type: Boolean,

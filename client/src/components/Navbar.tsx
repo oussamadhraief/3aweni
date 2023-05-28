@@ -4,7 +4,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { IoIosArrowDown } from "react-icons/io";
 import { useRef, useState } from "react";
 import { categories } from "../utils/categoriesData";
-import useClickOutside from "./useClickOutside";
+import useClickOutside from "../hooks/useClickOutside";
 
 export default function Navbar({
   Show,
@@ -30,7 +30,7 @@ export default function Navbar({
           Show
             ? "absolute top-full left-0 flex flex-col py-10 gap-8 w-full shadow-md"
             : "hidden"
-        } main-menu__list md:relative md:shadow-none md:gap-0 py-4 bg-white md:flex justify-center items-center flex-col md:flex-row`}
+        } main-menu__list md:relative md:top-0 md:shadow-none md:gap-0 md:py-4 bg-white justify-center md:flex items-center flex-col md:flex-row`}
       >
         <li className="dropdown dropdown-bottom dropdown-end flex items-center gap-3 relative group main-menu__item">
           <Link
@@ -57,7 +57,7 @@ export default function Navbar({
             </IconContext.Provider>
           </button>
           {Open && (
-            <ul className="absolute top-8 left-0 menu shadow-form rounded-lg h-[320px] flex flex-col items-center w-[340px] flex-wrap py-1 bg-white text-sm">
+            <ul className="absolute top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-0 menu shadow-form rounded-lg h-[320px] flex flex-col items-center w-[340px] flex-wrap py-1 bg-white text-sm z-50">
               {categories.map((item) => (
                 <li>
                   <Link

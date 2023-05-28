@@ -20,7 +20,7 @@ export default function Header() {
         <div className="flex">
           <Link className="header__logo" to="/">
             <img
-              className="header__icon"
+              className="header__icon w-24 sm:w-32"
               src="/secondary_logo.png"
               alt="logo"
             />

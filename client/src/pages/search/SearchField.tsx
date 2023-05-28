@@ -154,14 +154,14 @@ export default function SearchField() {
   };
 
   return (
-    <main className="mt-[94px] pt-24 flex flex-col items-center justify-center">
+    <main className="mt-[94px] pt-24 flex flex-col items-center justify-center px-5 md:px-8">
       <form
         onSubmit={(e) => {
           e.preventDefault();
 
           handleSearchSubmit();
         }}
-        className="relative w-1/3 rounded-full border border-gray-400 flex items-center pr-3 overflow-hidden mb-14"
+        className="relative w-1/3 min-w-fit rounded-full border border-gray-400 flex items-center pr-3 overflow-hidden mb-14"
       >
         <button className="px-2 h-10 flex justify-center items-center outline-none">
           <IconContext.Provider
@@ -172,13 +172,13 @@ export default function SearchField() {
         </button>
         <input
           placeholder="Chercher un 3aweni"
-          className="w-full outline-none h-10 placeholder:text-sm placeholder:font-thin placeholder:text-gray-600"
+          className="w-full outline-none h-10 placeholder:text-sm placeholder:font-thin placeholder:text-gray-600 min-w-[200px]"
           value={Search}
           onChange={handleChange}
         />
         <button
           type="button"
-          className={`rounded-md  ${
+          className={`rounded-md text-sm  ${
             FiltersCount !== 0
               ? "pl-1.5 pr-3 bg-secondary text-white"
               : "px-3 bg-gray-200 text-black"
@@ -206,7 +206,6 @@ export default function SearchField() {
           className="fixed inset-0 bg-gray-600/40 z-[100]"
           onClick={() => {
             setOpen(false);
-            handleFiltersReset();
           }}
         ></div>
       )}
@@ -225,7 +224,6 @@ export default function SearchField() {
             className="p-1.5 rounded-full hover:bg-gray-200"
             onClick={() => {
               setOpen(false);
-              handleFiltersReset();
             }}
           >
             <IconContext.Provider value={{ className: "h-5 w-5" }}>

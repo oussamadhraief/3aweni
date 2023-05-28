@@ -1,15 +1,13 @@
 import axios from "../../../utils/axiosConfig";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { IconContext } from "react-icons";
 import { RiDeleteBinLine } from "react-icons/ri";
 import UserImageModal from "../../../components/UserImageModal";
 import { userInt } from "../../../utils/interfaces";
 import useAuthContext from "../../../hooks/useAuthContext";
 import useLoadingAuthContext from "../../../hooks/useLoadingAuthContext";
-import getUser from "../../../hooks/getUser";
 import { FiCheck, FiEdit2 } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
-import { userInfo } from "os";
 
 interface userInfoInt {
   name: string;
@@ -148,16 +146,57 @@ export default function DashboardSettings() {
   };
 
   const handleSetEditingPassword = () => {
-    if (user) {
-      setUserPassword({
-        currentPassowrd: "",
-        newPassword: "",
-        newPasswordConfirmation: "",
-      });
-    }
+    setUserPassword({
+      currentPassowrd: "",
+      newPassword: "",
+      newPasswordConfirmation: "",
+    });
     setEditingEmail(false);
     setEditingInfo(false);
     setEditingPassword(true);
+  };
+
+  const handleChangeEmail = (e: FormEvent) => {
+    e.preventDefault();
+    axios.patch("/api/user/email", { email: UserEmail }).then(() => {
+      setEditingEmail(false);
+      login({
+        ...user!,
+        email: UserEmail,
+      });
+    });
+  };
+
+  const handleChangePersonalInfo = (e: FormEvent) => {
+    e.preventDefault();
+    axios
+      .patch("/api/user/info", { name: UserInfo.name, phone: UserInfo.phone })
+      .then(() => {
+        setEditingInfo(false);
+        login({
+          ...user!,
+          name: UserInfo.name,
+          phone: UserInfo.phone,
+        });
+      });
+  };
+
+  const handleChangePassword = (e: FormEvent) => {
+    e.preventDefault();
+    axios
+      .patch("/api/user/password", {
+        currentPassword: UserPassword.currentPassowrd,
+        newPassword: UserPassword.newPassword,
+        newPasswordConfirmation: UserPassword.newPasswordConfirmation,
+      })
+      .then(() => {
+        setEditingPassword(false);
+        setUserPassword({
+          currentPassowrd: "",
+          newPassword: "",
+          newPasswordConfirmation: "",
+        });
+      });
   };
 
   return (
@@ -214,10 +253,13 @@ export default function DashboardSettings() {
               Adresse E-mail
             </h2>
             {EditingEmail ? (
-              <div className="flex gap-2 items-end max-w-sm md:w-full">
+              <form
+                className="flex gap-2 items-end max-w-sm md:w-full"
+                onSubmit={handleChangeEmail}
+              >
                 <input
-                  type="text"
-                  id="exemple@email.com"
+                  type="email"
+                  
                   className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
                   placeholder="Email"
                   name="email"
@@ -232,6 +274,7 @@ export default function DashboardSettings() {
                   </IconContext.Provider>
                 </button>
                 <button
+                  type="button"
                   className="w-fit h-fit p-1 rounded-full bg-[#eee]"
                   onClick={() => setEditingEmail(false)}
                 >
@@ -239,7 +282,7 @@ export default function DashboardSettings() {
                     <IoMdClose />
                   </IconContext.Provider>
                 </button>
-              </div>
+              </form>
             ) : (
               <button
                 className="w-fit h-fit p-1.5 rounded-full bg-[#eee]"
@@ -257,11 +300,14 @@ export default function DashboardSettings() {
               Informations personnelles
             </h2>
             {EditingInfo ? (
-              <div className="flex gap-2 items-center max-w-sm md:w-full">
+              <form
+                className="flex gap-2 items-center max-w-sm md:w-full"
+                onSubmit={handleChangePersonalInfo}
+              >
                 <div className="flex flex-col gap-5 w-full">
                   <input
                     type="text"
-                    id="exemple@email.com"
+                    
                     className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
                     placeholder="Nom et prénom"
                     name="name"
@@ -274,8 +320,8 @@ export default function DashboardSettings() {
                     }
                   />
                   <input
-                    type="text"
-                    id="exemple@email.com"
+                    type="number"
+                    
                     className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
                     placeholder="Num. de tél"
                     name="phone"
@@ -297,13 +343,14 @@ export default function DashboardSettings() {
                 </button>
                 <button
                   className="w-fit h-fit p-1 rounded-full bg-[#eee]"
+                  type="button"
                   onClick={() => setEditingInfo(false)}
                 >
                   <IconContext.Provider value={{ className: "" }}>
                     <IoMdClose />
                   </IconContext.Provider>
                 </button>
-              </div>
+              </form>
             ) : (
               <button
                 className="w-fit h-fit p-1.5 rounded-full bg-[#eee]"
@@ -319,11 +366,14 @@ export default function DashboardSettings() {
           <div className="items-start justify-between w-full px-6 py-4 space-y-4 text-gray-500 md:flex md:space-y-0 pb-10">
             <h2 className="w-fit h-fit whitespace-nowrap">Mot de passe</h2>
             {EditingPassword ? (
-              <div className="flex gap-2 items-center max-w-sm md:w-full">
+              <form
+                className="flex gap-2 items-center max-w-sm md:w-full"
+                onSubmit={handleChangePassword}
+              >
                 <div className="flex flex-col gap-5 w-full">
                   <input
-                    type="text"
-                    id="exemple@email.com"
+                    type="password"
+                    
                     className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
                     placeholder="Ancien mot de passe"
                     name="currentPassowrd"
@@ -336,8 +386,8 @@ export default function DashboardSettings() {
                     }
                   />
                   <input
-                    type="text"
-                    id="exemple@email.com"
+                    type="password"
+                    
                     className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
                     placeholder="Nouveau mot de passe"
                     name="newPassword"
@@ -350,8 +400,8 @@ export default function DashboardSettings() {
                     }
                   />
                   <input
-                    type="text"
-                    id="exemple@email.com"
+                    type="password"
+                    
                     className="w-full h-9 flex-1 appearance-none border-b border-[#bbb] p-1 bg-white text-gray-700 placeholder-zinc-400 shadow-sm text-sm focus:outline-none"
                     placeholder="Confirmez le nouveau mot de passe"
                     name="newPasswordConfirmation"
@@ -372,6 +422,7 @@ export default function DashboardSettings() {
                   </IconContext.Provider>
                 </button>
                 <button
+                  type="button"
                   className="w-fit h-fit p-1 rounded-full bg-[#eee]"
                   onClick={() => setEditingPassword(false)}
                 >
@@ -379,7 +430,7 @@ export default function DashboardSettings() {
                     <IoMdClose />
                   </IconContext.Provider>
                 </button>
-              </div>
+              </form>
             ) : (
               <button
                 className="w-fit h-fit p-1.5 rounded-full bg-[#eee]"

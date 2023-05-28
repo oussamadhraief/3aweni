@@ -1,7 +1,7 @@
 import axios from "../../utils/axiosConfig";
 import { useEffect, useRef, useState } from "react";
 import { IconContext } from "react-icons";
-import { MdIosShare } from "react-icons/md";
+import { MdIosShare, MdOutlineDateRange } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import { donation, fundraiserInt } from "../../utils/interfaces";
 import { AiFillWarning } from "react-icons/ai";
@@ -10,12 +10,17 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { categories } from "../../utils/categoriesData";
 import { HiOutlineTag } from "react-icons/hi";
 import ContactModal from "../../components/ContactModal";
+import DonationsModal from "../../components/DonationsModal";
 import { calculateTimeAgo } from "../../utils/convertTimeToRelative";
+import { GoLocation } from "react-icons/go";
+import useDonationSearch from "../../hooks/useDonationsFetch";
+import WordsOfSupportSection from "../../components/WordsOfSupportSection";
 
 export default function SingleFundraiser() {
   const carousel = useRef<HTMLDivElement>(null);
   const { id } = useParams();
   const { user } = useAuthContext();
+
 
   const [Fundraiser, setFundraiser] = useState<fundraiserInt>({
     _id: "",
@@ -35,10 +40,12 @@ export default function SingleFundraiser() {
   });
   const [WarningOpen, setWarningOpen] = useState<boolean>(true);
   const [Open, setOpen] = useState<boolean>(false);
+  const [Show, setShow] = useState<boolean>(false);
   const [ShowMain, setShowMain] = useState({ type: "image", index: 0 });
   const [CollectedAmount, setCollectedAmount] = useState<number>(0);
   const [TotalDonations, setTotalDonations] = useState<string>("0");
   const [TopDonation, setTopDonation] = useState<donation>({
+    _id: '',
     user: null,
     fundraiser: null,
     amount: 0,
@@ -49,6 +56,7 @@ export default function SingleFundraiser() {
     updatedAt: null,
   });
   const [MostRecentDonation, setMostRecentDonation] = useState<donation>({
+    _id: '',
     user: null,
     fundraiser: null,
     amount: 0,
@@ -59,6 +67,7 @@ export default function SingleFundraiser() {
     updatedAt: null,
   });
   const [FirstDonation, setFirstDonation] = useState<donation>({
+    _id: '',
     user: null,
     fundraiser: null,
     amount: 0,
@@ -68,7 +77,7 @@ export default function SingleFundraiser() {
     createdAt: null,
     updatedAt: null,
   });
-  const [WordsOfSupport, setWordsOfSupport] = useState<donation[]>();
+  
 
   useEffect(() => {
     if (id) {
@@ -81,7 +90,6 @@ export default function SingleFundraiser() {
             topDonation,
             mostRecentDonation,
             firstDonation,
-            wordsOfSupport,
           },
         } = response;
 
@@ -92,7 +100,6 @@ export default function SingleFundraiser() {
         setMostRecentDonation(mostRecentDonation);
         setFirstDonation(firstDonation);
         setFundraiser(fundraiser);
-        setWordsOfSupport(wordsOfSupport);
       });
     }
   }, []);
@@ -124,7 +131,7 @@ export default function SingleFundraiser() {
   };
 
   return (
-    <main className="relative mt-[94px] py-10  flex flex-col items-center justify-center">
+    <main className="relative mt-[94px] pb-10  flex flex-col items-center justify-center">
       <section className="w-full h-fit min-h-fit max-w-7xl mx-auto text-gray-600 px-5 fundraiser-container">
         {user?._id === Fundraiser.user?._id && WarningOpen && (
           <div className="fixed bottom-0 left-0 bg-lighter_blue/80 w-full flex justify-between items-center py-3 px-10 text-secondary z-50">
@@ -156,7 +163,7 @@ export default function SingleFundraiser() {
             </Link>
           </div>
         )}
-        <h1 className="text-2xl font-semibold text-gray-800 grid-fundraiser-title my-5">
+        <h1 className="text-3xl font-semibold text-gray-800 grid-fundraiser-title my-5">
           {Fundraiser.title}
         </h1>
         <div className="aspect-[7/4] flex items-center justify-center grid-fundraiser-image">
@@ -260,20 +267,26 @@ export default function SingleFundraiser() {
         ) : null}
 
         <div className="mt-5 mb-2 text-sm flex items-center gap-1 grid-fundraiser-date-category">
-          <p>créé il y a {calculateTimeAgo(Fundraiser.createdAt)} - </p>
+          <MdOutlineDateRange />
+          <p>créé il y a {calculateTimeAgo(Fundraiser.createdAt)}  </p>
+          <p className="rounded-full w-[5px] h-[5px] border border-zinc-500 mx-1.5"></p>
           <HiOutlineTag />
           <Link to={`/discover/${Fundraiser.category}`} className="underline">
             {
               categories.find(
                 (category) => category.value === Fundraiser.category
-              )?.label
-            }
+                )?.label
+              }
           </Link>
+           
+              <p className="rounded-full w-[5px] h-[5px] border border-zinc-500 mx-1.5"></p>
+            <GoLocation />
+            <p>{Fundraiser.state}, Tunisie.</p>
         </div>
 
-        <div className="w-full px-8 py-6 sm:flex justify-between sm:space-x-6 border-y border-secondary/50 grid-fundraiser-organizer">
-          <div className="flex space-x-6">
-            <div className="flex-shrink-0 w-16 mb-6 h-16 sm:h-16 sm:w-16 sm:mb-0">
+        <div className="w-full px-8 pt-4 pb-3 sm:flex justify-between sm:space-x-6 border-y border-secondary/50 grid-fundraiser-organizer">
+          <div className="flex space-x-4">
+            <div className="flex-shrink-0 w-12 mb-6 h-12 sm:h-12 sm:w-12 sm:mb-0">
               <img
                 src={
                   Fundraiser.user?.image
@@ -284,22 +297,22 @@ export default function SingleFundraiser() {
                 className="object-cover object-center w-full h-full rounded-full"
               />
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-secondary">
+            <div className="flex flex-col justify-center">
+              <h2 className="text-sm font-semibold text-secondary">
                 {Fundraiser.user?.name}
               </h2>
-              <p className="text-sm text-zinc-600">Organisateur</p>
+              <p className="text-xs text-zinc-600">Organisateur</p>
             </div>
           </div>
           <button
-            className="border rounded px-2 py-0.5 border-secondary text-secondary self-center"
+            className="border rounded px-2 py-0.5 border-secondary text-secondary self-center hover:text-white hover:bg-secondary"
             onClick={() => setOpen(true)}
           >
             Contacter
           </button>
         </div>
 
-        <p className="my-5 text-sm grid-fundraiser-description">
+        <p className="my-5 text-sm grid-fundraiser-description break-words">
           {Fundraiser.description
             ? Fundraiser.description
             : "Pas de description"}
@@ -308,11 +321,11 @@ export default function SingleFundraiser() {
         <div className="flex gap-3 items-center grid-fundraiser-buttons">
           <Link
             to={`/donate/${Fundraiser._id}`}
-            className="w-full text-white py-2.5 rounded-lg my-3 flex flex-nowrap items-center gap-2 justify-center shadow-form bg-secondary hover:-translate-y-1 transition-all"
+            className="w-full text-white py-2.5 rounded-xl my-3 flex flex-nowrap items-center gap-2 justify-center bg-secondary shadow-modern  shadow-secondary/30 hover:shadow-xxxl hover:shadow-secondary/30 transition-all"
           >
             Donate
           </Link>
-          <button className="h-fit border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-[9px] rounded-lg flex justify-center items-center flex-nowrap gap-1">
+          <button className="h-fit border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-[9px] rounded-xl flex justify-center items-center flex-nowrap gap-1">
             <IconContext.Provider value={{ className: "h-4 w-4 mb-0.5" }}>
               <MdIosShare />
             </IconContext.Provider>
@@ -320,33 +333,7 @@ export default function SingleFundraiser() {
           </button>
         </div>
 
-        <div className="grid-fundraiser-donations flex flex-col gap-12">
-          <h3 className="text-lg font-bold mt-5">Des mots du cœur</h3>
-          {WordsOfSupport?.map((item) => (
-            <div className="flex items-start gap-3 text-sm">
-              <a href="#" className="relative block">
-                <img
-                  alt="profil"
-                  src={
-                    item?.user?.image
-                      ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item?.user?.image}`
-                      : "/profile.png"
-                  }
-                  className="mx-auto object-cover rounded-full h-12 w-12 "
-                />
-              </a>
-              <div className="flex flex-col">
-                <strong>{item.user?.name}</strong>
-                <div className="flex items-center gap-2 flex-nowrap text-xs">
-                  <p>{item.amount.toFixed(2)} TND</p>
-                  -
-                  <p>{calculateTimeAgo(item.createdAt)}</p>
-                </div>
-                <p className="mt-1">{item.message}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <WordsOfSupportSection />
 
         <div className="relative grid-fundraiser-sidebar">
           <div className="sticky card w-fit bg-base-100 shadow-form rounded-lg px-4 top-24 self-end">
@@ -365,7 +352,7 @@ export default function SingleFundraiser() {
                     ? (CollectedAmount / parseFloat(Fundraiser.goal)) * 100
                     : 0
                 }
-                className="w-full h-2 my-1 overflow-hidden rounded bg-secondary/10 [&::-webkit-progress-bar]:bg-secondary/10 [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
+                className="w-full h-1.5 my-1 overflow-hidden rounded bg-emerald-500/10 [&::-webkit-progress-bar]:bg-emerald-500/10 [&::-webkit-progress-value]:bg-emerald-500 [&::-moz-progress-bar]:bg-emerald-500"
               />
               <p className="text-zinc-500 font-thin text-xs">
                 {TotalDonations} dons
@@ -470,17 +457,17 @@ export default function SingleFundraiser() {
                 </div>
               </div>
 
-              <button className="text-gray-700 underline w-fit self-center py-1 rounded-lg text-sm">
+              <button className="text-secondary px-1.5 border border-secondary hover:bg-secondary hover:text-white w-fit self-center py-0.5 rounded-lg text-xs" onClick={() => setShow(true)}>
                 Voir tous
               </button>
 
               <Link
                 to={`/donate/${Fundraiser._id}`}
-                className="w-full text-white py-2.5 rounded-lg my-3 flex flex-nowrap items-center gap-2 justify-center shadow-form bg-secondary hover:-translate-y-1 transition-all"
+                className="w-full text-white py-2.5 rounded-2xl my-3 flex flex-nowrap items-center gap-2 justify-center bg-secondary shadow-modern  shadow-secondary/30 hover:shadow-xxxl hover:shadow-secondary/30 transition-all"
               >
                 Donate
               </Link>
-              <button className="h-9 border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-1.5 rounded-lg flex justify-center items-center flex-nowrap gap-1">
+              <button className="h-9 border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-1.5 rounded-xl flex justify-center items-center flex-nowrap gap-1">
                 <IconContext.Provider value={{ className: "h-4 w-4 mb-0.5" }}>
                   <MdIosShare />
                 </IconContext.Provider>
@@ -495,6 +482,11 @@ export default function SingleFundraiser() {
         onClose={() => setOpen(false)}
         name={Fundraiser.user?.name}
         id={Fundraiser.user?._id}
+      />
+      <DonationsModal
+        open={Show}
+        onClose={() => setShow(false)}
+        totalDonations={TotalDonations}
       />
     </main>
   );

@@ -11,9 +11,7 @@ export default function SearchPageSuggestions({
   city: string | null;
 }) {
   const [TabSelection, setTabSelection] = useState<boolean>(true);
-  const [TrendingFundraisers, setTrendingFundraisers] = useState<
-    fundraiserInt[]
-  >([]);
+  const [TrendingFundraisers, setTrendingFundraisers] = useState<fundraiserInt[]>([]);
   const [CloseFundraisers, setCloseFundraisers] = useState<fundraiserInt[]>([]);
 
   useEffect(() => {
@@ -70,7 +68,7 @@ export default function SearchPageSuggestions({
         </button>
       </div>
       {TabSelection ? (
-        <div className="w-full grid grid-cols-4 grid-rows-2 gap-5 overflow-visible fade-in-bottom">
+        <div className="w-full grid grid-cols-4 grid-rows-5 sm:grid-rows-2 gap-5 overflow-visible fade-in-bottom">
           {TrendingFundraisers.length ? (
             TrendingFundraisers.map((item, index) => {
               if (index == 0)
@@ -78,7 +76,7 @@ export default function SearchPageSuggestions({
                   <Link
                     key={item._id}
                     to={`/fundraisers/${item._id}`}
-                    className="flex flex-col items-start rounded-xl bg-white col-span-full md:col-span-2 row-span-2"
+                    className="flex flex-col items-start rounded-xl bg-white col-span-full sm:col-span-2 row-span-1 md:row-span-2"
                   >
                     <img
                       src={
@@ -102,7 +100,7 @@ export default function SearchPageSuggestions({
                 <Link
                   key={item._id}
                   to={`/fundraisers/${item._id}`}
-                  className="flex flex-col items-start rounded-xl bg-white row-span-1"
+                  className="flex flex-col items-start rounded-xl bg-white col-span-full sm:col-span-2 md:col-span-1 row-span-1"
                 >
                   <img
                     src={
@@ -131,7 +129,7 @@ export default function SearchPageSuggestions({
       ) : null}
 
       {!TabSelection && (
-        <div className="w-full grid grid-cols-4 gap-5 overflow-visible fade-in-bottom">
+        <div className="w-full grid grid-cols-4 grid-rows-5 sm:grid-rows-2 gap-5 overflow-visible fade-in-bottom">
           {locationPermission === false ? (
             <div className="col-span-full">
               L'autorisation de localisation est refusée. Veuillez activer
@@ -139,12 +137,12 @@ export default function SearchPageSuggestions({
             </div>
           ) : CloseFundraisers.length ? (
             CloseFundraisers.map((item, index) => {
-              if (index == 0)
+              if (index == 2)
                 return (
                   <Link
                     key={item._id}
                     to={`/fundraisers/${item._id}`}
-                    className="flex flex-col items-start rounded-xl bg-white col-span-full md:col-span-2 row-span-2"
+                    className="flex flex-col items-start rounded-xl bg-white col-span-full sm:col-span-2 row-span-1 md:row-span-2"
                   >
                     <img
                       src={
@@ -168,7 +166,7 @@ export default function SearchPageSuggestions({
                 <Link
                   key={item._id}
                   to={`/fundraisers/${item._id}`}
-                  className="flex flex-col items-start rounded-xl bg-white row-span-1"
+                  className="flex flex-col items-start rounded-xl bg-white col-span-full sm:col-span-2 md:col-span-1 row-span-1"
                 >
                   <img
                     src={

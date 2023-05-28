@@ -84,7 +84,7 @@ export default function UserDashboard() {
                   ? "hover:text-primary flex items-center p-2 my-4 transition-colors duration-200  text-primary rounded-l-lg border-r-2 border-primary bg-primary/10 text-[15px]"
                   : "hover:text-gray-800 hover:bg-gray-100 flex items-center p-2 my-4 transition-colors  duration-200  text-gray-600 rounded-lg text-[15px]"
               }
-              to="/dashboard/received-donations"
+              to="/dashboard/received-donations?page=1"
             >
               <IconContext.Provider
                 value={{ className: "w-5 h-5 text-gray-700" }}

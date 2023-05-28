@@ -7,11 +7,11 @@ export default function Footer() {
         <div className="footer__left">
           <div className="footer__info">
             <img className="footer__img" src="/official_logo.png" alt="logo" />
-            <p className="footer__description">
+            {/* <p className="footer__description">
               3aweni vous invite à vous inscrire à notre Newsletter.
-            </p>
+            </p> */}
           </div>
-          <form className="footer__form">
+          {/* <form className="footer__form">
             <input
               className="footer__form-input"
               placeholder="Votre adresse email"
@@ -33,7 +33,7 @@ export default function Footer() {
                 ></path>
               </svg>
             </button>
-          </form>
+          </form> */}
           <div className="footer__social">
             <Link className="footer__social-link" to="">
               <img

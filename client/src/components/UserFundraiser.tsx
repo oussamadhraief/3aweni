@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { IconContext } from "react-icons";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { Link } from "react-router-dom";
-import useClickOutside from "./useClickOutside";
+import useClickOutside from "../hooks/useClickOutside";
 
 export default function UserFundraiser({
   id,
