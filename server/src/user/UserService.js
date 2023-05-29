@@ -28,9 +28,41 @@ const register = async (email, password, name, phone, socketId) => {
 };
 
 const fetchUserTotalDonations = async (id) => {
-  const totalDonations = await Donation.find({ recipientId: id }).count();
+  const totalDonations = await Fundraiser.aggregate([
+    {
+      $match: {
+        user: mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $lookup: {
+        from: "donations",
+        localField: "_id",
+        foreignField: "fundraiser",
+        as: "donations",
+      },
+    },
+    {
+      $project: {
+        totalDonations: { $size: "$donations" },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: "$totalDonations" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        total: 1,
+      },
+    },
+  ]);
 
-  return totalDonations;
+  console.log(totalDonations);
+  return totalDonations[0].total;
 };
 
 const fetchUserTotalFundraisers = async (id) => {
