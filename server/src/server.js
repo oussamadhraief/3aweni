@@ -1246,6 +1246,7 @@ app.get("/api/user-stats", authenticateToken, async (req, res) => {
       fetchUserTotalMoneyReceived(req.user._id),
       ContactUser.find({ recipientId: req.user._id })
         .limit(5)
+        .sort({ createdAt: -1, _id: -1 })
         .populate("senderId recipientId"),
       Donation.aggregate([
         {
@@ -1337,10 +1338,10 @@ app.get("/api/unread-messages", authenticateToken, async (req, res) => {
 app.post("/api/contact-user", async (req, res) => {
   try {
     let contact;
-    const { message, id, recipientId } = req.body;
-
+    const { message, id, senderId } = req.body;
+    console.log(senderId);
     let user;
-    if (recipientId) user = await User.findOne({ _id: recipientId });
+    if (senderId) user = await User.findOne({ _id: senderId });
 
     if (user) {
       contact = {

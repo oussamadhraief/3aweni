@@ -1,6 +1,7 @@
 import axios from "../utils/axiosConfig";
 import { useEffect, useState } from "react";
 import ReactDom from "react-dom";
+import useAuthContext from "../hooks/useAuthContext";
 
 interface Props {
   open: boolean;
@@ -16,6 +17,9 @@ interface ContactFormInt {
 }
 
 export default function ContactModal({ open, onClose, name, id }: Props) {
+
+  const { user } = useAuthContext()
+
   const [Form, setForm] = useState<ContactFormInt>({
     name: "",
     email: "",
@@ -37,6 +41,7 @@ export default function ContactModal({ open, onClose, name, id }: Props) {
       {
         id,
         ...Form,
+        senderId: user ? user._id : null
       });
   };
 

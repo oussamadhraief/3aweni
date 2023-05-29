@@ -190,7 +190,6 @@ app.post("/api/user/login", async (req, res) => {
       email: user.email,
       image: user.image
     };
-    // Return the token in the response
     res.json({
       success: true,
       token,

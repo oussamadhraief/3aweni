@@ -57,7 +57,7 @@ export default function Navbar({
             </IconContext.Provider>
           </button>
           {Open && (
-            <ul className="absolute top-8 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-0 menu shadow-form rounded-lg h-fit sm:h-[320px] flex flex-col items-center w-52 sm:w-[340px] flex-wrap py-1 bg-white text-sm z-50">
+            <ul className="absolute top-8 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-0 menu shadow-form rounded-lg h-52 overflow-auto sm:overflow-hidden sm:h-[320px] flex flex-col items-center w-[340px] sm:w-[340px] flex-wrap py-1 bg-white text-sm z-50">
               {categories.map((item) => (
                 <li>
                   <Link

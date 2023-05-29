@@ -18,7 +18,7 @@ export default function Pagination({ PageNumber, Count, handlePageChange }: { Pa
                     <path d="M1427 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z"></path>
                   </svg>
                 </button>
-                {((PageNumber > 2 || Count == 0 || !(Count > 3)))  ? <button onClick={() => handlePageChange(1)}
+                {(((PageNumber > 2 && Count > 3) || (Count < 3)))  ? <button onClick={() => handlePageChange(1)}
                   type="button"
                   className={`w-full px-4 py-2 cursor-pointer text-base text-text-zinc-700 border-y bg-white  hover:bg-gray-100 `}
                 >

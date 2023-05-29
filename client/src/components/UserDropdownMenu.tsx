@@ -49,7 +49,7 @@ export default function UserDropdownMenu({ main }: { main: Boolean }) {
             alt=""
             className="w-7 h-7 sm:w-8 sm:h-8 rounded-full mx-auto object-cover"
           />
-          {NumberOfUnreadMessages > 0 && <span className="absolute top-0 right-0">
+          {(NumberOfUnreadMessages > 0 && location.pathname != '/dashboard/messages') && <span className="absolute top-0 right-0">
                 <button
                   type="button"
                   className="w-5 h-5 text-[10px] rounded-full text-white bg-red-500"

@@ -12,10 +12,12 @@ import {
 import { Line } from "react-chartjs-2";
 import axios from "../../../utils/axiosConfig";
 import { IconContext } from "react-icons";
-import { BiMessageSquare } from "react-icons/bi";
+import { BiDonateHeart, BiMessageSquare } from "react-icons/bi";
 import { donation, message } from "../../../utils/interfaces";
 import { calculateTimeAgo } from "../../../utils/convertTimeToRelative";
 import { Link } from "react-router-dom";
+import { RiProfileLine, RiSendPlaneLine } from "react-icons/ri";
+import { MdOutlineAttachMoney } from "react-icons/md";
 
 ChartJS.register(
   CategoryScale,
@@ -35,7 +37,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: "Dons reçus durant les derniers 28 jours",
+      text: "Total des fonds reçus durant les derniers 28 jours",
     },
   },
 };
@@ -67,10 +69,10 @@ export default function DashboardStats() {
     ],
     datasets: [
       {
-        label: "Dons reçus",
+        label: "Total des fonds reçus",
         data: ChartData,
-        borderColor: "#F46752",
-        backgroundColor: "#F46752",
+        borderColor: "#22D3EE",
+        backgroundColor: "#22D3EE",
       },
     ],
   };
@@ -103,19 +105,23 @@ export default function DashboardStats() {
   if (Loading) return null;
 
   return (
-    <main className="text-gray-600 bg-gray-50 dashboard-main-section flex justify-center items-start overflow-auto">
-      <div className="w-full max-w-[1480px] grid grid-cols-6 px-3 py-8 md:px-5 md:py-10 overflow-y-auto gap-y-10">
+    <main className="text-gray-600 bg-gray-50 dashboard-main-section flex justify-center items-start overflow-y-auto overflow-x-hidden">
+      <div className="w-full max-w-[1480px] grid grid-cols-6 px-3 py-8 md:px-5 md:py-10 overflow-y-auto overflow-x-hidden gap-y-10">
         <div className="col-span-full flex items-start justify-center gap-5 flex-wrap xl:flex-nowrap h-fit">
           <div className="min-w-full lg:min-w-[505px] lg:max-w-[850px] aspect-video flex-grow shadow bg-white rounded-2xl h-fit min-h-[400px] md:p-4 hidden sm:flex items-center justify-center ">
             <Line options={options} data={data} />
           </div>
           <div className="w-96 xl:w-[300px] 2xl:w-[410px] aspect-square min-w-[300px] h-full min-h-[400px] flex justify-center items-start">
             <div className="w-full ml-5 min-h-full h-full p-4 bg-white shadow rounded-2xl">
-              <div className="flex gap-1 items-center">
+              <div className="w-full justify-between flex gap-1 items-center">
+                <div className="flex items-center gap-1">
+                  
                 <IconContext.Provider value={{ className: "text-2xl" }}>
                   <BiMessageSquare />
                 </IconContext.Provider>
                 <p className="font-bold text-black text-md">Messages</p>
+                </div>
+                <Link to='/dashboard/messages' className="text-sm underline text-gray-700">Voir tous</Link>
               </div>
               <ul>
                 {Messages?.map((item) => (
@@ -147,89 +153,53 @@ export default function DashboardStats() {
         </div>
 
         <div className="col-span-full flex flex-wrap justify-evenly gap-5">
-          <div className="max-w-[330px] min-w-[260px] w-1/4 min-w-52 bg-white p-5 inline-grid grid-cols-1 shadow rounded-lg">
-            <div className="stat-figure mt-2 text-secondary">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block w-8 h-8 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-            </div>
-            <div className="stat-title">Total money received</div>
-            <div className="stat-value mt-2 text-2xl text-zinc-700">
-              {TotalMoneyReceived}
-            </div>
-          </div>
 
-          <div className="max-w-[330px] min-w-[260px] w-1/4 min-w-52 bg-white p-5 inline-grid grid-cols-1 shadow rounded-lg">
+        <div className="max-w-[330px] min-w-[260px] w-1/4 min-w-52 bg-white p-5 inline-grid grid-cols-1 shadow rounded-lg">
             <div className="stat-figure mt-2 text-yellow-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block w-8 h-8 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
+            <IconContext.Provider value={{ className: 'w-6 h-6 text-blue-500'}}>
+                <RiProfileLine />
+              </IconContext.Provider>
             </div>
-            <div className="stat-title">Total fundraisers created</div>
+            <div className="stat-title">Total des 3awenis créés</div>
             <div className="stat-value mt-2 text-2xl text-zinc-700">
               {TotalFundraisers}
             </div>
           </div>
+          
 
           <div className="max-w-[330px] min-w-[260px] w-1/4 min-w-52 bg-white p-5 inline-grid grid-cols-1 shadow rounded-lg">
             <div className="stat-figure mt-2 text-pink-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block w-8 h-8 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                ></path>
-              </svg>
+              
+              <IconContext.Provider value={{ className: 'w-6 h-6 text-violet-500'}}>
+                <BiDonateHeart />
+              </IconContext.Provider>
             </div>
-            <div className="stat-title">Total donations received</div>
+            <div className="stat-title">Total des dons reçus</div>
             <div className="stat-value mt-2 text-2xl text-zinc-700">
               {TotalDonations}
             </div>
           </div>
 
           <div className="max-w-[330px] min-w-[260px] w-1/4 min-w-52 bg-white p-5 inline-grid grid-cols-1 shadow rounded-lg">
-            <div className="stat-figure mt-2 text-violet-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block w-8 h-8 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                ></path>
-              </svg>
+            <div className="stat-figure mt-2 text-secondary">
+            <IconContext.Provider value={{ className: 'w-6 h-6 text-emerald-500'}}>
+                <MdOutlineAttachMoney />
+              </IconContext.Provider>
             </div>
-            <div className="stat-title">Total money spent</div>
+            <div className="stat-title">Montant total reçu</div>
+            <div className="stat-value mt-2 text-2xl text-zinc-700">
+              {TotalMoneyReceived}
+            </div>
+          </div>
+
+
+          <div className="max-w-[330px] min-w-[260px] w-1/4 min-w-52 bg-white p-5 inline-grid grid-cols-1 shadow rounded-lg">
+            <div className="stat-figure mt-2 text-violet-500">
+              <IconContext.Provider value={{ className: 'w-6 h-6 text-primary'}}>
+                <RiSendPlaneLine />
+              </IconContext.Provider>
+            </div>
+            <div className="stat-title">Total des fonds envoyés</div>
             <div className="stat-value mt-2 text-2xl text-zinc-700">
               {TotalMoneySent}
             </div>
@@ -279,30 +249,30 @@ export default function DashboardStats() {
                     {Donations.map((item) => (
                       <tr>
                         <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                          <Link
-                            to={`/fundraisers/${item.fundraiser?._id}`}
-                            className="relative w-fit flex items-center justify-start gap-2"
-                          >
-                            <img
-                              alt="profil"
-                              src={
-                                item.fundraiser?.image
-                                  ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.fundraiser?.image}`
-                                  : "/3aweni_placeholder.png"
-                              }
-                              className="mx-auto object-cover w-32"
-                            />
-                            <strong className="text-sm">
-                              {item.fundraiser?.title}
-                            </strong>
-                          </Link>
+                        <Link
+                      to={`/fundraisers/${item.fundraiser?._id}`}
+                      className="relative w-fit min-w-fit grid grid-cols-[128px,auto] items-center gap-2 break-words"
+                    >
+                      <img
+                        alt="profil"
+                        src={
+                          item.fundraiser?.image
+                            ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${item.fundraiser?.image}`
+                            : "/3aweni_placeholder.png"
+                        }
+                        className="mx-auto object-cover w-32 min-w-[128px] col-span-1 rounded-lg"
+                      />
+                      <strong className="text-xs text-zinc-700 col-span-1">
+                        {item.fundraiser?.title}
+                      </strong>
+                    </Link>
                         </td>
 
                         <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                          <p>{item.user?.name}</p>
+                          <p className="whitespace-nowrap">{item.user?.name}</p>
                         </td>
                         <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                          <p>{item.amount.toLocaleString()} TND</p>
+                          <p className="whitespace-nowrap">{item.amount.toLocaleString()} TND</p>
                         </td>
                         <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
                           <p className="text-gray-900 whitespace-no-wrap max-w-sm">
@@ -310,7 +280,7 @@ export default function DashboardStats() {
                           </p>
                         </td>
                         <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                          <p className="text-gray-900 whitespace-no-wrap">
+                          <p className="text-gray-900 whitespace-nowrap">
                             {calculateTimeAgo(item.createdAt)}
                           </p>
                         </td>
