@@ -13,10 +13,12 @@ export default function CategoryFundraisers() {
   const { category } = useParams();
 
   const [Fundraisers, setFundraisers] = useState<fundraisersFullInt[]>([]);
+  const [Loading, setLoading] = useState(true)
 
   useEffect(() => {
     axios.get(`/api/fundraisers/category/${category}`).then((res) => {
       setFundraisers(res.data.fundraisers);
+      setLoading(false)
     });
   }, []);
 
@@ -73,11 +75,22 @@ export default function CategoryFundraisers() {
               </p>
             </Link>
           ))
-        ) : (
+        ) : 
+        Loading ? <>
+        <div className="pb-2 rounded max-w-[280px] col-span-2 sm:col-span-1 mb-10 aspect-square bg-gray-300 animate-pulse"></div>
+        <div className="pb-2 rounded max-w-[280px] col-span-2 sm:col-span-1 mb-10 aspect-square bg-gray-300 animate-pulse"></div>
+        <div className="pb-2 rounded max-w-[280px] col-span-2 sm:col-span-1 mb-10 aspect-square bg-gray-300 animate-pulse"></div>
+        <div className="pb-2 rounded max-w-[280px] col-span-2 sm:col-span-1 mb-10 aspect-square bg-gray-300 animate-pulse"></div>
+        <div className="pb-2 rounded max-w-[280px] col-span-2 sm:col-span-1 mb-10 aspect-square bg-gray-300 animate-pulse"></div>
+        <div className="pb-2 rounded max-w-[280px] col-span-2 sm:col-span-1 mb-10 aspect-square bg-gray-300 animate-pulse"></div>
+        <div className="pb-2 rounded max-w-[280px] col-span-2 sm:col-span-1 mb-10 aspect-square bg-gray-300 animate-pulse"></div>
+        <div className="pb-2 rounded max-w-[280px] col-span-2 sm:col-span-1 mb-10 aspect-square bg-gray-300 animate-pulse"></div>
+
+        </> :
           <p className="col-span-full text-center">
             Pas de 3awenis dans cette catégorie
           </p>
-        )}
+        }
       </div>
     </main>
   );

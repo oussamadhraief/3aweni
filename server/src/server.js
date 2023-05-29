@@ -551,8 +551,6 @@ app.post("/api/search", async (req, res) => {
       query.$or = [
         { title: regex },
         { description: regex },
-        { _id: regex },
-        { category: regex },
         { state: regex },
       ];
     }
