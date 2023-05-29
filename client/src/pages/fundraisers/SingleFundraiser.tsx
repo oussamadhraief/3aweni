@@ -13,14 +13,13 @@ import ContactModal from "../../components/ContactModal";
 import DonationsModal from "../../components/DonationsModal";
 import { calculateTimeAgo } from "../../utils/convertTimeToRelative";
 import { GoLocation } from "react-icons/go";
-import useDonationSearch from "../../hooks/useDonationsFetch";
 import WordsOfSupportSection from "../../components/WordsOfSupportSection";
+import clipboardCopy from "clipboard-copy";
 
 export default function SingleFundraiser() {
   const carousel = useRef<HTMLDivElement>(null);
   const { id } = useParams();
   const { user } = useAuthContext();
-
 
   const [Fundraiser, setFundraiser] = useState<fundraiserInt>({
     _id: "",
@@ -45,7 +44,7 @@ export default function SingleFundraiser() {
   const [CollectedAmount, setCollectedAmount] = useState<number>(0);
   const [TotalDonations, setTotalDonations] = useState<string>("0");
   const [TopDonation, setTopDonation] = useState<donation>({
-    _id: '',
+    _id: "",
     user: null,
     fundraiser: null,
     amount: 0,
@@ -56,7 +55,7 @@ export default function SingleFundraiser() {
     updatedAt: null,
   });
   const [MostRecentDonation, setMostRecentDonation] = useState<donation>({
-    _id: '',
+    _id: "",
     user: null,
     fundraiser: null,
     amount: 0,
@@ -67,7 +66,7 @@ export default function SingleFundraiser() {
     updatedAt: null,
   });
   const [FirstDonation, setFirstDonation] = useState<donation>({
-    _id: '',
+    _id: "",
     user: null,
     fundraiser: null,
     amount: 0,
@@ -77,7 +76,6 @@ export default function SingleFundraiser() {
     createdAt: null,
     updatedAt: null,
   });
-  
 
   useEffect(() => {
     if (id) {
@@ -128,6 +126,11 @@ export default function SingleFundraiser() {
       carousel.current?.scrollLeft + carousel.current?.offsetWidth,
       0
     );
+  };
+
+  const copyToClipboard = () => {
+    const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3000/";
+    clipboardCopy(`${baseURL}fundraisers/${Fundraiser._id}`);
   };
 
   return (
@@ -266,27 +269,159 @@ export default function SingleFundraiser() {
           </div>
         ) : null}
 
-        <div className="mt-5 mb-2 text-sm flex items-center gap-1 grid-fundraiser-date-category">
+        <div className="mt-5 mb-2 text-sm flex items-center flex-wrap gap-1 grid-fundraiser-date-category">
           <MdOutlineDateRange />
-          <p>créé il y a {calculateTimeAgo(Fundraiser.createdAt)}  </p>
+          <p>créé il y a {calculateTimeAgo(Fundraiser.createdAt)} </p>
           <p className="rounded-full w-[5px] h-[5px] border border-zinc-500 mx-1.5"></p>
           <HiOutlineTag />
           <Link to={`/discover/${Fundraiser.category}`} className="underline">
             {
               categories.find(
                 (category) => category.value === Fundraiser.category
-                )?.label
-              }
+              )?.label
+            }
           </Link>
-           
-              <p className="rounded-full w-[5px] h-[5px] border border-zinc-500 mx-1.5"></p>
-            <GoLocation />
-            <p>{Fundraiser.state}, Tunisie.</p>
+
+          <p className="rounded-full w-[5px] h-[5px] border border-zinc-500 mx-1.5"></p>
+          <GoLocation />
+          <p>{Fundraiser.state}, Tunisie.</p>
         </div>
 
-        <div className="w-full px-8 pt-4 pb-3 sm:flex justify-between sm:space-x-6 border-y border-secondary/50 grid-fundraiser-organizer">
-          <div className="flex space-x-4">
-            <div className="flex-shrink-0 w-12 mb-6 h-12 sm:h-12 sm:w-12 sm:mb-0">
+        <div className="grid-fundraiser-money flex flex-col items-start gap-1 lg:hidden">
+          <p className="text-zinc-700 font-thin text-xs">
+            <strong className="text-black font-semibold text-lg">
+              {CollectedAmount.toFixed(2)} DT
+            </strong>
+            &nbsp;collectés men asl {parseFloat(Fundraiser.goal).toFixed(2)} DT
+          </p>
+          <progress
+            max="100"
+            value={
+              Fundraiser.goal
+                ? (CollectedAmount / parseFloat(Fundraiser.goal)) * 100
+                : 0
+            }
+            className="w-full h-2 my-1 overflow-hidden rounded bg-emerald-500/10 [&::-webkit-progress-bar]:bg-emerald-500/10 [&::-webkit-progress-value]:bg-emerald-500 [&::-moz-progress-bar]:bg-emerald-500"
+          />
+          <p className="text-zinc-500 font-thin text-xs">
+            {TotalDonations} dons
+          </p>
+        </div>
+
+        {(TopDonation && MostRecentDonation && FirstDonation) ? <div className="flex flex-col items-start lg:hidden grid-fundraiser-special mt-5">
+          <h3>Les dons reçus</h3>
+          {TopDonation && <div className="rounded-2xl bg-white p-4">
+            <div className="flex-row gap-4 flex justify-start items-center">
+              <div className="flex-shrink-0">
+                <a href="#" className="relative block">
+                  <img
+                    alt="profil"
+                    src={
+                      TopDonation?.user?.image
+                        ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${TopDonation?.user?.image}`
+                        : "/profile.png"
+                    }
+                    className="mx-auto object-cover rounded-full h-9 w-9 "
+                  />
+                </a>
+              </div>
+              <div className=" flex flex-col">
+                <span className="text-sm font-medium text-gray-700">
+                  {TopDonation?.user?.name}
+                </span>
+                <div className="text-xs flex flex-nowrap items-center">
+                  <p className=" font-bold">
+                    {TopDonation?.amount.toFixed(2)} TND &nbsp;
+                  </p>{" "}
+                  - &nbsp;
+                  <button className="hover:underline text-black">
+                    plus gros don
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>}
+          <hr />
+
+          {MostRecentDonation && <div className="rounded-2xl bg-white p-4">
+            <div className="flex-row gap-4 flex justify-start items-center">
+              <div className="flex-shrink-0">
+                <a href="#" className="relative block">
+                  <img
+                    alt="profil"
+                    src={
+                      MostRecentDonation?.user?.image
+                        ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${MostRecentDonation?.user?.image}`
+                        : "/profile.png"
+                    }
+                    className="mx-auto object-cover rounded-full h-9 w-9 "
+                  />
+                </a>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-700">
+                  {MostRecentDonation?.user?.name}
+                </span>
+                <div className="text-xs flex flex-nowrap items-center">
+                  <p className=" font-bold">
+                    {MostRecentDonation?.amount.toFixed(2)} TND &nbsp;
+                  </p>{" "}
+                  - &nbsp;
+                  <button className="hover:underline text-black">
+                    dernier don
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>}
+
+          <hr />
+
+          {FirstDonation && <div className="rounded-2xl bg-white p-4">
+            <div className="flex-row gap-4 flex justify-start items-center">
+              <div className="flex-shrink-0">
+                <a href="#" className="relative block">
+                  <img
+                    alt="profil"
+                    src={
+                      FirstDonation?.user?.image
+                        ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${FirstDonation?.user?.image}`
+                        : "/profile.png"
+                    }
+                    className="mx-auto object-cover rounded-full h-9 w-9 "
+                  />
+                </a>
+              </div>
+              <div className=" flex flex-col">
+                <span className="text-sm font-medium text-gray-700">
+                  {FirstDonation?.user?.name}
+                </span>
+                <div className="text-xs flex flex-nowrap items-center">
+                  <p className=" font-bold">
+                    {FirstDonation?.amount.toFixed(2)} TND &nbsp;
+                  </p>{" "}
+                  - &nbsp;
+                  <button className="hover:underline text-black">
+                    plus ancien don
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>}
+
+          <button
+            className="text-secondary px-1.5 border border-secondary hover:bg-secondary hover:text-white w-fit self-center py-0.5 rounded-lg text-xs"
+            onClick={() => setShow(true)}
+          >
+            Voir tous
+          </button>
+        </div>
+        :
+        <div className="flex flex-col items-start lg:hidden grid-fundraiser-special mt-5 text-sm">Pas de dons reçus</div>}
+
+        <div className="w-full px-0 sm:px-8 pt-4 pb-3 flex justify-between items-center flex-nowrap space-x-2 sm:space-x-6 border-y border-secondary/50 grid-fundraiser-organizer">
+          <div className="flex space-x-4 items-center">
+            <div className="flex-shrink-0 w-12 h-12 sm:h-12 sm:w-12 sm:mb-0">
               <img
                 src={
                   Fundraiser.user?.image
@@ -318,14 +453,17 @@ export default function SingleFundraiser() {
             : "Pas de description"}
         </p>
 
-        <div className="flex gap-3 items-center grid-fundraiser-buttons">
+        <div className="sticky lg:relative bottom-0 bg-white pb-2 flex gap-3 items-center grid-fundraiser-buttons before:absolute before:block before:lg:hidden before:bottom-full before:left-0 before:bg-gradient-to-t before:from-white before:to-white/50 before:w-full before:h-5">
           <Link
             to={`/donate/${Fundraiser._id}`}
-            className="w-full text-white py-2.5 rounded-xl my-3 flex flex-nowrap items-center gap-2 justify-center bg-secondary shadow-modern  shadow-secondary/30 hover:shadow-xxxl hover:shadow-secondary/30 transition-all"
+            className="w-full text-white py-2.5 rounded-xl my-0 lg:my-3 flex flex-nowrap items-center gap-2 justify-center bg-secondary shadow-modern  shadow-secondary/30 hover:shadow-xxxl hover:shadow-secondary/30 transition-all"
           >
             Donate
           </Link>
-          <button className="h-fit border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-[9px] rounded-xl flex justify-center items-center flex-nowrap gap-1">
+          <button
+            className="h-fit border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-[9px] rounded-xl flex justify-center items-center flex-nowrap gap-1"
+            onClick={copyToClipboard}
+          >
             <IconContext.Provider value={{ className: "h-4 w-4 mb-0.5" }}>
               <MdIosShare />
             </IconContext.Provider>
@@ -335,7 +473,7 @@ export default function SingleFundraiser() {
 
         <WordsOfSupportSection />
 
-        <div className="relative grid-fundraiser-sidebar flex flex-col items-end">
+        <div className="relative grid-fundraiser-sidebar hidden lg:flex flex-col items-end">
           <div className="sticky card w-fit bg-base-100 shadow-form rounded-lg px-4 top-24 self-end">
             <div className="w-80 py-8 flex flex-col">
               <p className="text-zinc-700 font-thin text-xs">
@@ -358,7 +496,8 @@ export default function SingleFundraiser() {
                 {TotalDonations} dons
               </p>
 
-              <div className="rounded-2xl bg-white p-4">
+              {!(TopDonation && MostRecentDonation && FirstDonation) && <p className="text-sm my-5">Pas de dons reçus</p>}
+              {TopDonation && <div className="rounded-2xl bg-white p-4">
                 <div className="flex-row gap-4 flex justify-start items-center">
                   <div className="flex-shrink-0">
                     <a href="#" className="relative block">
@@ -388,10 +527,11 @@ export default function SingleFundraiser() {
                     </div>
                   </div>
                 </div>
-              </div>
-              <hr />
+              </div>}
 
-              <div className="rounded-2xl bg-white p-4">
+              {(MostRecentDonation || FirstDonation) && <hr />}
+
+              {MostRecentDonation && <div className="rounded-2xl bg-white p-4">
                 <div className="flex-row gap-4 flex justify-start items-center">
                   <div className="flex-shrink-0">
                     <a href="#" className="relative block">
@@ -421,11 +561,11 @@ export default function SingleFundraiser() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>}
 
-              <hr />
+              {FirstDonation && <hr /> }
 
-              <div className="rounded-2xl bg-white p-4">
+              {FirstDonation && <div className="rounded-2xl bg-white p-4">
                 <div className="flex-row gap-4 flex justify-start items-center">
                   <div className="flex-shrink-0">
                     <a href="#" className="relative block">
@@ -455,11 +595,14 @@ export default function SingleFundraiser() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>}
 
-              <button className="text-secondary px-1.5 border border-secondary hover:bg-secondary hover:text-white w-fit self-center py-0.5 rounded-lg text-xs" onClick={() => setShow(true)}>
+              {(TopDonation && MostRecentDonation && FirstDonation) && <button
+                className="text-secondary px-1.5 border border-secondary hover:bg-secondary hover:text-white w-fit self-center py-0.5 rounded-lg text-xs"
+                onClick={() => setShow(true)}
+              >
                 Voir tous
-              </button>
+              </button>}
 
               <Link
                 to={`/donate/${Fundraiser._id}`}
@@ -467,7 +610,10 @@ export default function SingleFundraiser() {
               >
                 Donate
               </Link>
-              <button className="h-9 border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-1.5 rounded-xl flex justify-center items-center flex-nowrap gap-1">
+              <button
+                className="h-9 border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-1.5 rounded-xl flex justify-center items-center flex-nowrap gap-1"
+                onClick={copyToClipboard}
+              >
                 <IconContext.Provider value={{ className: "h-4 w-4 mb-0.5" }}>
                   <MdIosShare />
                 </IconContext.Provider>

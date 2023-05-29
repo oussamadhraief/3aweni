@@ -1,42 +1,42 @@
 import axios from "../utils/axiosConfig";
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 export default function RequestPasswordReset() {
+
+  const navigate = useNavigate()
+
   const [RequestPasswordResetForm, setRequestPasswordResetForm] =
     useState<string>("");
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     try {
-      const token = localStorage.getItem("jwt");
 
       axios
         .post(
           "/api/user/password-reset",
           {
             email: RequestPasswordResetForm,
-          },
-          {
-            withCredentials: true,
-          }
-        )
-        .then((response) => {});
+          })
+        .then((response) => {
+          navigate('/login')
+        });
     } catch (error) {}
   };
 
   return (
-    <main className="mt-[94px] flex justify-center items-center pt-32 pb-52">
+    <main className="mt-[94px] flex justify-center items-center py-32 bg-beige">
       <form
-        className="w-1/3 min-w-[300px] max-w-[500px] flex flex-col items-center justify-center"
+        className="w-1/3 min-w-[300px] max-w-[500px] flex flex-col items-center justify-center bg-white rounded-xl p-10"
         onSubmit={handleSubmit}
       >
         <div className="relative my-[15px] w-full">
           <input
             type="email"
-            className="peer block w-full h-10 bg-transparent border  border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-primary valid:border-primary"
+            className="peer block w-full h-10 bg-transparent border rounded-md border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-primary valid:border-primary"
             name="email"
             required
             onChange={(e) => setRequestPasswordResetForm(e.target.value)}
@@ -49,7 +49,7 @@ export default function RequestPasswordReset() {
           </label>
         </div>
 
-        <button className="w-fit h-fit px-8 py-2 bg-secondary text-white rounded my-7">
+        <button className="w-fit h-fit px-8 py-1.5 hover:-translate-y-0.5 transition-all bg-secondary text-white rounded my-7">
           {" "}
           Envoyer{" "}
         </button>

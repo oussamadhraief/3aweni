@@ -89,6 +89,22 @@ export default function DashboardSettings() {
     } catch (error) {}
   };
 
+  const handleDeleteUserImage = () => {
+    try {
+      axios.delete("/api/user/image").then(() => {
+        login({
+          ...user!,
+          image: "",
+        });
+
+        setCurrentUserImage("");
+      })
+    } catch (error) {
+      console.log(error);
+      
+    }
+  };
+
   const handleImageUpload = async () => {
     try {
       const res = await axios.post(
@@ -212,7 +228,7 @@ export default function DashboardSettings() {
                     src={
                       CurrentUserImage
                         ? `https://res.cloudinary.com/dhwfr0ywo/image/upload/${CurrentUserImage}`
-                        : "/profile.png "
+                        : "/profile.png"
                     }
                     className="mx-auto object-cover rounded-full h-24 w-24"
                   />
@@ -235,7 +251,7 @@ export default function DashboardSettings() {
                 <button
                   type="button"
                   className="text-black whitespace-nowrap"
-                  onClick={handleEditingImage}
+                  onClick={handleDeleteUserImage}
                 >
                   <IconContext.Provider
                     value={{ className: "text-gray-700 w-5 h-5" }}

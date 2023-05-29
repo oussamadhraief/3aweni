@@ -68,19 +68,19 @@ export default function DashboardDonationsSent() {
                 </th>
                 <th
                   scope="col"
-                  className="px-5 py-3 text-sm font-bold w-fit text-left text-gray-800 uppercase bg-white border-b border-gray-200"
+                  className="px-5 py-3 text-sm font-bold text-center w-fit text-gray-800 uppercase bg-white border-b border-gray-200"
                 >
                   bénéficiaire
                 </th>
                 <th
                   scope="col"
-                  className="px-5 py-3 text-sm font-bold w-fit text-left text-gray-800 uppercase bg-white border-b border-gray-200"
+                  className="px-5 py-3 text-sm font-bold text-center w-fit text-gray-800 uppercase bg-white border-b border-gray-200"
                 >
                   Montant
                 </th>
                 <th
                   scope="col"
-                  className="px-5 py-3 text-sm font-bold w-fit text-left text-gray-800 uppercase bg-white border-b border-gray-200"
+                  className="px-5 py-3 text-sm font-bold text-center w-fit text-gray-800 uppercase bg-white border-b border-gray-200"
                 >
                   Date
                 </th>
@@ -135,10 +135,10 @@ export default function DashboardDonationsSent() {
                       <p>Anonyme</p>
                     )}
                   </td>
-                  <td className="px-5 py-5 text-sm bg-white border-b border-gray-200 whitespace-nowrap w-fit min-w-fit">
+                  <td className="px-5 py-5 text-sm bg-white border-b border-gray-200 whitespace-nowrap w-fit min-w-fit text-center">
                     <p>{item.amount.toLocaleString()} TND</p>
                   </td>
-                  <td className="px-5 py-5 text-sm bg-white border-b border-gray-200 w-fit min-w-fit">
+                  <td className="px-5 py-5 text-sm bg-white border-b border-gray-200 w-fit min-w-fit text-center">
                     <p className="text-gray-900 whitespace-nowrap">
                       {calculateTimeAgo(item.createdAt)}
                     </p>

@@ -1354,8 +1354,8 @@ img {
     max-width: 100%;
   }
   .card__slider {
-  grid-template-columns: repeat(2, 300px);
-  place-content: center;
+    grid-template-columns: repeat(2, 300px);
+    place-content: center;
   }
 }
 @media (max-width: 768px) {
@@ -1363,14 +1363,14 @@ img {
     height: 280px;
   }
   .card__slider {
-  grid-template-columns: repeat(2, 1fr);
-  place-content: center;
+    grid-template-columns: repeat(2, 1fr);
+    place-content: center;
   }
 }
 @media (max-width: 536px) {
   .card__slider {
-  grid-template-columns: repeat(1, 300px);
-  place-content: center;
+    grid-template-columns: repeat(1, 300px);
+    place-content: center;
   }
 }
 .card__item--cyan {
@@ -1879,6 +1879,25 @@ input[type="number"] {
     "donations donations . sidebar";
 }
 
+@media (max-width: 1024px) {
+  .fundraiser-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "title title"
+      "image image"
+      "secondary secondary"
+      "money money"
+      "date date"
+      "organizer organizer"
+      "description description"
+      "buttons buttons"
+      "special special"
+      "donations donations";
+  }
+}
+
 .grid-fundraiser-title {
   grid-area: title;
 }
@@ -1913,5 +1932,13 @@ input[type="number"] {
 
 .grid-fundraiser-donations {
   grid-area: donations;
+}
+
+.grid-fundraiser-money {
+  grid-area: money;
+}
+
+.grid-fundraiser-special {
+  grid-area: special;
 }
 

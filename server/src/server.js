@@ -216,6 +216,23 @@ app.patch("/api/user/image", authenticateToken, async (req, res) => {
   }
 });
 
+
+app.delete("/api/user/image", authenticateToken, async (req, res) => {
+  try {
+
+    await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { image: '' },
+      { new: true }
+    );
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false });
+  }
+});
+
 app.patch("/api/user/email", authenticateToken, async (req, res) => {
   try {
     const { email } = req?.body;
@@ -318,14 +335,14 @@ app.patch("/api/user-message/:id", async (req, res) => {
   }
 });
 
-app.post("/api/user/password-reset", authenticateToken, async (req, res) => {
+app.post("/api/user/password-reset", async (req, res) => {
   const { email } = req.body;
 
   try {
     const oldUser = await User.findOne({ email });
 
     if (!oldUser) {
-      return res.status(404).json({ status: "User Not Exists!!" });
+      return res.status(404).json({ status: "User does not Exists!!" });
     }
 
     const secret = JWT_SECRET + oldUser.password;
@@ -736,6 +753,18 @@ app.get("/api/fundraiser/:id", async (req, res) => {
   }
 });
 
+app.delete("/api/fundraiser/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const fundraiser = await Fundraiser.findOneAndUpdate({ _id: mongoose.Types.ObjectId(id) }, { archived: true }, { new: true });
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(404).json({ success: false });
+  }
+});
+
 app.get("/api/single-fundraiser/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -958,7 +987,7 @@ app.get("/api/fundraisers/category/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const fundraisers = await Fundraiser.find({ category: id });
+    const fundraisers = await Fundraiser.find({ category: id, archived: false });
 
     const fundraisersWithAmount = await Promise.all(
       fundraisers.map(async (fundraiser) => {

@@ -418,7 +418,7 @@ export default function EditUserFundraiser() {
             </div>
             <div className="grid grid-cols-6 gap-4 col-span-full lg:col-span-3">
               <div className="col-span-full grid grid-cols-6 gap-4">
-                <div className="relative col-span-full sm:col-span-3 aspect-[7/4] rounded-md overflow-hidden">
+                <div className="relative col-span-full sm:col-span-3 aspect-[7/4] rounded-md overflow-hidden min-w-[300px]">
                   {Loading ? (
                     <div className="w-full h-full bg-gray-300 animate-pulse"></div>
                   ) : (

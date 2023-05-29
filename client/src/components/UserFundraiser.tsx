@@ -3,6 +3,7 @@ import { IconContext } from "react-icons";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import useClickOutside from "../hooks/useClickOutside";
+import axios from "../utils/axiosConfig";
 
 export default function UserFundraiser({
   id,
@@ -28,6 +29,14 @@ export default function UserFundraiser({
   const handleClick = () => {
     setShow((prev) => !prev);
   };
+
+  const handleArchiveFundraiser = () => {
+    try {
+      axios.delete(`/api/fundraiser/${id}`)
+    } catch (error) {
+      
+    }
+  }
 
   return (
     <div
@@ -60,7 +69,7 @@ export default function UserFundraiser({
               </Link>
             </li>
             <li>
-              <button className="text-red-500  py-2 px-3 text-sm">
+              <button className="text-red-500  py-2 px-3 text-sm" onClick={handleArchiveFundraiser}>
                 Supprimer
               </button>{" "}
             </li>
