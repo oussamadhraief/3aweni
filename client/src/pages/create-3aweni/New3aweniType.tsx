@@ -70,8 +70,8 @@ export default function New3aweniType() {
           </h1>
         </aside>
 
-        <div className="w-full md:w-3/4 lg:w-2/3 h-fit min-h-screen md:min-h-screen bg-white z-10 rounded-t-[46px] md:rounded-tl-[46px] md:rounded-tr-none shadow-modern px-5 py-14 md:px-10  md:pb-10 overflow-auto md:pt-32 flex items-center flex-col justify-between">
-        <div className="w-full lg:w-5/6 mt-20">
+        <div className="w-full md:w-3/4 lg:w-2/3 h-fit min-h-screen md:min-h-screen bg-white z-10 rounded-t-[46px] md:rounded-tl-[46px] md:rounded-tr-none shadow-modern px-5 py-14 md:px-10  md:pb-10 overflow-auto md:pt-20 flex items-center flex-col justify-between">
+        <div className="w-full lg:w-5/6 mt-0 xl:mt-10 ">
             <p>Pour qui voulez-vous collecter les fonds:</p>
             <div className="w-full flex justify-start gap-4 items-center flex-wrap mt-8">
               <label

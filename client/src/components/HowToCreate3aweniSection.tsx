@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function HowToCreate3aweniSection() {
   return (
-    <section className="works">
+    <section className="works" id="create3aweni">
       <div className="works__container g-container">
         <div className="works__info to-top">
           <span className="works__subtitle">Comment ça fonctionne</span>

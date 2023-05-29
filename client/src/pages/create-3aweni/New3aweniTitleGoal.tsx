@@ -87,8 +87,8 @@ export default function New3aweniTitleGoal() {
           
         </aside>
 
-        <div className="w-full md:w-3/4 lg:w-2/3 h-fit min-h-screen md:min-h-screen bg-white z-10 rounded-t-[46px] md:rounded-tl-[46px] md:rounded-tr-none shadow-modern px-5 py-14 md:px-10  md:pb-10 overflow-auto md:pt-32 flex items-center flex-col justify-between">
-          <div  className="w-full sm:w-4/6 lg:w-3/6 mt-20 min-w-full sm:min-w-[350px]">
+        <div className="w-full md:w-3/4 lg:w-2/3 h-fit min-h-screen md:min-h-screen bg-white z-10 rounded-t-[46px] md:rounded-tl-[46px] md:rounded-tr-none shadow-modern px-5 py-14 md:px-10  md:pb-10 overflow-auto md:pt-20 flex items-center flex-col justify-between">
+          <div  className="w-full sm:w-4/6 lg:w-3/6 mt-0 xl:mt-10 min-w-full sm:min-w-[350px]">
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Choisissez un titre</span>
