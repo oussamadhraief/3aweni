@@ -61,7 +61,7 @@ const fetchUserTotalDonations = async (id) => {
     },
   ]);
 
-  console.log(totalDonations);
+  
   return totalDonations[0].total;
 };
 
