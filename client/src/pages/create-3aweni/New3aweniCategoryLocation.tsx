@@ -65,23 +65,23 @@ export default function New3aweniCategoryLocation() {
   };
 
   return (
-    <main className="relative w-screen h-screen min-w-screen min-h-screen overflow-visible flex flex-nowrap items-start bg-beige">
-      <Link to="/" className="w-14 absolute left-10 top-10 z-50">
+    <main className="relative w-fit h-fit min-w-[100vw] min-h-screen overflow-visible flex flex-nowrap items-start bg-beige">
+      <Link to="/" className="w-10 md:w-14 absolute left-10 top-10 z-50">
         <img src="/icon.png" alt="" />
       </Link>
 
       <form
         onSubmit={handleSubmit}
-        className="w-screen h-fit min-w-screen min-h-screen overflow-hidden items-start relative flex flex-nowrap shrink-0"
+        className="w-fit h-fit min-w-[100vw] min-h-screen overflow-hidden items-start relative flex flex-wrap md:flex-nowrap shrink-0"
       >
-        <aside className="w-1/3 h-screen  bg-beige create-aside-background relative flex justify-center">
-          <h1 className="mt-[25vh]">
+        <aside className="w-full md:w-1/4 lg:w-1/3 h-fit min-h-fit md:min-h-screen px-5  bg-beige create-aside-background relative flex justify-center">
+          <h1 className="mt-40 mb-24 text-sm lg:text-base">
             <strong>Etape 1: </strong> Choisissez une catégorie et entrez votre
             localisation
           </h1>
         </aside>
-        <div className="w-2/3 h-screen bg-white z-10 rounded-tl-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-center flex-col justify-between">
-          <div className="w-5/6 ">
+        <div className="w-full md:w-3/4 lg:w-2/3 h-fit min-h-screen md:min-h-screen bg-white z-10 rounded-t-[46px] md:rounded-tl-[46px] md:rounded-tr-none shadow-modern px-5 py-14 md:px-10  md:pb-10 overflow-auto md:pt-32 flex items-center flex-col justify-between">
+          <div className="w-full md:w-5/6">
             <p>Selectionnez une catégorie:</p>
             <div className="flex justify-start gap-4 items-center flex-wrap mt-8">
               {categories.map((item) => (
@@ -109,11 +109,11 @@ export default function New3aweniCategoryLocation() {
               ))}
             </div>
           </div>
-          <div className="w-5/6">
+          <div className="w-full md:w-5/6">
             <h3>Insérez vos coordonnées:</h3>
             <div className="w-full h-fit flex flex-nowrap justify-start items-start gap-5 mt-3">
               <div className="w-1/3">
-                <select
+                <select 
                   className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-400 rounded-lg bg-gray-50 outline-none"
                   onChange={handleChange}
                   required

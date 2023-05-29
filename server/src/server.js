@@ -171,7 +171,7 @@ app.post("/api/user/login", async (req, res) => {
       email: user.email,
       image: user.image,
     };
-    // Return the token in the response
+   
     res.json({ success: true, token, user: resUser });
   } catch (error) {
     console.log(error);
@@ -697,7 +697,7 @@ app.post("/api/create-fundraiser/register", async (req, res) => {
       title,
       goal
     );
-
+      
     res.status(201).json({ success: true, fundraiser: newFundraiser });
   } catch (error) {
     res.status(400).json({ success: false, error: error });

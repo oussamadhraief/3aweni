@@ -84,14 +84,55 @@ const fetchFundraiserFirstDonation = async id => {
   }).populate("user");
   return firstDonation;
 };
-const fetchFundraisersCreatedCountByDate = async (startDate, endDate) => {
-  const count = Fundraiser.find({
-    createdAt: {
-      $gte: startDate,
-      $lt: endDate
+const fetchMoneyReceivedByDate = async (startDate, endDate, id) => {
+  const totalMoneyReceived = await Fundraiser.aggregate([{
+    $match: {
+      user: mongoose.Types.ObjectId(id)
     }
-  }).count();
-  return count;
+  }, {
+    $lookup: {
+      from: "donations",
+      let: {
+        fundraiserId: "$_id"
+      },
+      pipeline: [{
+        $match: {
+          $expr: {
+            $and: [{
+              $eq: ["$fundraiser", "$$fundraiserId"]
+            }, {
+              $gte: ["$createdAt", startDate]
+            }, {
+              $lt: ["$createdAt", endDate]
+            }]
+          }
+        }
+      }, {
+        $group: {
+          _id: null,
+          totalAmount: {
+            $sum: "$amount"
+          }
+        }
+      }],
+      as: "donations"
+    }
+  }, {
+    $project: {
+      totalAmount: {
+        $arrayElemAt: ["$donations.totalAmount", 0]
+      }
+    }
+  }, {
+    $match: {
+      totalAmount: {
+        $ne: null,
+        $ne: undefined
+      }
+    }
+  }]);
+  return totalMoneyReceived.length > 0 ? totalMoneyReceived.map(donation => donation.totalAmount) // Extract the amount attribute
+  .reduce((sum, amount) => sum + amount, 0) : 0;
 };
 exports.createFundraiser = createFundraiser;
 exports.fetchFundraiser = fetchFundraiser;
@@ -100,4 +141,4 @@ exports.fetchFundraiserTotalDonations = fetchFundraiserTotalDonations;
 exports.fetchFundraiserTopDonation = fetchFundraiserTopDonation;
 exports.fetchFundraiserMostRecentDonation = fetchFundraiserMostRecentDonation;
 exports.fetchFundraiserFirstDonation = fetchFundraiserFirstDonation;
-exports.fetchFundraisersCreatedCountByDate = fetchFundraisersCreatedCountByDate;
+exports.fetchMoneyReceivedByDate = fetchMoneyReceivedByDate;

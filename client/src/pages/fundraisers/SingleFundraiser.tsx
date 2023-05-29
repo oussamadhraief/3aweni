@@ -335,9 +335,9 @@ export default function SingleFundraiser() {
 
         <WordsOfSupportSection />
 
-        <div className="relative grid-fundraiser-sidebar">
+        <div className="relative grid-fundraiser-sidebar flex flex-col items-end">
           <div className="sticky card w-fit bg-base-100 shadow-form rounded-lg px-4 top-24 self-end">
-            <div className="w-72 py-8 flex flex-col">
+            <div className="w-80 py-8 flex flex-col">
               <p className="text-zinc-700 font-thin text-xs">
                 <strong className="text-black font-semibold text-lg">
                   {CollectedAmount.toFixed(2)} DT

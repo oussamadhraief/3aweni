@@ -1,29 +1,66 @@
 import axios from "../../utils/axiosConfig";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { IconContext } from "react-icons";
 import { HiOutlineArrowNarrowLeft } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthContext from "../../hooks/useAuthContext";
 
 interface FormState {
   category: string;
-  state: string | undefined;
-  zipCode: number | null;
+  state: string;
+  zipCode: number;
   type: string;
-  goal: string | undefined;
+  title: string;
+  goal: string;
   email: string;
   password: string;
 }
 
 export default function New3aweniRegister() {
+
+  const { login } = useAuthContext()
+  const navigate = useNavigate()
+
   const [Form, setForm] = useState<FormState>({
     category: "",
     state: "",
     type: "",
-    goal: undefined,
-    zipCode: null,
+    title: "",
+    goal: "",
+    zipCode: 0,
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    const session3aweni = sessionStorage.getItem("create3aweni");
+    if (session3aweni) {
+      const res = JSON.parse(session3aweni);
+
+      if (
+        res.category &&
+        res.state &&
+        res.zipCode &&
+        res.type &&
+        res.title &&
+        res.goal
+      ) {
+        setForm({
+          ...Form,
+          category: res.category,
+          state: res.state,
+          zipCode: parseInt(res.zipCode),
+          type: res.type,
+          title: res.title,
+          goal: res.goal,
+        });
+      } else {
+        navigate("/create/category");
+      }
+    } else {
+      navigate("/create/category");
+    }
+  }, []);
 
   const handleChange = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -39,7 +76,7 @@ export default function New3aweniRegister() {
     try {
       axios
         .post(
-          "/api/user/register",
+          "/api/user/login",
           {
             email: Form.email,
             password: Form.password,
@@ -48,28 +85,61 @@ export default function New3aweniRegister() {
             withCredentials: true,
           }
         )
-        .then((response) => {});
+        .then((res) => {
+          const {
+            data: { user, token },
+          } = res;
+
+          localStorage.setItem("jwt", token);
+          
+          login(user);
+          const goal = parseFloat(Form.goal);
+          axios
+          .post(
+            "/api/create-fundraiser",
+            {
+              ...Form,
+              goal,
+            },
+            {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              }
+            })
+          .then((response) => {
+            localStorage.removeItem('create3aweni')
+  
+            const {
+              data: { fundraiser },
+            } = response;
+  
+            navigate(`/fundraisers/${fundraiser._id}`);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        });
     } catch (error) {}
   };
 
   return (
-    <main className="relative w-screen h-screen min-w-screen min-h-screen overflow-visible flex flex-nowrap items-start bg-beige">
-      <Link to="/" className="w-14 absolute left-10 top-10 z-50">
+    <main className="relative w-fit h-fit min-w-[100vw] min-h-screen overflow-visible flex flex-nowrap items-start bg-beige">
+      <Link to="/" className="w-10 md:w-14 absolute left-10 top-10 z-50">
         <img src="/icon.png" alt="" />
       </Link>
 
       <form
         onSubmit={handleSubmit}
-        className="w-screen h-fit min-w-screen min-h-screen overflow-hidden items-start relative flex flex-nowrap shrink-0"
+        className="w-fit h-fit min-w-[100vw] min-h-screen overflow-hidden items-start relative flex flex-wrap md:flex-nowrap shrink-0"
       >
-        <aside className="w-1/3 h-screen bg-beige create-aside-background relative flex justify-center">
-          <h1 className="mt-[25vh]">
+        <aside className="w-full md:w-1/4 lg:w-1/3 h-fit min-h-fit md:min-h-screen px-5  bg-beige create-aside-background relative flex justify-center">
+          <h1 className="mt-40 mb-24 text-sm lg:text-base">
             <strong>Etape 4: </strong> Connectez vous à votre compte.
           </h1>
         </aside>
 
-        <div className="w-2/3 h-screen bg-white z-10 rounded-tl-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-center flex-col justify-between">
-          <div className="w-3/6 min-w-[300px] flex flex-col items-center justify-center mt-20">
+        <div className="w-full md:w-3/4 lg:w-2/3 h-fit min-h-screen md:min-h-screen bg-white z-10 rounded-t-[46px] md:rounded-tl-[46px] md:rounded-tr-none shadow-modern px-5 py-14 md:px-10  md:pb-10 overflow-auto md:pt-32 flex items-center flex-col justify-between">
+        <div className="w-full sm:w-4/6 lg:w-3/6 min-w-full sm:min-w-[350px] flex flex-col items-center justify-center mt-10">
             <label htmlFor="email" className="text-gray-700 w-fit self-start">
               Adresse Email:
             </label>
@@ -79,7 +149,6 @@ export default function New3aweniRegister() {
               className="peer block w-full h-10 bg-transparent border  border-[#ccc] px-1 rounded outline-none z-0 focus:border-primary valid:border-primary text-sm"
               name="email"
               id="email"
-              placeholder="example@email.com"
               required
               value={Form.email}
               onChange={handleChange}

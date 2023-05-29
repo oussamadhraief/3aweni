@@ -122,7 +122,7 @@ export default function SearchResults() {
               <p className="font-semibold text-black text-sm px-2 leading-6 line-clamp-1 h-6">
                 {item.title}
               </p>
-              <p className="h-14 line-clamp-2 leading-7 w-full text-sm px-2">
+              <p className="h-14 line-clamp-2 leading-7 w-full text-sm px-2 break-words">
                 {item.description ? item.description : "Pas de description"}
               </p>
               <p className="text-zinc-500 font-thin text-xs mt-10 px-2 h-4">

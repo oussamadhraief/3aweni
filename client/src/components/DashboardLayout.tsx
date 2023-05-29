@@ -13,33 +13,40 @@ import { RiUserHeartLine } from "react-icons/ri";
 import UserDropdownMenu from "./UserDropdownMenu";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import axios from "../utils/axiosConfig";
+import { IoMdClose } from "react-icons/io";
 
 export default function UserDashboard() {
   const location = useLocation();
   const { login, logout } = useAuthContext();
   const { setLoading } = useLoadingAuthContext();
   const [ShowSidebar, setShowSidebar] = useState<boolean>(true);
-  const [NumberOfUnreadMessages, setNumberOfUnreadMessages] = useState(0)
+  const [NumberOfUnreadMessages, setNumberOfUnreadMessages] = useState(0);
 
   useEffect(() => {
+    const mql = window.matchMedia("(max-width: 767px)");
+    if (mql.matches) {
+      setShowSidebar(false);
+    }
     getUser({ login, logout, setLoading });
-    axios.get('/api/unread-messages').then((res) => {
-      const { data: { number }} = res
-      setNumberOfUnreadMessages(number)
-    })
+    axios.get("/api/unread-messages").then((res) => {
+      const {
+        data: { number },
+      } = res;
+      setNumberOfUnreadMessages(number);
+    });
   }, [location]);
 
   return (
     <div className="flex w-screen h-screen flex-nowrap justify-start items-start overflow-hidden">
       <div
         className={`relative ${
-          ShowSidebar ? "w-72" : "w-0"
+          ShowSidebar ? "w-full h-screen md:w-72" : "h-0 md:h-screen md:w-0"
         } transition-all bg-white  shrink-0`}
       >
         <div
-          className={`absolute top-0 ${
-            ShowSidebar ? "left-0" : "-left-72"
-          } transition-all duration-150 h-screen w-72 min-w-[288px] max-w-[288px] shadow-form`}
+          className={`absolute left-0 md:top-0 ${
+            ShowSidebar ? "top-0 md:left-0" : "-top-[100vh] md:-left-72"
+          } transition-all duration-150 h-screen w-full md:w-72 min-w-[288px] max-w-full md:max-w-[288px] shadow-form`}
         >
           <Link to="/">
             <img className="h-12 mx-auto mt-5" src="/secondary_logo.png" />
@@ -60,7 +67,6 @@ export default function UserDashboard() {
                 <MdOutlineSpaceDashboard />
               </IconContext.Provider>
               <span className="mx-4 font-normal">Tableau de bord</span>
-              
             </NavLink>
             <NavLink
               className={({ isActive }) =>
@@ -76,7 +82,6 @@ export default function UserDashboard() {
                 <BiIdCard />
               </IconContext.Provider>
               <span className="mx-4 font-normal">Mes 3awenis</span>
-              
             </NavLink>
             <NavLink
               className={({ isActive }) =>
@@ -122,14 +127,17 @@ export default function UserDashboard() {
                 <TiMessage />
               </IconContext.Provider>
               <span className="mx-4 font-normal">Messages reçus</span>
-              {NumberOfUnreadMessages > 0 && <span className="flex-grow text-right">
-                <button
-                  type="button"
-                  className="w-5 h-5 text-[10px]  rounded-full text-white bg-red-500"
-                >
-                  <span className="p-1">{NumberOfUnreadMessages}</span>
-                </button>
-              </span>}
+              {NumberOfUnreadMessages > 0 &&
+                location.pathname != "/dashboard/messages" && (
+                  <span className="flex-grow text-right">
+                    <button
+                      type="button"
+                      className="w-5 h-5 text-[10px]  rounded-full text-white bg-red-500"
+                    >
+                      <span className="p-1">{NumberOfUnreadMessages}</span>
+                    </button>
+                  </span>
+                )}
             </NavLink>
             <NavLink
               className={({ isActive }) =>
@@ -145,7 +153,6 @@ export default function UserDashboard() {
                 <FiSettings />
               </IconContext.Provider>
               <span className="mx-4 font-normal">Paramètres</span>
-              
             </NavLink>
           </nav>
         </div>
@@ -160,9 +167,18 @@ export default function UserDashboard() {
             onClick={() => setShowSidebar((prev) => !prev)}
           >
             {ShowSidebar ? (
-              <IconContext.Provider value={{ className: "w-5 h-5" }}>
-                <BsArrowBarLeft />
-              </IconContext.Provider>
+              <>
+                <IconContext.Provider
+                  value={{ className: "w-0 h-0 md:w-5 md:h-5" }}
+                >
+                  <BsArrowBarLeft />
+                </IconContext.Provider>
+                <IconContext.Provider
+                  value={{ className: "md:w-0 md:h-0 w-5 h-5" }}
+                >
+                  <IoMdClose />
+                </IconContext.Provider>
+              </>
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"

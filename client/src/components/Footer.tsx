@@ -35,38 +35,24 @@ export default function Footer() {
             </button>
           </form> */}
           <div className="footer__social">
-            <Link className="footer__social-link" to="">
+            <Link className="footer__social-link" target="_blank" to="https://www.facebook.com/3awenitn">
               <img
                 className="footer__social-icon"
                 src="https://raw.githubusercontent.com/ricardoolivaalonso/GetBello/main/public/img/facebook.svg"
                 alt="icon"
               />
             </Link>
-            <Link className="footer__social-link" to="">
+            <Link className="footer__social-link" target="_blank" to="https://www.instagram.com/3aweni.tn/">
               <img
                 className="footer__social-icon"
                 src="https://raw.githubusercontent.com/ricardoolivaalonso/GetBello/main/public/img/instagram.svg"
                 alt="icon"
               />
             </Link>
-            <Link className="footer__social-link" to="">
-              <img
-                className="footer__social-icon"
-                src="https://raw.githubusercontent.com/ricardoolivaalonso/GetBello/main/public/img/youtube.svg"
-                alt="icon"
-              />
-            </Link>
-            <Link className="footer__social-link" to="">
+            <Link className="footer__social-link" target="_blank" to="">
               <img
                 className="footer__social-icon"
                 src="https://raw.githubusercontent.com/ricardoolivaalonso/GetBello/main/public/img/linkedin.svg"
-                alt="icon"
-              />
-            </Link>
-            <Link className="footer__social-link" to="">
-              <img
-                className="footer__social-icon"
-                src="https://raw.githubusercontent.com/ricardoolivaalonso/GetBello/main/public/img/tiktok.svg"
                 alt="icon"
               />
             </Link>
@@ -76,13 +62,10 @@ export default function Footer() {
           <div className="footer__links">
             <ul className="footer__links-list">
               <h4 className="footer__links-title">Liens</h4>
-              <Link className="footer__links-item" to="#">
+              <Link className="footer__links-item" to="/create/category">
                 Lancer un 3aweni
               </Link>
-              <Link className="footer__links-item" to="#">
-                Découvrir
-              </Link>
-              <Link className="footer__links-item" to="#">
+              <Link className="footer__links-item" to="/search">
                 Recherche
               </Link>
               <Link className="footer__links-item" to="#">

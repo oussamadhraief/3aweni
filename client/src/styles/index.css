@@ -1353,10 +1353,24 @@ img {
   .card__item {
     max-width: 100%;
   }
+  .card__slider {
+  grid-template-columns: repeat(2, 300px);
+  place-content: center;
+  }
 }
 @media (max-width: 768px) {
   .card__item {
     height: 280px;
+  }
+  .card__slider {
+  grid-template-columns: repeat(2, 1fr);
+  place-content: center;
+  }
+}
+@media (max-width: 536px) {
+  .card__slider {
+  grid-template-columns: repeat(1, 300px);
+  place-content: center;
   }
 }
 .card__item--cyan {

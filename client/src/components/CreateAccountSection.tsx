@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function CreateAccountSection() {
   return (
@@ -16,7 +17,7 @@ export default function CreateAccountSection() {
           <p className="started__description">
             Un compte est requis pour créer un 3aweni.
           </p>
-          <button className="price__button">
+          <Link to='/register' className="price__button">
             Inscrivez-vous
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -31,7 +32,7 @@ export default function CreateAccountSection() {
                 fill="#007188"
               ></path>
             </svg>
-          </button>
+          </Link>
         </div>
         <picture className="started__picture-right to-left">
           <img

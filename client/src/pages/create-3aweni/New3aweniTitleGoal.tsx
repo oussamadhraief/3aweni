@@ -53,7 +53,7 @@ export default function New3aweniTitleGoal() {
             goal,
           })
         .then((response) => {
-          // localStorage.removeItem('create3aweni')
+          localStorage.removeItem('create3aweni')
 
           const {
             data: { fundraiser },
@@ -71,24 +71,24 @@ export default function New3aweniTitleGoal() {
   };
 
   return (
-    <main className="relative w-screen h-screen min-w-screen min-h-screen overflow-visible flex flex-nowrap items-start bg-beige">
-      <Link to="/" className="w-14 absolute left-10 top-10 z-50">
+    <main className="relative w-fit h-fit min-w-[100vw] min-h-screen overflow-visible flex flex-nowrap items-start bg-beige">
+      <Link to="/" className="w-10 md:w-14 absolute left-10 top-10 z-50">
         <img src="/icon.png" alt="" />
       </Link>
 
       <form
         onSubmit={handleSubmit}
-        className="w-screen h-fit min-w-screen min-h-screen overflow-hidden items-start relative flex flex-nowrap shrink-0"
+        className="w-fit h-fit min-w-[100vw] min-h-screen overflow-hidden items-start relative flex flex-wrap md:flex-nowrap shrink-0"
       >
-        <aside className="w-1/3 h-screen bg-beige create-aside-background relative flex flex-col items-center">
-          <h2 className="mt-[25vh]">
+        <aside className="w-full md:w-1/4 lg:w-1/3 h-fit min-h-fit md:min-h-screen px-5  bg-beige create-aside-background relative flex justify-center">
+          <h1 className="mt-40 mb-24 text-sm lg:text-base">
             <strong>Etape 3: </strong> Insérez l'objectif de votre 3aweni.
-          </h2>
-          {/* <p className='text-gray-700 text-sm'>Vous pouvez toujours modifier l'objectif (jsp).</p> */}
+          </h1>
+          
         </aside>
 
-        <div className="w-2/3 h-screen bg-white z-10 rounded-tl-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-center flex-col justify-between">
-          <div onSubmit={handleSubmit} className="w-3/6 mt-20">
+        <div className="w-full md:w-3/4 lg:w-2/3 h-fit min-h-screen md:min-h-screen bg-white z-10 rounded-t-[46px] md:rounded-tl-[46px] md:rounded-tr-none shadow-modern px-5 py-14 md:px-10  md:pb-10 overflow-auto md:pt-32 flex items-center flex-col justify-between">
+          <div  className="w-full sm:w-4/6 lg:w-3/6 mt-20 min-w-full sm:min-w-[350px]">
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Choisissez un titre</span>
@@ -145,11 +145,10 @@ export default function New3aweniTitleGoal() {
               Pour recevoir l'argent collecté, veuillez vous assurer que la
               personne qui effectue le retrait a : <br />
               <br />
-              <ul>
-                <li>Un numéro de sécurité sociale américain</li>
+              <ul className="list-disc">
+                <li>- Au moins 18 ans</li>
                 <li>
-                  Un compte bancaire et une adresse postale dans l'un des 50
-                  États
+                  - Un compte bancaire et une adresse postale
                 </li>
               </ul>
             </p>

@@ -20,7 +20,7 @@ export default function SectionTwo() {
             Suivez quelques simples étapes et lancez une collecte de dons pour
             vous ou pour quelqu'un que vous connaissez.
           </p>
-          <Link className="price__button" to="#">
+          <Link className="price__button" to="/create/category">
             Comment lancer un 3aweni
             <svg
               xmlns="http://www.w3.org/2000/svg"

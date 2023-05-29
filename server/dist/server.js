@@ -21,7 +21,7 @@ const {
   fetchFundraiserMostRecentDonation,
   fetchFundraiserFirstDonation,
   fetchFundraiserTotalDonations,
-  fetchFundraisersCreatedCountByDate
+  fetchMoneyReceivedByDate
 } = require("./fundraiser/FundraiserService");
 const {
   register,
@@ -343,7 +343,6 @@ app.get("/api/received-messages", authenticateToken, async (req, res) => {
     }), ContactUser.find({
       recipientId: req.user._id
     }).count()]);
-    console.log(count);
     res.status(200).json({
       success: true,
       messages,
@@ -574,21 +573,8 @@ app.post("/api/close-fundraisers", async (req, res) => {
           state: city
         }
       }, {
-        $lookup: {
-          from: "donations",
-          localField: "_id",
-          foreignField: "fundraiser",
-          as: "donations"
-        }
-      }, {
-        $addFields: {
-          totalDonations: {
-            $size: "$donations"
-          }
-        }
-      }, {
         $sort: {
-          totalDonations: -1,
+          createdAt: -1,
           _id: -1
         }
       }, {
@@ -597,8 +583,7 @@ app.post("/api/close-fundraisers", async (req, res) => {
         $project: {
           _id: 1,
           image: 1,
-          title: 1,
-          state: 1
+          title: 1
         }
       }]);
       res.status(200).json({
@@ -944,7 +929,6 @@ app.get("/api/sent-donations", authenticateToken, async (req, res) => {
     }), Donation.find({
       user: req.user._id
     }).count()]);
-    console.log(donations);
     res.status(200).json({
       success: true,
       donations,
@@ -983,21 +967,22 @@ app.get("/api/received-donations", authenticateToken, async (req, res) => {
     }, {
       $lookup: {
         from: "users",
-        localField: "fundraiser.user",
-        foreignField: "_id",
-        as: "fundraiser.user"
-      }
-    }, {
-      $unwind: "$fundraiser.user"
-    }, {
-      $lookup: {
-        from: "users",
         localField: "user",
         foreignField: "_id",
         as: "user"
       }
     }, {
       $unwind: "$user"
+    }, {
+      $addFields: {
+        user: {
+          $cond: {
+            if: "$incognito",
+            then: "$user",
+            else: null
+          }
+        }
+      }
     }, {
       $sort: {
         createdAt: -1,
@@ -1007,6 +992,17 @@ app.get("/api/received-donations", authenticateToken, async (req, res) => {
       $skip: (pageNumber - 1) * 10
     }, {
       $limit: 10
+    }, {
+      $project: {
+        _id: 1,
+        user: 1,
+        fundraiser: 1,
+        amount: 1,
+        tip: 1,
+        incognito: 1,
+        message: 1,
+        createdAt: 1
+      }
     }]), Donation.aggregate([{
       $match: {
         fundraiser: {
@@ -1297,11 +1293,50 @@ app.get("/api/user-stats", authenticateToken, async (req, res) => {
     const fundraisers = await Fundraiser.find({
       user: req.user._id
     }, "_id");
-    const [last7, third7, second7, first7, before7, totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived, messages, lastFiveDonationsReceived] = await Promise.all([Fundraiser.find({
-      createdAt: {
-        $gte: thisWeek
+    const [last7, third7, second7, first7, before7, totalDonations, totalFundraisers, totalMoneySent, totalMoneyReceived, messages, lastFiveDonationsReceived] = await Promise.all([Fundraiser.aggregate([{
+      $match: {
+        user: mongoose.Types.ObjectId(req.user._id)
       }
-    }).count(), fetchFundraisersCreatedCountByDate(WeekThree, thisWeek), fetchFundraisersCreatedCountByDate(WeekTwo, WeekThree), fetchFundraisersCreatedCountByDate(WeekOne, WeekTwo), fetchFundraisersCreatedCountByDate(WeekZero, WeekOne), fetchUserTotalDonations(req.user._id), fetchUserTotalFundraisers(req.user._id), fetchUserTotalMoneySent(req.user._id), fetchUserTotalMoneyReceived(req.user._id), ContactUser.find({
+    }, {
+      $lookup: {
+        from: "donations",
+        let: {
+          fundraiserId: "$_id"
+        },
+        pipeline: [{
+          $match: {
+            $expr: {
+              $and: [{
+                $eq: ["$fundraiser", "$$fundraiserId"]
+              }, {
+                $gte: ["$createdAt", thisWeek]
+              }]
+            }
+          }
+        }, {
+          $group: {
+            _id: null,
+            totalAmount: {
+              $sum: "$amount"
+            }
+          }
+        }],
+        as: "donations"
+      }
+    }, {
+      $project: {
+        totalAmount: {
+          $arrayElemAt: ["$donations.totalAmount", 0]
+        }
+      }
+    }, {
+      $match: {
+        totalAmount: {
+          $ne: null,
+          $ne: undefined
+        }
+      }
+    }]), fetchMoneyReceivedByDate(WeekThree, thisWeek, req.user._id), fetchMoneyReceivedByDate(WeekTwo, WeekThree, req.user._id), fetchMoneyReceivedByDate(WeekOne, WeekTwo, req.user._id), fetchMoneyReceivedByDate(WeekZero, WeekOne, req.user._id), fetchUserTotalDonations(req.user._id), fetchUserTotalFundraisers(req.user._id), fetchUserTotalMoneySent(req.user._id), fetchUserTotalMoneyReceived(req.user._id), ContactUser.find({
       recipientId: req.user._id
     }).limit(5).populate("senderId recipientId"), Donation.aggregate([{
       $match: {
@@ -1346,7 +1381,7 @@ app.get("/api/user-stats", authenticateToken, async (req, res) => {
     }])]);
     res.status(200).json({
       success: true,
-      data: [before7, first7, second7, third7, last7],
+      data: [before7, first7, second7, third7, last7.length > 0 ? last7.map(donation => donation.totalAmount).reduce((sum, amount) => sum + amount, 0) : 0],
       totalDonations,
       totalFundraisers,
       totalMoneySent,
@@ -1381,15 +1416,17 @@ app.get("/api/unread-messages", authenticateToken, async (req, res) => {
 
 //Contact User
 
-app.post("/api/contact-user", authenticateToken, async (req, res) => {
+app.post("/api/contact-user", async (req, res) => {
   try {
     let contact;
     const {
       message,
-      id
+      id,
+      recipientId
     } = req.body;
-    const user = await User.findOne({
-      _id: req.user._id
+    let user;
+    if (recipientId) user = await User.findOne({
+      _id: recipientId
     });
     if (user) {
       contact = {

@@ -114,16 +114,14 @@ export default function New3aweniRegister() {
               {
                 email: Form.email,
                 password: Form.password,
-              },
-              {
-                withCredentials: true,
-              }
-            )
+              })
             .then((res) => {
               const {
-                data: { user },
+                data: { user, token },
               } = res;
 
+              localStorage.setItem("jwt", token);
+              
               login(user);
 
               navigate(`/fundraisers/${fundraiser._id}`);
@@ -133,23 +131,23 @@ export default function New3aweniRegister() {
   };
 
   return (
-    <main className="relative w-screen h-screen min-w-screen min-h-screen overflow-visible flex flex-nowrap items-start bg-beige">
-      <Link to="/" className="w-14 absolute left-10 top-10 z-50">
+    <main className="relative w-fit h-fit min-w-[100vw] min-h-screen overflow-visible flex flex-nowrap items-start bg-beige">
+      <Link to="/" className="w-10 md:w-14 absolute left-10 top-10 z-50">
         <img src="/icon.png" alt="" />
       </Link>
 
       <form
         onSubmit={handleSubmit}
-        className="w-screen h-fit min-w-screen min-h-screen overflow-hidden items-start relative flex flex-nowrap shrink-0"
+        className="w-fit h-fit min-w-[100vw] min-h-screen overflow-hidden items-start relative flex flex-wrap md:flex-nowrap shrink-0"
       >
-        <aside className="w-1/3 h-screen bg-beige create-aside-background relative flex justify-center">
-          <h1 className="mt-[25vh]">
+        <aside className="w-full md:w-1/4 lg:w-1/3 h-fit min-h-fit md:min-h-screen px-5  bg-beige create-aside-background relative flex justify-center">
+          <h1 className="mt-40 mb-24 text-sm lg:text-base">
             <strong>Etape 4: </strong> Inscrivez vous sur la platforme 3aweni.
           </h1>
         </aside>
 
-        <div className="w-2/3 h-screen bg-white z-10 rounded-tl-[46px] shadow-modern px-10 pb-10 overflow-auto pt-32 flex items-center flex-col justify-between">
-          <div className="w-3/6 min-w-[300px] flex flex-col items-center justify-center gap-8 mt-10">
+        <div className="w-full md:w-3/4 lg:w-2/3 h-fit min-h-screen md:min-h-screen bg-white z-10 rounded-t-[46px] md:rounded-tl-[46px] md:rounded-tr-none shadow-modern px-5 py-14 md:px-10  md:pb-10 overflow-auto md:pt-32 flex items-center flex-col justify-between">
+          <div className="w-full sm:w-4/6 lg:w-3/6 min-w-full sm:min-w-[350px] flex flex-col items-center justify-center gap-8 mt-10">
             <p>
               Vous êtes déjà inscrit ?{" "}
               <Link to="/create/login" className="underline text-primary">
@@ -231,7 +229,7 @@ export default function New3aweniRegister() {
 
             <div className="relative w-full">
               <input
-                type="text"
+                type="password"
                 className="peer block w-full h-10 bg-transparent border rounded border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-primary valid:border-primary"
                 id="password"
                 name="password"
@@ -248,7 +246,7 @@ export default function New3aweniRegister() {
 
             <div className="relative w-full">
               <input
-                type="text"
+                type="password"
                 className="peer block w-full h-10 bg-transparent border rounded border-[#ccc] transition-all px-[15px] outline-none z-0 focus:border-primary valid:border-primary"
                 id="password-confirm"
                 name="password-confirm"

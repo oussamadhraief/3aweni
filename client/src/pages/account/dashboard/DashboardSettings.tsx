@@ -200,8 +200,8 @@ export default function DashboardSettings() {
   };
 
   return (
-    <section className="dashboard-main-section w-full bg-gray-100/50 flex justify-center items-center">
-      <div className="container max-w-2xl mx-auto shadow-md md:w-3/4 rounded-b-lg overflow-hidden">
+    <section className="dashboard-main-section w-full bg-gray-100/50 flex justify-center items-center px-2 py-10 overflow-y-auto">
+      <div className="container max-w-2xl mx-auto shadow-md w-full md:w-3/4 rounded-b-lg overflow-hidden">
         <div className="p-4 border-t border-gray-200 rounded-lg bg-gray-100/5 ">
           <div className="mx-auto md:w-full md:mx-0">
             <div className="relative w-full flex items-center space-x-4 transition-all">

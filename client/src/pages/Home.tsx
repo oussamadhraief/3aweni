@@ -15,7 +15,7 @@ function App() {
       <CreateFundraiserSection />
       <WhyUse3aweniSection />
       <HowToCreate3aweniSection />
-      <GuideSection />
+      {/* <GuideSection /> */}
       <ExploreSection />
       <CreateAccountSection />
     </main>
