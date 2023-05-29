@@ -196,7 +196,7 @@ export default function UserDashboard() {
             )}
           </button>
           <div className="self-end flex justify-between items-center">
-            <form className="flex items-center flex-nowrap bg-gray-100 rounded-full overflow-hidden">
+            <form className="flex items-center flex-nowrap bg-gray-100 rounded-full overflow-hidden w-40 sm:w-72">
               <button className="py-1 px-2">
                 <IconContext.Provider
                   value={{ className: "text-gray-500 w-5 h-5" }}
@@ -208,7 +208,7 @@ export default function UserDashboard() {
               <input
                 type="text"
                 placeholder="Search"
-                className="h-8 bg-gray-100 placeholder:text-gray-500 outline-none"
+                className="h-8 bg-gray-100 placeholder:text-gray-500 outline-none text-sm"
               />
             </form>
             <UserDropdownMenu main={false} />
