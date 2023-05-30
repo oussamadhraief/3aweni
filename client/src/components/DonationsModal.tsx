@@ -132,7 +132,7 @@ export default function DonationsModal({
           to={`/donate/${id}`}
           className="w-11/12 text-white py-2.5 rounded-xl flex flex-nowrap items-center gap-2 justify-center bg-secondary hover:-translate-y-1 transition-all"
         >
-          Donate
+          Faire un don
         </Link>
       </div>
     </>,

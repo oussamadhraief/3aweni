@@ -458,7 +458,7 @@ export default function SingleFundraiser() {
             to={`/donate/${Fundraiser._id}`}
             className="w-full text-white py-2.5 rounded-xl my-0 lg:my-3 flex flex-nowrap items-center gap-2 justify-center bg-secondary shadow-modern  shadow-secondary/30 hover:shadow-xxxl hover:shadow-secondary/30 transition-all"
           >
-            Donate
+            Faire un don
           </Link>
           <button
             className="h-fit border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-[9px] rounded-xl flex justify-center items-center flex-nowrap gap-1"
@@ -608,7 +608,7 @@ export default function SingleFundraiser() {
                 to={`/donate/${Fundraiser._id}`}
                 className="w-full text-white py-2.5 rounded-2xl my-3 flex flex-nowrap items-center gap-2 justify-center bg-secondary shadow-modern  shadow-secondary/30 hover:shadow-xxxl hover:shadow-secondary/30 transition-all"
               >
-                Donate
+                Faire un don
               </Link>
               <button
                 className="h-9 border border-secondary text-secondary hover:text-white hover:bg-secondary w-full py-1.5 rounded-xl flex justify-center items-center flex-nowrap gap-1"

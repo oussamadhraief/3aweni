@@ -971,7 +971,7 @@ app.get("/api/received-donations", authenticateToken, async (req, res) => {
     res.status(200).json({
       success: true,
       donations,
-      count: totalDocuments[0].totalDocuments,
+      count: totalDocuments[0].totalDocuments ? totalDocuments[0].totalDocuments : 0,
     });
   } catch (error) {
     console.error("Error fetching donations:", error);
