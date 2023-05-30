@@ -53,7 +53,7 @@ export default function SearchPageSuggestions({
           }
           onClick={(e) => setTabSelection(true)}
         >
-          Trending
+          Tendance
         </button>
 
         <button
@@ -64,7 +64,7 @@ export default function SearchPageSuggestions({
           }
           onClick={(e) => setTabSelection(false)}
         >
-          Near you
+          Près de vous
         </button>
       </div>
       {TabSelection ? (
