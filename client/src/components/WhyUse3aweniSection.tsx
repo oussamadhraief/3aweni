@@ -1,6 +1,6 @@
 export default function WhyUse3aweniSection() {
   return (
-    <section className="hands bg-white">
+    <section className="hands bg-white" id="why-3aweni">
       <div className="hands__container g-container">
         <picture className="hands__picture-top to-top">
           <img

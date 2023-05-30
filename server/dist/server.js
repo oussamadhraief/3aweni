@@ -246,6 +246,25 @@ app.patch("/api/user/image", authenticateToken, async (req, res) => {
     });
   }
 });
+app.delete("/api/user/image", authenticateToken, async (req, res) => {
+  try {
+    await User.findOneAndUpdate({
+      _id: req.user._id
+    }, {
+      image: ''
+    }, {
+      new: true
+    });
+    res.status(200).json({
+      success: true
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      success: false
+    });
+  }
+});
 app.patch("/api/user/email", authenticateToken, async (req, res) => {
   try {
     const {
@@ -376,7 +395,7 @@ app.patch("/api/user-message/:id", async (req, res) => {
     });
   }
 });
-app.post("/api/user/password-reset", authenticateToken, async (req, res) => {
+app.post("/api/user/password-reset", async (req, res) => {
   const {
     email
   } = req.body;
@@ -386,7 +405,7 @@ app.post("/api/user/password-reset", authenticateToken, async (req, res) => {
     });
     if (!oldUser) {
       return res.status(404).json({
-        status: "User Not Exists!!"
+        status: "User does not Exists!!"
       });
     }
     const secret = JWT_SECRET + oldUser.password;
@@ -619,10 +638,6 @@ app.post("/api/search", async (req, res) => {
       }, {
         description: regex
       }, {
-        _id: regex
-      }, {
-        category: regex
-      }, {
         state: regex
       }];
     }
@@ -837,6 +852,27 @@ app.get("/api/fundraiser/:id", async (req, res) => {
     });
   }
 });
+app.delete("/api/fundraiser/:id", async (req, res) => {
+  try {
+    const {
+      id
+    } = req.params;
+    const fundraiser = await Fundraiser.findOneAndUpdate({
+      _id: mongoose.Types.ObjectId(id)
+    }, {
+      archived: true
+    }, {
+      new: true
+    });
+    res.status(200).json({
+      success: true
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false
+    });
+  }
+});
 app.get("/api/single-fundraiser/:id", async (req, res) => {
   try {
     const {
@@ -1042,7 +1078,8 @@ app.get("/api/fundraisers/category/:id", async (req, res) => {
       id
     } = req.params;
     const fundraisers = await Fundraiser.find({
-      category: id
+      category: id,
+      archived: false
     });
     const fundraisersWithAmount = await Promise.all(fundraisers.map(async fundraiser => {
       const collectedAmount = await fetchFundraiserCollectedAmount(fundraiser._id);
@@ -1337,7 +1374,10 @@ app.get("/api/user-stats", authenticateToken, async (req, res) => {
       }
     }]), fetchMoneyReceivedByDate(WeekThree, thisWeek, req.user._id), fetchMoneyReceivedByDate(WeekTwo, WeekThree, req.user._id), fetchMoneyReceivedByDate(WeekOne, WeekTwo, req.user._id), fetchMoneyReceivedByDate(WeekZero, WeekOne, req.user._id), fetchUserTotalDonations(req.user._id), fetchUserTotalFundraisers(req.user._id), fetchUserTotalMoneySent(req.user._id), fetchUserTotalMoneyReceived(req.user._id), ContactUser.find({
       recipientId: req.user._id
-    }).limit(5).populate("senderId recipientId"), Donation.aggregate([{
+    }).limit(5).sort({
+      createdAt: -1,
+      _id: -1
+    }).populate("senderId recipientId"), Donation.aggregate([{
       $match: {
         fundraiser: {
           $in: fundraisers.map(fundraiser => fundraiser._id)
@@ -1421,11 +1461,12 @@ app.post("/api/contact-user", async (req, res) => {
     const {
       message,
       id,
-      recipientId
+      senderId
     } = req.body;
+    console.log(senderId);
     let user;
-    if (recipientId) user = await User.findOne({
-      _id: recipientId
+    if (senderId) user = await User.findOne({
+      _id: senderId
     });
     if (user) {
       contact = {

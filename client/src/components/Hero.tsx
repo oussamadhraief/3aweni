@@ -6,12 +6,12 @@ export default function Hero() {
   return (
     <section className="hero">
       <div className="hero__info to-top">
-        <span className="hero__subtitle flex justify-between gap-1">
+        <a href="#why-3aweni" className="hero__subtitle flex justify-between gap-1">
           <IconContext.Provider value={{ className: "text-primary mt-1" }}>
             <AiOutlineInfoCircle />
           </IconContext.Provider>
           En savoir plus sur 3aweni{" "}
-        </span>
+        </a>
         <h1 className="hero__title">L'espoir pour tous !</h1>
         <p className="hero__description">
           Rendre le monde meilleur, par un simple don.

@@ -1107,11 +1107,13 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
     const { id } = req.params;
 
     const fund = await Fundraiser.findOne({ _id: id });
-
+    let donation = amount
+    if(tip)
+      donation = amount + tip
     const paymentInfo = {
       receiverWalletId: "6466799e1874253b580aac46",
       token: "TND",
-      amount: amount * 1000,
+      amount: donation * 1000,
       type: "immediate",
       description: "donation for " + fund.title,
       lifespan: 20,

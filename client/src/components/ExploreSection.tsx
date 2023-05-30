@@ -10,7 +10,7 @@ export default function ExploreSection() {
             <p className="card__description">
               Trouvez les personnes qui ont le plus besoin de votre aide
             </p>
-            <Link className="card__link" to="#">
+            <Link className="card__link" to="/search">
               Voir la tendance
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +32,7 @@ export default function ExploreSection() {
             <p className="card__description">
               Naviguez parmi les plus récents 3awenis{" "}
             </p>
-            <Link className="card__link" to="#">
+            <Link className="card__link" to="/discover/animals">
               Voir
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@ export default function ExploreSection() {
               Trouvez les personnes les plus proches de vous qui ont besoin
               d'aide.
             </p>
-            <Link className="card__link" to="#">
+            <Link className="card__link" to="/search">
               Tell Me More
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +77,7 @@ export default function ExploreSection() {
             <p className="card__description">
               Effectuez une recherche selon votre choix.
             </p>
-            <Link className="card__link" to="#">
+            <Link className="card__link" to="/search">
               Rechercher
               <svg
                 xmlns="http://www.w3.org/2000/svg"
