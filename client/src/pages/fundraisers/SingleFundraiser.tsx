@@ -129,8 +129,7 @@ export default function SingleFundraiser() {
   };
 
   const copyToClipboard = () => {
-    const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3000/";
-    clipboardCopy(`${baseURL}fundraisers/${Fundraiser._id}`);
+    clipboardCopy(`https://3aweni.vercel.app/fundraisers/${Fundraiser._id}`);
   };
 
   return (

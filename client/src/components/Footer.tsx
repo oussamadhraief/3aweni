@@ -49,13 +49,6 @@ export default function Footer() {
                 alt="icon"
               />
             </Link>
-            <Link className="footer__social-link" target="_blank" to="">
-              <img
-                className="footer__social-icon"
-                src="https://raw.githubusercontent.com/ricardoolivaalonso/GetBello/main/public/img/linkedin.svg"
-                alt="icon"
-              />
-            </Link>
           </div>
         </div>
         <div className="footer__right">
