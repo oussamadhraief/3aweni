@@ -830,7 +830,7 @@ app.get("/api/fundraiser-support/:id", async (req, res) => {
       .skip(page * 10)
       .limit(10)
       .populate("user");
-
+    
     res.status(200).json({ success: true, donations: donations });
   } catch (error) {
     res.status(404).json({ success: false });

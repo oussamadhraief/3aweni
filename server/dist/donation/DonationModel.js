@@ -13,7 +13,7 @@ const donation = new mongoose.Schema({
   amount: {
     type: Number,
     required: true,
-    min: 50,
+    min: 1,
     max: 1000000
   },
   tip: {

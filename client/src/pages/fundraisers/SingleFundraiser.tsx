@@ -90,7 +90,7 @@ export default function SingleFundraiser() {
             firstDonation,
           },
         } = response;
-
+        
         setCollectedAmount(collectedAmount);
         const formattedTotalDonation = formatNumber(totalDonations);
         setTotalDonations(formattedTotalDonation);
@@ -203,8 +203,8 @@ export default function SingleFundraiser() {
           )}
         </div>
 
-        {Fundraiser.secondaryImages.length &&
-        Fundraiser.secondaryVideos.length ? (
+        {Fundraiser.secondaryImages.length > 0 ||
+        Fundraiser.secondaryVideos.length > 0 ? (
           <div className="relative flex items-center flex-nowrap grid-fundraiser-secondary">
             <button
               className="bg-white/70 hover:bg-white rounded-full p-0.5 absolute top-1/2 -translate-y-1/2 left-1 shrink-0 z-10 text-secondary"

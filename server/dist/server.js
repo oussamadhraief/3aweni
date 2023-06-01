@@ -1059,7 +1059,7 @@ app.get("/api/received-donations", authenticateToken, async (req, res) => {
     res.status(200).json({
       success: true,
       donations,
-      count: totalDocuments[0].totalDocuments
+      count: totalDocuments[0].totalDocuments ? totalDocuments[0].totalDocuments : 0
     });
   } catch (error) {
     console.error("Error fetching donations:", error);
@@ -1232,10 +1232,12 @@ app.post("/api/konnect-gateway/:id", authenticateToken, async (req, res) => {
     const fund = await Fundraiser.findOne({
       _id: id
     });
+    let donation = amount;
+    if (tip) donation = amount + tip;
     const paymentInfo = {
       receiverWalletId: "6466799e1874253b580aac46",
       token: "TND",
-      amount: amount * 1000,
+      amount: donation * 1000,
       type: "immediate",
       description: "donation for " + fund.title,
       lifespan: 20,
