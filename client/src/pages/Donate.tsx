@@ -170,7 +170,7 @@ export default function Donate() {
               defaultValue={""}
               decimalsLimit={2}
               maxLength={7}
-              allowNegativeValue={false}
+               allowNegativeValue={false}
               value={Donation.tip}
               onValueChange={(value) => {
                 const newValue = value as string;

@@ -421,7 +421,7 @@ app.post("/api/user/password-reset", async (req, res) => {
       service: "gmail",
       auth: {
         user: "3aweni.tn@gmail.com",
-        pass: "3awenitn123"
+        pass: process.env.EMAIL_PASSWORD
       }
     });
     var mailOptions = {

@@ -102,6 +102,10 @@ export default function SingleFundraiser() {
     }
   }, []);
 
+  useEffect(() => {
+    
+  },[])
+
   const formatNumber = (num: number) => {
     const suffixes = ["", "k", "M", "B", "T"];
     const suffixNum = Math.floor(("" + num).length / 3);
@@ -133,7 +137,7 @@ export default function SingleFundraiser() {
   };
 
   return (
-    <main className="relative mt-[94px] pb-10  flex flex-col items-center justify-center">
+    <main className="relative mt-[94px] pb-10 flex flex-col items-center justify-center">
       <section className="w-full h-fit min-h-fit max-w-7xl mx-auto text-gray-600 px-5 fundraiser-container">
         {user?._id === Fundraiser.user?._id && WarningOpen && (
           <div className="fixed bottom-0 left-0 bg-lighter_blue/80 w-full flex justify-between items-center py-3 px-10 text-secondary z-50">

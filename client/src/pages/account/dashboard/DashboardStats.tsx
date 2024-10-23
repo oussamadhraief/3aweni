@@ -107,7 +107,7 @@ export default function DashboardStats() {
   return (
     <main className="text-gray-600 bg-gray-50 dashboard-main-section flex justify-center items-start overflow-y-auto overflow-x-hidden">
       <div className="w-full max-w-[1480px] grid grid-cols-6 px-3 py-8 md:px-5 md:py-10 overflow-y-auto overflow-x-hidden gap-y-10">
-        <div className="col-span-full flex items-start justify-center gap-5 flex-wrap xl:flex-nowrap h-fit">
+          
           <div className="min-w-full lg:min-w-[505px] lg:max-w-[850px] aspect-video flex-grow shadow bg-white rounded-2xl h-fit min-h-[400px] md:p-4 hidden sm:flex items-center justify-center ">
             <Line options={options} data={data} />
           </div>
@@ -305,7 +305,6 @@ export default function DashboardStats() {
             </div>
           </div>
         </div>
-      </div>
     </main>
   );
 }
